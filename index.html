@@ -1,2 +1,95 @@
 <!-- this is just skeleton code  for the project -->
- 
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Finance Tracker</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Student Finance Tracker</h1>
+            <p>Track your expenses, food budget, and student debt progress</p>
+        </header>
+
+        <div class="grid-container">
+            <section class="card form-section">
+                <h2>Set Your Goals</h2>
+                <form>
+                    <div>
+                        <label for="food-budget">Monthly Food Budget ($)</label>
+                        <input type="number" id="food-budget" />
+                    </div>
+                    <div class="flex-row">
+                        <label for="debt-total">Total Student Debt ($)</label>
+                        <input type="number" id="debt-total" />
+                        <button class="button-primary button-small">Set</button>
+                    </div>
+                </form>
+            </section>
+
+            <section class="card dashboard-section">
+                <h2>Dashboard</h2>
+                <div class="metric-grid-dashboard">
+                    <div class="metric-item main-balance">
+                        <div class="metric-title">Balance</div>
+                        <div class="metric-value text-positive">$1,200</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-title">Income</div>
+                        <div class="metric-value text-income">$2,000</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-title">Expenses</div>
+                        <div class="metric-value text-expense">$800</div>
+                    </div>
+                </div>
+
+                <div class="metric-group goals">
+                    <div class="card">
+                        <h2>Food Budget Progress</h2>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" style="width: 60%; background-color: var(--color-warning);"></div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h2>Debt Repayment Progress</h2>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" style="width: 40%; background-color: var(--color-secondary);"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-wrapper">
+                    <table class="transaction-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Category</th>
+                                <th>Amount</th>
+                                <th>Type</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>2025-11-01</td>
+                                <td>Food</td>
+                                <td>$50</td>
+                                <td>Expense</td>
+                            </tr>
+                            <tr>
+                                <td>2025-11-03</td>
+                                <td>Debt Payment</td>
+                                <td>$100</td>
+                                <td>Expense</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </div>
+</body>
+</html>
