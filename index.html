@@ -1,95 +1,333 @@
-<!-- this is just skeleton code  for the project -->
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Student Finance Tracker</title>
-    <link rel="stylesheet" href="style.css" />
-</head>
-<body>
-    <div class="container">
-        <header>
-            <h1>Student Finance Tracker</h1>
-            <p>Track your expenses, food budget, and student debt progress</p>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>EduFinance — Student Finance Toolkit</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+        <link rel="stylesheet" href="./style.css" />
+        <script defer src="./assets/js/app.js"></script>
+    </head>
+    <body class="theme-light">
+        <header class="site-header">
+            <div class="site-nav">
+                <a class="brand" href="#landing">EduFinance</a>
+                <button id="mobileToggle" class="icon-button" aria-expanded="false" aria-controls="mobileMenu">
+                    ☰
+                </button>
+                <nav class="nav-links" aria-label="Primary">
+                    <a href="#landing">Home</a>
+                    <a href="#dashboard">Dashboard</a>
+                    <a href="#expenses">Expenses</a>
+                    <a href="#analysis">Analysis</a>
+                    <a href="#tips">Tips</a>
+                    <a href="#profile">Profile</a>
+                    <a href="#split">Split</a>
+                    <a href="#about">About</a>
+                </nav>
+                <div class="nav-actions">
+                    <button id="themeToggle" class="icon-button" aria-label="Toggle theme">🌙</button>
+                    <a class="btn btn-primary" href="#login">Sign In</a>
+                </div>
+            </div>
+            <div id="mobileMenu" class="mobile-menu" hidden>
+                <a href="#landing">Home</a>
+                <a href="#dashboard">Dashboard</a>
+                <a href="#expenses">Expenses</a>
+                <a href="#analysis">Analysis</a>
+                <a href="#tips">Tips</a>
+                <a href="#profile">Profile</a>
+                <a href="#split">Split</a>
+                <a href="#about">About</a>
+                <a class="btn btn-primary" href="#login">Sign In</a>
+            </div>
         </header>
 
-        <div class="grid-container">
-            <section class="card form-section">
-                <h2>Set Your Goals</h2>
-                <form>
-                    <div>
-                        <label for="food-budget">Monthly Food Budget ($)</label>
-                        <input type="number" id="food-budget" />
+        <main>
+            <section id="landing" class="section hero">
+                <div class="hero-copy">
+                    <span class="badge">Student-first finance toolkit</span>
+                    <h1>Stay on top of your budget, whether it is Birr or USD.</h1>
+                    <p>EduFinance brings the core screens of the original React prototype into a static preview you can host anywhere. Track expenses, review dashboards, get smart tips, and collaborate with friends.</p>
+                    <div class="hero-actions">
+                        <a class="btn btn-primary" href="#dashboard">View Dashboard</a>
+                        <button id="openDemo" class="btn btn-secondary">Add Demo Expense</button>
                     </div>
-                    <div class="flex-row">
-                        <label for="debt-total">Total Student Debt ($)</label>
-                        <input type="number" id="debt-total" />
-                        <button class="button-primary button-small">Set</button>
+                </div>
+                <div class="hero-preview">
+                    <article class="card">
+                        <header class="card-header">
+                            <div>
+                                <h2>Weekly Overview</h2>
+                                <p>November 17 — November 23</p>
+                            </div>
+                            <span class="status-pill">On track</span>
+                        </header>
+                        <div class="card-body preview-metrics">
+                            <div>
+                                <p class="label">Total spent</p>
+                                <p class="value" data-key="totalSpent">Birr 0</p>
+                            </div>
+                            <div>
+                                <p class="label">Remaining budget</p>
+                                <p class="value" data-key="remainingBudget">Birr 0</p>
+                            </div>
+                            <div>
+                                <p class="label">This week transactions</p>
+                                <p class="value" data-key="transactionCount">0</p>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <section id="login" class="section section-split">
+                <div class="card card-tight">
+                    <h2>Quick Login Preview</h2>
+                    <form class="form-grid" aria-label="Login form">
+                        <label>Email
+                            <input type="email" placeholder="student@edufinance.com" required />
+                        </label>
+                        <label>Password
+                            <input type="password" placeholder="••••••" required />
+                        </label>
+                        <div class="form-row">
+                            <label class="checkbox">
+                                <input type="checkbox" checked />
+                                Remember me
+                            </label>
+                            <a href="#" class="link">Forgot password?</a>
+                        </div>
+                        <button type="button" class="btn btn-primary" id="mockLogin">Sign In</button>
+                        <p class="note">Theme toggle and validation mirror the TSX logic.</p>
+                    </form>
+                </div>
+                <div class="login-side card">
+                    <h3>Highlights</h3>
+                    <ul>
+                        <li>Instant validation feedback</li>
+                        <li>Dark mode friendly UI</li>
+                        <li>Separate navigation for mobile users</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="dashboard" class="section">
+                <header class="section-header">
+                    <div>
+                        <p class="eyebrow">Dashboard</p>
+                        <h2>Budget health at a glance</h2>
+                    </div>
+                    <div class="toolbar">
+                        <button class="btn btn-secondary" data-range="week">This week</button>
+                        <button class="btn btn-ghost" data-range="month">This month</button>
+                        <button class="btn btn-ghost" data-range="semester">This semester</button>
+                    </div>
+                </header>
+
+                <div class="grid grid-3">
+                    <article class="card">
+                        <h3>Budget progress</h3>
+                        <div class="progress">
+                            <div class="progress-bar" data-key="budgetProgress"></div>
+                        </div>
+                        <p class="label">Spent <span data-key="progressSpent">Birr 0</span> of <span data-key="progressBudget">Birr 0</span></p>
+                    </article>
+                    <article class="card">
+                        <h3>Average daily spending</h3>
+                        <p class="big-number" data-key="avgDaily">Birr 0</p>
+                        <p class="label">Based on the last 7 days</p>
+                    </article>
+                    <article class="card">
+                        <h3>Upcoming reminders</h3>
+                        <ul class="list">
+                            <li>Rent due Nov 28</li>
+                            <li>Library fees due Dec 01</li>
+                            <li>Tutoring payment Dec 04</li>
+                        </ul>
+                    </article>
+                </div>
+            </section>
+
+            <section id="expenses" class="section">
+                <header class="section-header">
+                    <div>
+                        <p class="eyebrow">Expenses</p>
+                        <h2>Latest transactions</h2>
+                    </div>
+                    <div class="toolbar">
+                        <button class="btn btn-secondary" id="exportCsv">Export CSV</button>
+                        <button class="btn btn-ghost" id="exportPdf">Export PDF</button>
+                    </div>
+                </header>
+
+                <div class="table">
+                    <div class="table-head">
+                        <span>Date</span>
+                        <span>Category</span>
+                        <span class="align-right">Amount</span>
+                        <span>Notes</span>
+                        <span class="align-right">Actions</span>
+                    </div>
+                    <div id="expenseRows" class="table-body"></div>
+                </div>
+            </section>
+
+            <section id="analysis" class="section">
+                <header class="section-header">
+                    <div>
+                        <p class="eyebrow">Analysis</p>
+                        <h2>Spending trends</h2>
+                    </div>
+                    <div class="toolbar">
+                        <label class="select">
+                            <span class="label">Category</span>
+                            <select id="categoryFilter">
+                                <option value="all">All categories</option>
+                                <option value="Food">Food</option>
+                                <option value="Transport">Transport</option>
+                                <option value="Books">Books</option>
+                                <option value="Entertainment">Entertainment</option>
+                                <option value="Utilities">Utilities</option>
+                            </select>
+                        </label>
+                    </div>
+                </header>
+
+                <div class="analysis-grid">
+                    <article class="card">
+                        <h3>Top categories</h3>
+                        <ul id="topCategories" class="list"></ul>
+                    </article>
+                    <article class="card">
+                        <h3>Daily totals</h3>
+                        <div class="spark" id="dailyTotals"></div>
+                    </article>
+                    <article class="card">
+                        <h3>Summary</h3>
+                        <p>Total spent: <strong data-key="analysisTotal">Birr 0</strong></p>
+                        <p>Average daily: <strong data-key="analysisAverage">Birr 0</strong></p>
+                        <button class="btn btn-secondary" id="analysisShare">Copy summary</button>
+                    </article>
+                </div>
+            </section>
+
+            <section id="tips" class="section">
+                <header class="section-header">
+                    <div>
+                        <p class="eyebrow">Tips & challenges</p>
+                        <h2>Level up your money habits</h2>
+                    </div>
+                </header>
+                <div id="tipsList" class="tips-grid"></div>
+            </section>
+
+            <section id="profile" class="section section-split">
+                <div class="card card-tight">
+                    <h2>Profile snapshot</h2>
+                    <div class="profile-card">
+                        <div class="avatar" data-initial="S"></div>
+                        <div>
+                            <h3 data-key="profileName">Student</h3>
+                            <p class="label" data-key="profileEmail">student@edufinance.com</p>
+                        </div>
+                    </div>
+                    <div class="form-grid">
+                        <label>Budget
+                            <input id="profileBudget" type="number" min="0" />
+                        </label>
+                        <label>Currency
+                            <select id="profileCurrency">
+                                <option value="Birr">Birr (ETB)</option>
+                                <option value="USD">US Dollar (USD)</option>
+                            </select>
+                        </label>
+                        <label class="switch">
+                            <input id="profileNotifications" type="checkbox" checked />
+                            <span>Notifications enabled</span>
+                        </label>
+                        <button class="btn btn-secondary" id="profileSave" type="button">Save profile</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>Data management</h3>
+                    <p>Need to start fresh? You can clear demo data and begin experimenting again.</p>
+                    <button class="btn btn-danger" id="clearData">Clear demo data</button>
+                </div>
+            </section>
+
+            <section id="split" class="section">
+                <header class="section-header">
+                    <div>
+                        <p class="eyebrow">Split expenses</p>
+                        <h2>Track balances with friends</h2>
+                    </div>
+                </header>
+                <div class="grid grid-2">
+                    <article class="card">
+                        <h3>Balances</h3>
+                        <ul id="balanceList" class="list"></ul>
+                    </article>
+                    <article class="card">
+                        <h3>Recent shared costs</h3>
+                        <ul id="splitExpenses" class="list"></ul>
+                    </article>
+                </div>
+            </section>
+
+            <section id="about" class="section">
+                <div class="card about">
+                    <h2>About this mock</h2>
+                    <p>This static port reuses text and data from the original React + TypeScript app. Sections mirror the main pages—Landing, Login, Dashboard, Expenses, Analysis, Tips, Profile, and Split—to help you ship a lightweight marketing site or handoff to designers.</p>
+                    <p>Built with semantic HTML, vanilla CSS, and a small JavaScript bundle that simulates the original interactions using `localStorage`.</p>
+                </div>
+            </section>
+        </main>
+
+        <footer class="site-footer">
+            <p>© 2025 EduFinance Team · Mock experience inspired by the Figma design</p>
+            <div class="footer-links">
+                <a href="https://github.com/Yoni-Berihun" target="_blank" rel="noreferrer">GitHub</a>
+                <a href="https://www.figma.com/design/eCcZirqtQctQjrw2z6v8iw/EduFinance-Website-Mockup-Design" target="_blank" rel="noreferrer">Figma file</a>
+            </div>
+        </footer>
+
+        <div id="modalOverlay" class="modal-overlay" hidden>
+            <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+                <header class="modal-header">
+                    <h2 id="modalTitle">Add expense (demo)</h2>
+                    <button id="modalClose" class="icon-button" aria-label="Close">✕</button>
+                </header>
+                <form id="expenseForm" class="form-grid">
+                    <label>Category
+                        <select id="expenseCategory" required>
+                            <option>Food</option>
+                            <option>Transport</option>
+                            <option>Books</option>
+                            <option>Entertainment</option>
+                            <option>Utilities</option>
+                            <option>Other</option>
+                        </select>
+                    </label>
+                    <label>Amount
+                        <input id="expenseAmount" type="number" min="0" step="0.01" required />
+                    </label>
+                    <label>Date
+                        <input id="expenseDate" type="date" required />
+                    </label>
+                    <label>Notes
+                        <textarea id="expenseNotes" rows="3" placeholder="Lunch with friends" required></textarea>
+                    </label>
+                    <div class="form-row form-right">
+                        <button type="button" class="btn btn-tertiary" id="modalCancel">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save expense</button>
                     </div>
                 </form>
-            </section>
-
-            <section class="card dashboard-section">
-                <h2>Dashboard</h2>
-                <div class="metric-grid-dashboard">
-                    <div class="metric-item main-balance">
-                        <div class="metric-title">Balance</div>
-                        <div class="metric-value text-positive">$1,200</div>
-                    </div>
-                    <div class="metric-item">
-                        <div class="metric-title">Income</div>
-                        <div class="metric-value text-income">$2,000</div>
-                    </div>
-                    <div class="metric-item">
-                        <div class="metric-title">Expenses</div>
-                        <div class="metric-value text-expense">$800</div>
-                    </div>
-                </div>
-
-                <div class="metric-group goals">
-                    <div class="card">
-                        <h2>Food Budget Progress</h2>
-                        <div class="progress-bar-container">
-                            <div class="progress-bar" style="width: 60%; background-color: var(--color-warning);"></div>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <h2>Debt Repayment Progress</h2>
-                        <div class="progress-bar-container">
-                            <div class="progress-bar" style="width: 40%; background-color: var(--color-secondary);"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="table-wrapper">
-                    <table class="transaction-table">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Category</th>
-                                <th>Amount</th>
-                                <th>Type</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>2025-11-01</td>
-                                <td>Food</td>
-                                <td>$50</td>
-                                <td>Expense</td>
-                            </tr>
-                            <tr>
-                                <td>2025-11-03</td>
-                                <td>Debt Payment</td>
-                                <td>$100</td>
-                                <td>Expense</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
+            </div>
         </div>
-    </div>
-</body>
+
+        <div id="toast" class="toast" role="status" aria-live="polite" hidden>Saved</div>
+    </body>
 </html>
