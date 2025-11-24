@@ -64,7 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const progressBar = App.qs('[data-key="budgetProgress"]');
         if (progressBar) {
             progressBar.style.width = `${progressPercent}%`;
-            progressBar.classList.toggle("progress-bar-danger", progressPercent > 100);
+            progressBar.classList.toggle("progress-bar-danger", total > user.budget);
         }
 
         App.qs('[data-key="progressSpent"]').textContent = App.formatCurrency(total, user.currency);
@@ -138,8 +138,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const avgEl = App.qs('[data-key="analysisAverage"]');
         const stats = App.calculateStats(rangeExpenses);
 
-        totalEl.textContent = App.formatCurrency(stats.total, user.currency);
-        avgEl.textContent = App.formatCurrency(stats.averageDaily, user.currency);
+        if (totalEl) totalEl.textContent = App.formatCurrency(stats.total, user.currency);
+        if (avgEl) avgEl.textContent = App.formatCurrency(stats.averageDaily, user.currency);
 
         if (topList) {
             topList.innerHTML = "";
@@ -404,8 +404,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const exportCsv = () => {
         const header = ["Date", "Category", "Amount", "Notes"];
         const lines = expenses.map((expense) => {
-            return [expense.date, expense.category, expense.amount, expense.notes.replace(/"/g, '""')]
-                .map((value) => `"${value}` + `"`)
+            const safeNotes = (expense.notes || "").replace(/"/g, '""');
+            return [expense.date, expense.category, expense.amount, safeNotes]
+                .map((value) => `"${value}"`)
                 .join(",");
         });
         const csv = [header.join(","), ...lines].join("\n");

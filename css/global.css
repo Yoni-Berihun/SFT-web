@@ -1,3 +1,4 @@
+/* global.css with chart preview height fix */
 :root {
     --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
     --color-primary: #2c3e50;
@@ -689,12 +690,13 @@ textarea:disabled {
 
 .chart-preview {
     position: relative;
-    height: 300px;
+    height: 320px;
     width: 100%;
 }
 
 .chart-preview canvas {
-    max-height: 100%;
+    width: 100% !important;
+    height: 100% !important;
 }
 
 .toast {
