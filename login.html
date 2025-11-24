@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>EduFinance — Login</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+        <link rel="stylesheet" href="css/global.css" />
+        <link rel="stylesheet" href="css/login.css" />
+        <script defer src="js/common.js"></script>
+        <script defer src="js/login.js"></script>
+    </head>
+    <body class="theme-light">
+        <header class="site-header">
+            <div class="site-nav">
+                <a class="brand" href="index.html">EduFinance</a>
+                <div class="nav-actions">
+                    <button id="themeToggle" class="icon-button" aria-label="Toggle theme">🌙</button>
+                </div>
+            </div>
+        </header>
+
+        <main class="login-wrapper">
+            <section class="login-card" aria-labelledby="loginTitle">
+                <h1 id="loginTitle">Welcome back</h1>
+                <p>Sign in with any email and password to access the dashboard demo.</p>
+                <div id="loginMessage" class="login-message" role="alert"></div>
+                <form id="loginForm" novalidate>
+                    <label class="input-group">
+                        Email
+                        <input id="loginEmail" type="email" placeholder="student@edufinance.com" required autocomplete="email" />
+                    </label>
+                    <label class="input-group">
+                        Password
+                        <input id="loginPassword" type="password" placeholder="••••••" required autocomplete="current-password" />
+                    </label>
+                    <div class="remember-row">
+                        <label>
+                            <input id="rememberMe" type="checkbox" /> Remember me
+                        </label>
+                        <a href="#" aria-disabled="true">Forgot password?</a>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Sign in</button>
+                </form>
+                <p class="note">Need a refresher? Head back to the <a href="index.html">overview page</a>.</p>
+            </section>
+        </main>
+
+        <div id="toast" class="toast" role="status" aria-live="polite" hidden>Saved</div>
+    </body>
+</html>

@@ -9,156 +9,155 @@
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
         <link rel="stylesheet" href="./style.css" />
         <script defer src="./assets/js/app.js"></script>
-    </head>
-    <body class="theme-light">
-        <header class="site-header">
-            <div class="site-nav">
-                <a class="brand" href="#landing">EduFinance</a>
-                <button id="mobileToggle" class="icon-button" aria-expanded="false" aria-controls="mobileMenu">
-                    ☰
-                </button>
-                <nav class="nav-links" aria-label="Primary">
-                    <a href="#landing">Home</a>
-                    <a href="#dashboard">Dashboard</a>
-                    <a href="#expenses">Expenses</a>
-                    <a href="#analysis">Analysis</a>
-                    <a href="#tips">Tips</a>
-                    <a href="#profile">Profile</a>
-                    <a href="#split">Split</a>
-                    <a href="#about">About</a>
-                </nav>
-                <div class="nav-actions">
-                    <button id="themeToggle" class="icon-button" aria-label="Toggle theme">🌙</button>
-                    <a class="btn btn-primary" href="#login">Sign In</a>
-                </div>
-            </div>
-            <div id="mobileMenu" class="mobile-menu" hidden>
-                <a href="#landing">Home</a>
-                <a href="#dashboard">Dashboard</a>
-                <a href="#expenses">Expenses</a>
-                <a href="#analysis">Analysis</a>
-                <a href="#tips">Tips</a>
-                <a href="#profile">Profile</a>
-                <a href="#split">Split</a>
-                <a href="#about">About</a>
-                <a class="btn btn-primary" href="#login">Sign In</a>
-            </div>
-        </header>
-
-        <main>
-            <section id="landing" class="section hero">
-                <div class="hero-copy">
-                    <span class="badge">Student-first finance toolkit</span>
-                    <h1>Stay on top of your budget, whether it is Birr or USD.</h1>
-                    <p>EduFinance brings the core screens of the original React prototype into a static preview you can host anywhere. Track expenses, review dashboards, get smart tips, and collaborate with friends.</p>
-                    <div class="hero-actions">
-                        <a class="btn btn-primary" href="#dashboard">View Dashboard</a>
-                        <button id="openDemo" class="btn btn-secondary">Add Demo Expense</button>
+    <!DOCTYPE html>
+    <html lang="en">
+        <head>
+            <meta charset="utf-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1" />
+            <title>EduFinance — Student Finance Toolkit</title>
+            <link rel="preconnect" href="https://fonts.googleapis.com" />
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+            <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+            <link rel="stylesheet" href="css/global.css" />
+            <link rel="stylesheet" href="css/index.css" />
+            <script defer src="js/common.js"></script>
+            <script defer src="js/index.js"></script>
+        </head>
+        <body class="theme-light">
+            <header class="site-header">
+                <div class="site-nav">
+                    <a class="brand" href="index.html">EduFinance</a>
+                    <button id="mobileToggle" class="icon-button" aria-expanded="false" aria-controls="mobileMenu">☰</button>
+                    <nav class="nav-links" aria-label="Primary">
+                        <a href="#overview">Overview</a>
+                        <a href="#features">Features</a>
+                        <a href="#preview">Preview</a>
+                        <a href="#get-started">Get started</a>
+                    </nav>
+                    <div class="nav-actions">
+                        <button id="themeToggle" class="icon-button" aria-label="Toggle theme">🌙</button>
+                        <a class="btn btn-primary" href="login.html">Sign in</a>
                     </div>
                 </div>
-                <div class="hero-preview">
-                    <article class="card">
-                        <header class="card-header">
-                            <div>
-                                <h2>Weekly Overview</h2>
-                                <p>November 17 — November 23</p>
-                            </div>
-                            <span class="status-pill">On track</span>
-                        </header>
-                        <div class="card-body preview-metrics">
-                            <div>
-                                <p class="label">Total spent</p>
-                                <p class="value" data-key="totalSpent">Birr 0</p>
-                            </div>
-                            <div>
-                                <p class="label">Remaining budget</p>
-                                <p class="value" data-key="remainingBudget">Birr 0</p>
-                            </div>
-                            <div>
-                                <p class="label">This week transactions</p>
-                                <p class="value" data-key="transactionCount">0</p>
-                            </div>
-                        </div>
-                    </article>
+                <div id="mobileMenu" class="mobile-menu" hidden>
+                    <a href="#overview">Overview</a>
+                    <a href="#features">Features</a>
+                    <a href="#preview">Preview</a>
+                    <a href="#get-started">Get started</a>
+                    <a class="btn btn-primary" href="login.html">Sign in</a>
                 </div>
-            </section>
+            </header>
 
-            <section id="login" class="section section-split">
-                <div class="card card-tight">
-                    <h2>Quick Login Preview</h2>
-                    <form class="form-grid" aria-label="Login form">
-                        <label>Email
-                            <input type="email" placeholder="student@edufinance.com" required />
-                        </label>
-                        <label>Password
-                            <input type="password" placeholder="••••••" required />
-                        </label>
-                        <div class="form-row">
-                            <label class="checkbox">
-                                <input type="checkbox" checked />
-                                Remember me
-                            </label>
-                            <a href="#" class="link">Forgot password?</a>
-                        </div>
-                        <button type="button" class="btn btn-primary" id="mockLogin">Sign In</button>
-                        <p class="note">Theme toggle and validation mirror the TSX logic.</p>
-                    </form>
-                </div>
-                <div class="login-side card">
-                    <h3>Highlights</h3>
-                    <ul>
-                        <li>Instant validation feedback</li>
-                        <li>Dark mode friendly UI</li>
-                        <li>Separate navigation for mobile users</li>
-                    </ul>
-                </div>
-            </section>
-
-            <section id="dashboard" class="section">
-                <header class="section-header">
+            <main>
+                <section id="overview" class="section landing-hero">
                     <div>
-                        <p class="eyebrow">Dashboard</p>
-                        <h2>Budget health at a glance</h2>
-                    </div>
-                    <div class="toolbar">
-                        <button class="btn btn-secondary" data-range="week">This week</button>
-                        <button class="btn btn-ghost" data-range="month">This month</button>
-                        <button class="btn btn-ghost" data-range="semester">This semester</button>
-                    </div>
-                </header>
-
-                <div class="grid grid-3">
-                    <article class="card">
-                        <h3>Budget progress</h3>
-                        <div class="progress">
-                            <div class="progress-bar" data-key="budgetProgress"></div>
+                        <span class="badge">Student-first finance toolkit</span>
+                        <h1>Track your budget, expenses, and shared costs without React.</h1>
+                        <p>EduFinance is a static conversion of the original TypeScript app. Use it to teach HTML, CSS, and JavaScript or as a polished prototype ready for instructor review.</p>
+                        <div class="hero-actions">
+                            <a class="btn btn-primary" href="login.html">Launch the demo</a>
+                            <a class="btn btn-secondary" href="dashboard.html">Skip to dashboard</a>
                         </div>
-                        <p class="label">Spent <span data-key="progressSpent">Birr 0</span> of <span data-key="progressBudget">Birr 0</span></p>
-                    </article>
-                    <article class="card">
-                        <h3>Average daily spending</h3>
-                        <p class="big-number" data-key="avgDaily">Birr 0</p>
-                        <p class="label">Based on the last 7 days</p>
-                    </article>
-                    <article class="card">
-                        <h3>Upcoming reminders</h3>
-                        <ul class="list">
-                            <li>Rent due Nov 28</li>
-                            <li>Library fees due Dec 01</li>
-                            <li>Tutoring payment Dec 04</li>
-                        </ul>
-                    </article>
-                </div>
-            </section>
-
-            <section id="expenses" class="section">
-                <header class="section-header">
-                    <div>
-                        <p class="eyebrow">Expenses</p>
-                        <h2>Latest transactions</h2>
                     </div>
-                    <div class="toolbar">
-                        <button class="btn btn-secondary" id="exportCsv">Export CSV</button>
+                    <div class="hero-preview">
+                        <article class="card">
+                            <header class="card-header">
+                                <div>
+                                    <p class="eyebrow">Live snapshot</p>
+                                    <h2>Next-gen budget view</h2>
+                                </div>
+                                <span class="status-pill">On track</span>
+                            </header>
+                            <div class="preview-metrics">
+                                <div>
+                                    <p class="label">Total spent</p>
+                                    <p class="big-number">Birr 1,045</p>
+                                </div>
+                                <div>
+                                    <p class="label">Remaining budget</p>
+                                    <p class="big-number">Birr 3,955</p>
+                                </div>
+                                <div>
+                                    <p class="label">Transactions</p>
+                                    <p class="big-number">12</p>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                </section>
+
+                <section id="features" class="section">
+                    <header class="section-header">
+                        <div>
+                            <p class="eyebrow">All-in-one toolkit</p>
+                            <h2>Built with semantic HTML, responsive CSS, and vanilla JS</h2>
+                        </div>
+                    </header>
+                    <div class="feature-grid">
+                        <article class="feature-card">
+                            <h3>Dashboard overview</h3>
+                            <p>Monitor weekly spending, average spend, and upcoming reminders with a single glance.</p>
+                        </article>
+                        <article class="feature-card">
+                            <h3>Expense management</h3>
+                            <p>Add, edit, filter, and export transactions using accessible forms and tables.</p>
+                        </article>
+                        <article class="feature-card">
+                            <h3>Split with friends</h3>
+                            <p>Track who owes who for shared outings with an intuitive balances summary.</p>
+                        </article>
+                    </div>
+                </section>
+
+                <section id="preview" class="section">
+                    <header class="section-header">
+                        <div>
+                            <p class="eyebrow">Page lineup</p>
+                            <h2>Converted React screens now live as static pages</h2>
+                        </div>
+                    </header>
+                    <div class="grid grid-3">
+                        <article class="card">
+                            <h3>Login</h3>
+                            <p>Modern sign-in form with remember-me support and validation.</p>
+                            <a class="btn btn-secondary" href="login.html">Open login page</a>
+                        </article>
+                        <article class="card">
+                            <h3>Dashboard</h3>
+                            <p>All dashboard, expenses, analysis, tips, profile, and split modules in one place.</p>
+                            <a class="btn btn-secondary" href="dashboard.html">Open dashboard</a>
+                        </article>
+                        <article class="card">
+                            <h3>Design tokens</h3>
+                            <p>Colour system, typography, and responsive layout pulled from the TSX source.</p>
+                            <a class="btn btn-secondary" href="#get-started">View structure</a>
+                        </article>
+                    </div>
+                </section>
+
+                <section id="get-started" class="section">
+                    <div class="cta-section">
+                        <h2>Ready to explore the converted experience?</h2>
+                        <p>Start from the login page, sign in with any credentials, and you will be redirected to the interactive dashboard.</p>
+                        <div class="hero-actions" style="justify-content: center;">
+                            <a class="btn btn-primary" href="login.html">Sign in now</a>
+                            <a class="btn btn-secondary" href="dashboard.html">Preview dashboard</a>
+                        </div>
+                    </div>
+                </section>
+            </main>
+
+            <footer class="site-footer">
+                <p>© 2025 EduFinance Team · Mock experience inspired by the Figma design</p>
+                <div class="footer-links">
+                    <a href="https://github.com/Yoni-Berihun" target="_blank" rel="noreferrer">GitHub</a>
+                    <a href="https://www.figma.com/design/eCcZirqtQctQjrw2z6v8iw/EduFinance-Website-Mockup-Design" target="_blank" rel="noreferrer">Figma file</a>
+                </div>
+            </footer>
+
+            <div id="toast" class="toast" role="status" aria-live="polite" hidden>Saved</div>
+        </body>
+    </html>
                         <button class="btn btn-ghost" id="exportPdf">Export PDF</button>
                     </div>
                 </header>

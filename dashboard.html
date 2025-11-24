@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>EduFinance — Dashboard</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+        <link rel="stylesheet" href="css/global.css" />
+        <link rel="stylesheet" href="css/dashboard.css" />
+        <script defer src="js/common.js"></script>
+        <script defer src="js/dashboard.js"></script>
+    </head>
+    <body class="theme-light">
+        <header class="site-header">
+            <div class="site-nav">
+                <a class="brand" href="index.html">EduFinance</a>
+                <button id="mobileToggle" class="icon-button" aria-expanded="false" aria-controls="mobileMenu">☰</button>
+                <nav class="nav-links" aria-label="Primary">
+                    <a href="#overview">Overview</a>
+                    <a href="#expenses">Expenses</a>
+                    <a href="#analysis">Analysis</a>
+                    <a href="#tips">Tips</a>
+                    <a href="#profile">Profile</a>
+                    <a href="#split">Split</a>
+                </nav>
+                <div class="nav-actions">
+                    <button id="themeToggle" class="icon-button" aria-label="Toggle theme">🌙</button>
+                    <button id="logout" class="btn btn-secondary" type="button">Log out</button>
+                </div>
+            </div>
+            <div id="mobileMenu" class="mobile-menu" hidden>
+                <a href="#overview">Overview</a>
+                <a href="#expenses">Expenses</a>
+                <a href="#analysis">Analysis</a>
+                <a href="#tips">Tips</a>
+                <a href="#profile">Profile</a>
+                <a href="#split">Split</a>
+                <button id="logoutMobile" class="btn btn-secondary" type="button">Log out</button>
+            </div>
+        </header>
+
+        <main>
+            <section id="overview" class="section">
+                <header class="section-header">
+                    <div>
+                        <p class="eyebrow">Overview</p>
+                        <h2>Your spending at a glance</h2>
+                    </div>
+                </header>
+                <div class="dashboard-hero">
+                    <article class="card metric-card">
+                        <header class="card-header">
+                            <div>
+                                <p class="eyebrow">This week</p>
+                                <h2>Spending snapshot</h2>
+                            </div>
+                            <span class="status-pill" data-key="statusPill">On track</span>
+                        </header>
+                        <div class="dashboard-stats">
+                            <div>
+                                <p class="label">Total spent</p>
+                                <p class="metric-value" data-key="totalSpent">Birr 0</p>
+                            </div>
+                            <div>
+                                <p class="label">Remaining budget</p>
+                                <p class="metric-value" data-key="remainingBudget">Birr 0</p>
+                            </div>
+                            <div>
+                                <p class="label">Transactions</p>
+                                <p class="metric-value" data-key="transactionCount">0</p>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar" data-key="budgetProgress"></div>
+                            </div>
+                            <p class="label">Spent <span data-key="progressSpent">Birr 0</span> of <span data-key="progressBudget">Birr 0</span></p>
+                            <p class="label">Average daily: <strong data-key="avgDaily">Birr 0</strong></p>
+                        </div>
+                        <div class="dashboard-actions">
+                            <button class="btn btn-secondary" id="openModal" type="button">Add expense</button>
+                            <button class="btn btn-ghost" id="exportCsv" type="button">Export CSV</button>
+                            <button class="btn btn-ghost" id="exportPdf" type="button">Export PDF</button>
+                        </div>
+                    </article>
+                    <article class="card metric-card">
+                        <h3>Upcoming reminders</h3>
+                        <ul class="list upcoming-list">
+                            <li>Pay library fine — Birr 45 (due Friday)</li>
+                            <li>Class trip contribution — Birr 150 (next week)</li>
+                            <li>Monthly savings transfer — Birr 300 (1st of month)</li>
+                        </ul>
+                        <div class="badges-row">
+                            <span class="badge">Syncs to local storage</span>
+                            <span class="badge">Dark mode ready</span>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <section id="expenses" class="section">
+                <header class="section-header">
+                    <div>
+                        <p class="eyebrow">Expenses</p>
+                        <h2>Latest transactions</h2>
+                    </div>
+                    <div class="toolbar">
+                        <label class="input-group" for="categoryFilter">
+                            Filter by category
+                            <select id="categoryFilter">
+                                <option value="all">All</option>
+                                <option value="Food">Food</option>
+                                <option value="Transport">Transport</option>
+                                <option value="Books">Books</option>
+                                <option value="Entertainment">Entertainment</option>
+                                <option value="Supplies">Supplies</option>
+                            </select>
+                        </label>
+                    </div>
+                </header>
+                <div class="table">
+                    <div class="table-head">
+                        <span>Date</span>
+                        <span>Category</span>
+                        <span class="align-right">Amount</span>
+                        <span>Notes</span>
+                        <span class="align-right">Actions</span>
+                    </div>
+                    <div id="expenseRows" class="table-body"></div>
+                </div>
+            </section>
+
+            <section id="analysis" class="section">
+                <header class="section-header">
+                    <div>
+                        <p class="eyebrow">Analysis</p>
+                        <h2>Trends and summaries</h2>
+                    </div>
+                    <div class="toolbar">
+                        <button class="btn btn-secondary" type="button" id="analysisShare">Copy summary</button>
+                    </div>
+                </header>
+                <div class="analysis-grid">
+                    <article class="card">
+                        <h3>Top categories</h3>
+                        <ul id="topCategories" class="list"></ul>
+                    </article>
+                    <article class="card">
+                        <h3>Daily totals</h3>
+                        <div class="spark" id="dailyTotals"></div>
+                    </article>
+                    <article class="card">
+                        <h3>Summary</h3>
+                        <p>Total spent: <strong data-key="analysisTotal">Birr 0</strong></p>
+                        <p>Average daily: <strong data-key="analysisAverage">Birr 0</strong></p>
+                    </article>
+                </div>
+            </section>
+
+            <section id="tips" class="section">
+                <header class="section-header">
+                    <div>
+                        <p class="eyebrow">Tips & challenges</p>
+                        <h2>Level up your habits</h2>
+                    </div>
+                </header>
+                <div id="tipsList" class="tips-grid"></div>
+            </section>
+
+            <section id="profile" class="section section-split">
+                <div class="card card-tight">
+                    <h2>Profile snapshot</h2>
+                    <div class="profile-card">
+                        <div class="avatar" data-initial="S"></div>
+                        <div>
+                            <p class="label">Name</p>
+                            <p data-key="profileName">Student</p>
+                            <p class="label">Email</p>
+                            <p data-key="profileEmail">student@edufinance.com</p>
+                        </div>
+                    </div>
+                    <div class="form-grid">
+                        <label class="input-group">
+                            Budget
+                            <input id="profileBudget" type="number" min="0" step="0.01" />
+                        </label>
+                        <label class="input-group">
+                            Currency
+                            <select id="profileCurrency">
+                                <option value="Birr">Birr</option>
+                                <option value="USD">USD</option>
+                            </select>
+                        </label>
+                        <label class="switch">
+                            <input id="profileNotifications" type="checkbox" /> Email notifications
+                        </label>
+                        <button class="btn btn-secondary" id="profileSave" type="button">Save profile</button>
+                    </div>
+                </div>
+                <div class="card about-card">
+                    <h3>Data management</h3>
+                    <p>Need to start fresh? You can clear demo data and begin experimenting again.</p>
+                    <button class="btn btn-danger" id="clearData" type="button">Clear demo data</button>
+                </div>
+            </section>
+
+            <section id="split" class="section">
+                <header class="section-header">
+                    <div>
+                        <p class="eyebrow">Split expenses</p>
+                        <h2>Track balances with friends</h2>
+                    </div>
+                </header>
+                <div class="grid grid-2">
+                    <article class="card">
+                        <h3>Balances</h3>
+                        <ul id="balanceList" class="list"></ul>
+                    </article>
+                    <article class="card">
+                        <h3>Recent shared costs</h3>
+                        <ul id="splitExpenses" class="list"></ul>
+                    </article>
+                </div>
+            </section>
+
+            <section class="section">
+                <article class="card about-card">
+                    <h2>About this conversion</h2>
+                    <p>This dashboard is built entirely with semantic HTML, responsive CSS, and vanilla JavaScript, mirroring all interactions from the original TSX components.</p>
+                    <p>All data persists locally using <code>localStorage</code>, making it ready to demonstrate in any classroom without a backend.</p>
+                </article>
+            </section>
+        </main>
+
+        <footer class="site-footer">
+            <p>© 2025 EduFinance Team · Mock experience inspired by the Figma design</p>
+            <div class="footer-links">
+                <a href="https://github.com/Yoni-Berihun" target="_blank" rel="noreferrer">GitHub</a>
+                <a href="https://www.figma.com/design/eCcZirqtQctQjrw2z6v8iw/EduFinance-Website-Mockup-Design" target="_blank" rel="noreferrer">Figma file</a>
+            </div>
+        </footer>
+
+        <div id="modalOverlay" class="modal-overlay" hidden>
+            <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+                <header class="modal-header">
+                    <h2 id="modalTitle">Add expense</h2>
+                    <button id="modalClose" class="icon-button" aria-label="Close">✕</button>
+                </header>
+                <form id="expenseForm" class="form-grid">
+                    <label class="input-group">
+                        Category
+                        <select id="expenseCategory" required>
+                            <option value="Food">Food</option>
+                            <option value="Transport">Transport</option>
+                            <option value="Books">Books</option>
+                            <option value="Entertainment">Entertainment</option>
+                            <option value="Supplies">Supplies</option>
+                        </select>
+                    </label>
+                    <label class="input-group">
+                        Amount
+                        <input id="expenseAmount" type="number" min="0" step="0.01" required />
+                    </label>
+                    <label class="input-group">
+                        Date
+                        <input id="expenseDate" type="date" required />
+                    </label>
+                    <label class="input-group">
+                        Notes
+                        <textarea id="expenseNotes" rows="3" placeholder="Lunch with friends" required></textarea>
+                    </label>
+                    <div class="form-row form-right">
+                        <button type="button" class="btn btn-tertiary" id="modalCancel">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save expense</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="toast" class="toast" role="status" aria-live="polite" hidden>Saved</div>
+    </body>
+</html>
