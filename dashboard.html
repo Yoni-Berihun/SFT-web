@@ -39,6 +39,7 @@
                 </nav>
                 <div class="shell-actions">
                     <button id="themeToggle" class="icon-button" aria-label="Toggle theme" type="button">🌙</button>
+                    <a id="login" class="btn btn-ghost" href="login.html">Login</a>
                     <button id="logout" class="btn btn-secondary" type="button">Log out</button>
                 </div>
             </div>
@@ -47,16 +48,34 @@
         <main id="main-content">
             <section id="overview" class="section">
                 <header class="section-header">
-                    <div>
-                        <p class="eyebrow">Overview</p>
-                        <h2>Your spending at a glance</h2>
+                    <div class="greeting-row">
+                        <div>
+                            <p class="eyebrow">Welcome back</p>
+                            <h1>Hello, <span data-key="userName">Student</span></h1>
+                        </div>
+                        <div class="date-range-toggle" role="tablist" aria-label="Dashboard date range">
+                            <button type="button" class="chip chip-active" data-range="week" role="tab" aria-selected="true">This Week</button>
+                            <button type="button" class="chip" data-range="month" role="tab" aria-selected="false">This Month</button>
+                            <button type="button" class="chip" data-range="custom" role="tab" aria-selected="false">Custom</button>
+                        </div>
+                    </div>
+                    <div class="date-range-custom" hidden>
+                        <label class="input-group">
+                            From
+                            <input type="date" id="customFrom" />
+                        </label>
+                        <label class="input-group">
+                            To
+                            <input type="date" id="customTo" />
+                        </label>
+                        <button type="button" class="btn btn-secondary" id="applyCustomRange">Apply</button>
                     </div>
                 </header>
                 <div class="dashboard-hero">
                     <article class="card metric-card">
                         <header class="card-header">
                             <div>
-                                <p class="eyebrow">This week</p>
+                                <p class="eyebrow" data-key="currentRangeLabel">This week</p>
                                 <h2>Spending snapshot</h2>
                             </div>
                             <span class="status-pill" data-key="statusPill">On track</span>
@@ -71,14 +90,20 @@
                                 <p class="metric-value" data-key="remainingBudget">Birr 0</p>
                             </div>
                             <div>
-                                <p class="label">Transactions</p>
+                                <p class="label">Transactions this week</p>
                                 <p class="metric-value" data-key="transactionCount">0</p>
+                            </div>
+                            <div>
+                                <p class="label">Average daily spend</p>
+                                <p class="metric-value" data-key="avgDaily">Birr 0</p>
                             </div>
                             <div class="progress">
                                 <div class="progress-bar" data-key="budgetProgress"></div>
                             </div>
-                            <p class="label">Spent <span data-key="progressSpent">Birr 0</span> of <span data-key="progressBudget">Birr 0</span></p>
-                            <p class="label">Average daily: <strong data-key="avgDaily">Birr 0</strong></p>
+                            <p class="label">
+                                Spent <span data-key="progressSpent">Birr 0</span> of
+                                <span data-key="progressBudget">Birr 0</span>
+                            </p>
                         </div>
                         <div class="dashboard-actions">
                             <button class="btn btn-secondary" id="openModal" type="button">Add expense</button>
@@ -131,6 +156,9 @@
                     </div>
                     <div id="expenseRows" class="table-body"></div>
                 </div>
+                <div class="table-footer">
+                    <a href="expenses.html" class="link">View all</a>
+                </div>
             </section>
 
             <section id="analysis" class="section">
@@ -165,7 +193,7 @@
             <section id="tips" class="section">
                 <header class="section-header">
                     <div>
-                        <p class="eyebrow">Tips & challenges</p>
+                        <p class="eyebrow">Tips &amp; challenges</p>
                         <h2>Level up your habits</h2>
                     </div>
                 </header>

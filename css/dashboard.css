@@ -7,6 +7,7 @@
 
 .dashboard-stats {
     display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 24px;
 }
 
@@ -20,8 +21,76 @@
 }
 
 .metric-value {
-    font-size: 2.1rem;
+    font-size: 1.6rem;
     font-weight: 700;
+}
+
+.greeting-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.date-range-toggle {
+    display: inline-flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.chip {
+    border-radius: 999px;
+    border: 1px solid var(--border-subtle);
+    background: transparent;
+    padding: 0.25rem 0.9rem;
+    font-size: 0.875rem;
+    cursor: pointer;
+}
+
+.chip-active {
+    background: var(--accent-soft);
+    border-color: var(--accent);
+    color: var(--accent-strong);
+}
+
+.date-range-custom {
+    margin-top: 0.75rem;
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    align-items: flex-end;
+}
+
+.progress {
+    width: 100%;
+    border-radius: 999px;
+    background: var(--surface-subtle);
+    overflow: hidden;
+    height: 0.75rem;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 0;
+    transition: width 0.3s ease;
+    background: var(--accent);
+}
+
+.progress-bar-danger {
+    background: var(--danger);
+}
+
+.status-pill {
+    border-radius: 999px;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.875rem;
+    background: var(--surface-subtle);
+}
+
+.status-pill-danger {
+    background: rgba(220, 38, 38, 0.15);
+    color: #b91c1c;
 }
 
 .upcoming-list li::before {
@@ -47,8 +116,34 @@
     gap: 12px;
 }
 
+.table-footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 0.75rem;
+}
+
+.tips-grid {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+    scroll-snap-type: x mandatory;
+}
+
+.tip-card {
+    min-width: 220px;
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+}
+
 @media (max-width: 1024px) {
     .dashboard-hero {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-stats {
         grid-template-columns: minmax(0, 1fr);
     }
 }

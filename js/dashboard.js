@@ -12,32 +12,68 @@ document.addEventListener("DOMContentLoaded", () => {
     let splitExpenses = App.loadState(App.STORAGE_KEYS.split, App.defaultSplitExpenses);
     let editingId = null;
     let filteredCategory = "all";
-    let spendingChart = null;
+    let currentRange = "week";
+    let customFrom = null;
+    let customTo = null;
 
     const statusPill = App.qs("[data-key=\"statusPill\"]");
 
+    const getRangeLabel = () => {
+        if (currentRange === "week") return "This week";
+        if (currentRange === "month") return "This month";
+        return "Custom";
+    };
+
+    const getExpensesInRange = () => {
+        let start;
+        let end = new Date();
+
+        if (currentRange === "week") {
+            start = new Date(end.getTime() - 6 * 24 * 60 * 60 * 1000);
+        } else if (currentRange === "month") {
+            start = new Date(end);
+            start.setMonth(start.getMonth() - 1);
+        } else if (currentRange === "custom" && customFrom && customTo) {
+            start = customFrom;
+            end = customTo;
+        } else {
+            // Fallback to all data
+            return expenses.slice();
+        }
+
+        return expenses.filter((expense) => {
+            const date = new Date(expense.date);
+            return date >= start && date <= end;
+        });
+    };
+
     const updateHero = () => {
-        const stats = App.calculateStats(expenses);
+        const rangeExpenses = getExpensesInRange();
+        const stats = App.calculateStats(rangeExpenses);
         const total = stats.total;
         const remaining = Math.max(user.budget - total, 0);
         const progressPercent = user.budget ? Math.min(Math.round((total / user.budget) * 100), 100) : 0;
 
+        App.qs('[data-key="currentRangeLabel"]').textContent = getRangeLabel();
+        App.qs('[data-key="userName"]').textContent = user.name || "Student";
+
         App.qs('[data-key="totalSpent"]').textContent = App.formatCurrency(total, user.currency);
         App.qs('[data-key="remainingBudget"]').textContent = App.formatCurrency(remaining, user.currency);
-        App.qs('[data-key="transactionCount"]').textContent = expenses.length.toString();
+        App.qs('[data-key="transactionCount"]').textContent = rangeExpenses.length.toString();
 
         const progressBar = App.qs('[data-key="budgetProgress"]');
         if (progressBar) {
             progressBar.style.width = `${progressPercent}%`;
+            progressBar.classList.toggle("progress-bar-danger", progressPercent > 100);
         }
 
         App.qs('[data-key="progressSpent"]').textContent = App.formatCurrency(total, user.currency);
         App.qs('[data-key="progressBudget"]').textContent = App.formatCurrency(user.budget, user.currency);
 
-        const status = progressPercent > 95 ? "Over budget" : progressPercent > 80 ? "Monitor" : "On track";
+        const status = total > user.budget ? "Over budget" : progressPercent > 80 ? "Monitor" : "On track";
         if (statusPill) {
             statusPill.textContent = status;
-            statusPill.classList.toggle("btn-danger", status === "Over budget");
+            statusPill.classList.toggle("status-pill-danger", status === "Over budget");
         }
 
         App.qs('[data-key="avgDaily"]').textContent = App.formatCurrency(stats.averageDaily, user.currency);
@@ -61,8 +97,9 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     const getFilteredExpenses = () => {
-        if (filteredCategory === "all") return expenses.slice();
-        return expenses.filter((expense) => expense.category === filteredCategory);
+        const inRange = getExpensesInRange();
+        if (filteredCategory === "all") return inRange.slice();
+        return inRange.filter((expense) => expense.category === filteredCategory);
     };
 
     const populateExpensesTable = () => {
@@ -71,7 +108,8 @@ document.addEventListener("DOMContentLoaded", () => {
         container.innerHTML = "";
         const source = getFilteredExpenses()
             .slice()
-            .sort((a, b) => new Date(b.date) - new Date(a.date));
+            .sort((a, b) => new Date(b.date) - new Date(a.date))
+            .slice(0, 7);
 
         if (!source.length) {
             const empty = document.createElement("div");
@@ -93,12 +131,12 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     const populateAnalysis = () => {
-        const totals = computeCategoryTotals(expenses);
+        const rangeExpenses = getExpensesInRange();
+        const totals = computeCategoryTotals(rangeExpenses);
         const topList = App.qs("#topCategories");
         const totalEl = App.qs('[data-key="analysisTotal"]');
         const avgEl = App.qs('[data-key="analysisAverage"]');
-        const chart = App.qs("#dailyTotals");
-        const stats = App.calculateStats(expenses);
+        const stats = App.calculateStats(rangeExpenses);
 
         totalEl.textContent = App.formatCurrency(stats.total, user.currency);
         avgEl.textContent = App.formatCurrency(stats.averageDaily, user.currency);
@@ -120,18 +158,35 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const chartCanvas = App.qs("#dailyTotalsChart");
         if (chartCanvas && typeof Chart !== "undefined") {
-            const today = new Date();
+            const inRange = getExpensesInRange();
             const labels = [];
             const data = [];
-            for (let i = 6; i >= 0; i -= 1) {
-                const date = new Date(today.getTime() - i * 24 * 60 * 60 * 1000);
-                const dateKey = date.toISOString().split("T")[0];
-                const dayTotal = expenses
+            // Build daily buckets based on current range
+            let start;
+            let end = new Date();
+            if (currentRange === "week") {
+                start = new Date(end.getTime() - 6 * 24 * 60 * 60 * 1000);
+            } else if (currentRange === "month") {
+                start = new Date(end);
+                start.setMonth(start.getMonth() - 1);
+            } else if (currentRange === "custom" && customFrom && customTo) {
+                start = customFrom;
+                end = customTo;
+            } else {
+                // default last 7 days
+                start = new Date(end.getTime() - 6 * 24 * 60 * 60 * 1000);
+            }
+
+            const oneDay = 24 * 60 * 60 * 1000;
+            for (let d = new Date(start); d <= end; d = new Date(d.getTime() + oneDay)) {
+                const dateKey = d.toISOString().split("T")[0];
+                const dayTotal = inRange
                     .filter((expense) => expense.date === dateKey)
                     .reduce((sum, expense) => sum + expense.amount, 0);
-                labels.push(date.toLocaleDateString(undefined, { weekday: "short" }));
+                labels.push(d.toLocaleDateString(undefined, { month: "short", day: "numeric" }));
                 data.push(dayTotal);
             }
+
             const isDark = document.documentElement.getAttribute("data-theme") === "dark";
             if (window.dashboardLineChart) {
                 window.dashboardLineChart.destroy();
@@ -180,9 +235,9 @@ document.addEventListener("DOMContentLoaded", () => {
         container.innerHTML = "";
         App.defaultTips.forEach((tip) => {
             const card = document.createElement("article");
-            card.className = "tip-card";
+            card.className = "card tip-card";
             card.innerHTML = `
-                <span class="big-number">${tip.icon}</span>
+                <span class="big-number" role="img" aria-label="Tip icon">${tip.icon}</span>
                 <h3>${tip.title}</h3>
                 <p>${tip.preview}</p>
                 <ul>${tip.checklist.map((item) => `<li>${item}</li>`).join("")}</ul>
@@ -321,6 +376,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         App.saveState(App.STORAGE_KEYS.expenses, expenses);
+        window.dispatchEvent(new Event("expensesUpdated"));
         updateAll();
         closeModal();
     };
@@ -339,6 +395,7 @@ document.addEventListener("DOMContentLoaded", () => {
         } else if (action === "delete") {
             expenses = expenses.filter((item) => item.id !== id);
             App.saveState(App.STORAGE_KEYS.expenses, expenses);
+            window.dispatchEvent(new Event("expensesUpdated"));
             App.showToast("Expense removed");
             updateAll();
         }
@@ -348,7 +405,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const header = ["Date", "Category", "Amount", "Notes"];
         const lines = expenses.map((expense) => {
             return [expense.date, expense.category, expense.amount, expense.notes.replace(/"/g, '""')]
-                .map((value) => `"${value}"`)
+                .map((value) => `"${value}` + `"`)
                 .join(",");
         });
         const csv = [header.join(","), ...lines].join("\n");
@@ -368,7 +425,8 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     const shareAnalysis = () => {
-        const stats = App.calculateStats(expenses);
+        const rangeExpenses = getExpensesInRange();
+        const stats = App.calculateStats(rangeExpenses);
         const summary = `EduFinance summary — Total: ${App.formatCurrency(stats.total, user.currency)}, Avg daily: ${App.formatCurrency(stats.averageDaily, user.currency)}, Transactions this week: ${stats.weekCount}`;
         if (navigator.clipboard) {
             navigator.clipboard
@@ -406,8 +464,47 @@ document.addEventListener("DOMContentLoaded", () => {
         App.saveState(App.STORAGE_KEYS.expenses, expenses);
         App.saveState(App.STORAGE_KEYS.friends, splitFriends);
         App.saveState(App.STORAGE_KEYS.split, splitExpenses);
+        window.dispatchEvent(new Event("expensesUpdated"));
         updateAll();
         App.showToast("Demo data restored");
+    };
+
+    const initDateRangeControls = () => {
+        const chips = Array.from(document.querySelectorAll(".date-range-toggle .chip"));
+        const customRow = App.qs(".date-range-custom");
+        const fromInput = App.qs("#customFrom");
+        const toInput = App.qs("#customTo");
+        const applyBtn = App.qs("#applyCustomRange");
+
+        chips.forEach((chip) => {
+            chip.addEventListener("click", () => {
+                const range = chip.getAttribute("data-range");
+                currentRange = range;
+                chips.forEach((c) => {
+                    c.classList.toggle("chip-active", c === chip);
+                    c.setAttribute("aria-selected", c === chip ? "true" : "false");
+                });
+                if (range === "custom") {
+                    customRow.hidden = false;
+                } else {
+                    customRow.hidden = true;
+                    customFrom = null;
+                    customTo = null;
+                    updateAll();
+                }
+            });
+        });
+
+        applyBtn?.addEventListener("click", () => {
+            if (fromInput.value && toInput.value) {
+                customFrom = new Date(fromInput.value);
+                customTo = new Date(toInput.value);
+                currentRange = "custom";
+                updateAll();
+            } else {
+                App.showToast("Select both start and end dates");
+            }
+        });
     };
 
     const initEvents = () => {
@@ -424,6 +521,8 @@ document.addEventListener("DOMContentLoaded", () => {
             filteredCategory = event.target.value;
             populateExpensesTable();
         });
+
+        initDateRangeControls();
     };
 
     populateTips();
@@ -432,10 +531,15 @@ document.addEventListener("DOMContentLoaded", () => {
     populateAnalysis();
     updateAll();
     initEvents();
-    
+
     // Listen for expense updates to refresh charts
     window.addEventListener("expensesUpdated", () => {
         expenses = App.loadState(App.STORAGE_KEYS.expenses, App.defaultExpenses);
         updateAll();
+    });
+
+    // Refresh chart colors on theme change
+    window.addEventListener("themechange", () => {
+        populateAnalysis();
     });
 });
