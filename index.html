@@ -1,332 +1,150 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>EduFinance — Student Finance Toolkit</title>
+        <title>EduFinance — Track, Learn, Grow.</title>
+        <meta name="description" content="EduFinance helps students track expenses, learn money skills, and build smart habits with a friendly toolkit." />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-        <link rel="stylesheet" href="./style.css" />
-        <script defer src="./assets/js/app.js"></script>
-    <!DOCTYPE html>
-    <html lang="en">
-        <head>
-            <meta charset="utf-8" />
-            <meta name="viewport" content="width=device-width, initial-scale=1" />
-            <title>EduFinance — Student Finance Toolkit</title>
-            <link rel="preconnect" href="https://fonts.googleapis.com" />
-            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-            <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-            <link rel="stylesheet" href="css/global.css" />
-            <link rel="stylesheet" href="css/index.css" />
-            <script defer src="js/common.js"></script>
-            <script defer src="js/index.js"></script>
-        </head>
-        <body class="theme-light">
-            <header class="site-header">
-                <div class="site-nav">
-                    <a class="brand" href="index.html">EduFinance</a>
-                    <button id="mobileToggle" class="icon-button" aria-expanded="false" aria-controls="mobileMenu">☰</button>
-                    <nav class="nav-links" aria-label="Primary">
-                        <a href="#overview">Overview</a>
-                        <a href="#features">Features</a>
-                        <a href="#preview">Preview</a>
-                        <a href="#get-started">Get started</a>
-                    </nav>
-                    <div class="nav-actions">
-                        <button id="themeToggle" class="icon-button" aria-label="Toggle theme">🌙</button>
-                        <a class="btn btn-primary" href="login.html">Sign in</a>
-                    </div>
-                </div>
-                <div id="mobileMenu" class="mobile-menu" hidden>
-                    <a href="#overview">Overview</a>
-                    <a href="#features">Features</a>
-                    <a href="#preview">Preview</a>
-                    <a href="#get-started">Get started</a>
-                    <a class="btn btn-primary" href="login.html">Sign in</a>
-                </div>
-            </header>
+        <link rel="stylesheet" href="css/global.css" />
+        <link rel="stylesheet" href="css/index.css" />
+        <script defer src="js/common.js"></script>
+        <script defer src="js/index.js"></script>
+    </head>
+    <body data-page="home">
+        <a class="skip-link" href="#main-content">Skip to main content</a>
 
-            <main>
-                <section id="overview" class="section landing-hero">
-                    <div>
-                        <span class="badge">Student-first finance toolkit</span>
-                        <h1>Track your budget, expenses, and shared costs without React.</h1>
-                        <p>EduFinance is a static conversion of the original TypeScript app. Use it to teach HTML, CSS, and JavaScript or as a polished prototype ready for instructor review.</p>
-                        <div class="hero-actions">
-                            <a class="btn btn-primary" href="login.html">Launch the demo</a>
-                            <a class="btn btn-secondary" href="dashboard.html">Skip to dashboard</a>
+        <header class="site-header" role="banner">
+            <div class="nav-inner container">
+                <a class="brand" href="index.html" aria-label="EduFinance home">
+                    <span class="brand-mark" aria-hidden="true">EF</span>
+                    EduFinance
+                </a>
+                <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" data-nav-toggle>
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="nav-toggle-bar"></span>
+                    <span class="nav-toggle-bar"></span>
+                    <span class="nav-toggle-bar"></span>
+                </button>
+                <nav id="primary-navigation" class="primary-nav" aria-label="Primary" data-nav-drawer>
+                    <a class="nav-link" data-nav-link="home" href="index.html">Home</a>
+                    <a class="nav-link" data-nav-link="features" href="#features">Features</a>
+                    <a class="nav-link" data-nav-link="about" href="about.html">About</a>
+                </nav>
+                <div class="shell-actions">
+                    <button id="themeToggle" class="icon-button" aria-label="Toggle theme" type="button">🌙</button>
+                    <a href="login.html" class="btn btn-secondary">Login</a>
+                </div>
+            </div>
+        </header>
+
+        <main id="main-content">
+            <section class="hero" aria-labelledby="hero-title">
+                <div class="container hero__grid">
+                    <div class="hero__content">
+                        <p class="eyebrow">Student finance tracker</p>
+                        <h1 id="hero-title">EduFinance — Track, Learn, Grow.</h1>
+                        <p class="hero__subtitle">Manage your allowance and build smart habits with a responsive, accessible toolkit designed for students and mentors.</p>
+                        <div class="hero__actions">
+                            <a class="btn btn-primary" href="login.html">Get Started</a>
+                            <a class="btn btn-secondary" href="#features">Learn More</a>
                         </div>
+                        <ul class="hero__list" aria-label="Highlights">
+                            <li>Full expense CRUD with friendly microcopy.</li>
+                            <li>Charts, calendar insights, and dark mode ready.</li>
+                            <li>Built with semantic HTML, CSS, and vanilla JS.</li>
+                        </ul>
                     </div>
-                    <div class="hero-preview">
-                        <article class="card">
-                            <header class="card-header">
-                                <div>
-                                    <p class="eyebrow">Live snapshot</p>
-                                    <h2>Next-gen budget view</h2>
-                                </div>
-                                <span class="status-pill">On track</span>
+                    <div class="hero__preview" aria-label="Sample financial overview">
+                        <article class="card hero-card">
+                            <header>
+                                <p class="eyebrow">Weekly pulse</p>
+                                <h2>Allowance snapshot</h2>
                             </header>
-                            <div class="preview-metrics">
+                            <dl class="hero-card__stats">
                                 <div>
-                                    <p class="label">Total spent</p>
-                                    <p class="big-number">Birr 1,045</p>
+                                    <dt>Total spent</dt>
+                                    <dd>ETB 1,240</dd>
                                 </div>
                                 <div>
-                                    <p class="label">Remaining budget</p>
-                                    <p class="big-number">Birr 3,955</p>
+                                    <dt>Remaining budget</dt>
+                                    <dd>ETB 3,760</dd>
                                 </div>
                                 <div>
-                                    <p class="label">Transactions</p>
-                                    <p class="big-number">12</p>
+                                    <dt>Challenges cleared</dt>
+                                    <dd>3 / 5</dd>
                                 </div>
+                            </dl>
+                            <div class="hero-card__progress" role="img" aria-label="Budget usage 36 percent">
+                                <span style="width: 36%"></span>
                             </div>
+                            <p class="helper-text">Here’s your week at a glance.</p>
                         </article>
                     </div>
-                </section>
+                </div>
+            </section>
 
-                <section id="features" class="section">
+            <section id="features" class="section features" aria-labelledby="features-title">
+                <div class="container">
                     <header class="section-header">
                         <div>
-                            <p class="eyebrow">All-in-one toolkit</p>
-                            <h2>Built with semantic HTML, responsive CSS, and vanilla JS</h2>
+                            <p class="eyebrow">Why EduFinance</p>
+                            <h2 id="features-title">Built for budgeting confidence</h2>
+                            <p class="section-subtitle">Each module uses the same design system, keyboard-friendly controls, and localStorage persistence.</p>
                         </div>
                     </header>
                     <div class="feature-grid">
                         <article class="feature-card">
-                            <h3>Dashboard overview</h3>
-                            <p>Monitor weekly spending, average spend, and upcoming reminders with a single glance.</p>
+                            <div class="icon-circle" aria-hidden="true">📒</div>
+                            <h3>Track Expenses Easily</h3>
+                            <p>Create, review, and adjust every transaction with filters, validation, and export-ready data.</p>
                         </article>
                         <article class="feature-card">
-                            <h3>Expense management</h3>
-                            <p>Add, edit, filter, and export transactions using accessible forms and tables.</p>
+                            <div class="icon-circle" aria-hidden="true">📈</div>
+                            <h3>Analyze &amp; Improve</h3>
+                            <p>Use charts plus a calendar timeline to see where your allowance goes and how habits shift.</p>
                         </article>
                         <article class="feature-card">
-                            <h3>Split with friends</h3>
-                            <p>Track who owes who for shared outings with an intuitive balances summary.</p>
+                            <div class="icon-circle" aria-hidden="true">🎯</div>
+                            <h3>Practical Tips &amp; Challenges</h3>
+                            <p>Stay motivated with guided challenges, progress tracking, and microcopy that celebrates wins.</p>
                         </article>
                     </div>
-                </section>
-
-                <section id="preview" class="section">
-                    <header class="section-header">
-                        <div>
-                            <p class="eyebrow">Page lineup</p>
-                            <h2>Converted React screens now live as static pages</h2>
-                        </div>
-                    </header>
-                    <div class="grid grid-3">
-                        <article class="card">
-                            <h3>Login</h3>
-                            <p>Modern sign-in form with remember-me support and validation.</p>
-                            <a class="btn btn-secondary" href="login.html">Open login page</a>
-                        </article>
-                        <article class="card">
-                            <h3>Dashboard</h3>
-                            <p>All dashboard, expenses, analysis, tips, profile, and split modules in one place.</p>
-                            <a class="btn btn-secondary" href="dashboard.html">Open dashboard</a>
-                        </article>
-                        <article class="card">
-                            <h3>Design tokens</h3>
-                            <p>Colour system, typography, and responsive layout pulled from the TSX source.</p>
-                            <a class="btn btn-secondary" href="#get-started">View structure</a>
-                        </article>
-                    </div>
-                </section>
-
-                <section id="get-started" class="section">
-                    <div class="cta-section">
-                        <h2>Ready to explore the converted experience?</h2>
-                        <p>Start from the login page, sign in with any credentials, and you will be redirected to the interactive dashboard.</p>
-                        <div class="hero-actions" style="justify-content: center;">
-                            <a class="btn btn-primary" href="login.html">Sign in now</a>
-                            <a class="btn btn-secondary" href="dashboard.html">Preview dashboard</a>
-                        </div>
-                    </div>
-                </section>
-            </main>
-
-            <footer class="site-footer">
-                <p>© 2025 EduFinance Team · Mock experience inspired by the Figma design</p>
-                <div class="footer-links">
-                    <a href="https://github.com/Yoni-Berihun" target="_blank" rel="noreferrer">GitHub</a>
-                    <a href="https://www.figma.com/design/eCcZirqtQctQjrw2z6v8iw/EduFinance-Website-Mockup-Design" target="_blank" rel="noreferrer">Figma file</a>
-                </div>
-            </footer>
-
-            <div id="toast" class="toast" role="status" aria-live="polite" hidden>Saved</div>
-        </body>
-    </html>
-                        <button class="btn btn-ghost" id="exportPdf">Export PDF</button>
-                    </div>
-                </header>
-
-                <div class="table">
-                    <div class="table-head">
-                        <span>Date</span>
-                        <span>Category</span>
-                        <span class="align-right">Amount</span>
-                        <span>Notes</span>
-                        <span class="align-right">Actions</span>
-                    </div>
-                    <div id="expenseRows" class="table-body"></div>
                 </div>
             </section>
 
-            <section id="analysis" class="section">
-                <header class="section-header">
-                    <div>
-                        <p class="eyebrow">Analysis</p>
-                        <h2>Spending trends</h2>
-                    </div>
-                    <div class="toolbar">
-                        <label class="select">
-                            <span class="label">Category</span>
-                            <select id="categoryFilter">
-                                <option value="all">All categories</option>
-                                <option value="Food">Food</option>
-                                <option value="Transport">Transport</option>
-                                <option value="Books">Books</option>
-                                <option value="Entertainment">Entertainment</option>
-                                <option value="Utilities">Utilities</option>
-                            </select>
-                        </label>
-                    </div>
-                </header>
-
-                <div class="analysis-grid">
-                    <article class="card">
-                        <h3>Top categories</h3>
-                        <ul id="topCategories" class="list"></ul>
+            <section class="section info-panels" aria-labelledby="info-title">
+                <div class="container info-grid">
+                    <article class="panel-card">
+                        <p class="eyebrow">Design system</p>
+                        <h2 id="info-title">Consistent tokens and dark mode ready</h2>
+                        <p>Typography, spacing, focus rings, and tone are codified in <code>css/global.css</code>. Switch to dark mode by toggling the <code>data-theme</code> attribute—charts, cards, and inputs adapt instantly.</p>
+                        <a class="btn btn-tertiary" href="about.html">Meet the roadmap</a>
                     </article>
-                    <article class="card">
-                        <h3>Daily totals</h3>
-                        <div class="spark" id="dailyTotals"></div>
+                    <article class="panel-card panel-card--accent" aria-live="polite">
+                        <h3>What’s included?</h3>
+                        <ul>
+                            <li>Dashboard + Expenses + Analysis</li>
+                            <li>Financial Tips &amp; Profile settings</li>
+                            <li>Split calculator &amp; About page</li>
+                        </ul>
+                        <p class="helper-text">Use CSV for spreadsheets, PDF for sharing.</p>
                     </article>
-                    <article class="card">
-                        <h3>Summary</h3>
-                        <p>Total spent: <strong data-key="analysisTotal">Birr 0</strong></p>
-                        <p>Average daily: <strong data-key="analysisAverage">Birr 0</strong></p>
-                        <button class="btn btn-secondary" id="analysisShare">Copy summary</button>
-                    </article>
-                </div>
-            </section>
-
-            <section id="tips" class="section">
-                <header class="section-header">
-                    <div>
-                        <p class="eyebrow">Tips & challenges</p>
-                        <h2>Level up your money habits</h2>
-                    </div>
-                </header>
-                <div id="tipsList" class="tips-grid"></div>
-            </section>
-
-            <section id="profile" class="section section-split">
-                <div class="card card-tight">
-                    <h2>Profile snapshot</h2>
-                    <div class="profile-card">
-                        <div class="avatar" data-initial="S"></div>
-                        <div>
-                            <h3 data-key="profileName">Student</h3>
-                            <p class="label" data-key="profileEmail">student@edufinance.com</p>
-                        </div>
-                    </div>
-                    <div class="form-grid">
-                        <label>Budget
-                            <input id="profileBudget" type="number" min="0" />
-                        </label>
-                        <label>Currency
-                            <select id="profileCurrency">
-                                <option value="Birr">Birr (ETB)</option>
-                                <option value="USD">US Dollar (USD)</option>
-                            </select>
-                        </label>
-                        <label class="switch">
-                            <input id="profileNotifications" type="checkbox" checked />
-                            <span>Notifications enabled</span>
-                        </label>
-                        <button class="btn btn-secondary" id="profileSave" type="button">Save profile</button>
-                    </div>
-                </div>
-                <div class="card">
-                    <h3>Data management</h3>
-                    <p>Need to start fresh? You can clear demo data and begin experimenting again.</p>
-                    <button class="btn btn-danger" id="clearData">Clear demo data</button>
-                </div>
-            </section>
-
-            <section id="split" class="section">
-                <header class="section-header">
-                    <div>
-                        <p class="eyebrow">Split expenses</p>
-                        <h2>Track balances with friends</h2>
-                    </div>
-                </header>
-                <div class="grid grid-2">
-                    <article class="card">
-                        <h3>Balances</h3>
-                        <ul id="balanceList" class="list"></ul>
-                    </article>
-                    <article class="card">
-                        <h3>Recent shared costs</h3>
-                        <ul id="splitExpenses" class="list"></ul>
-                    </article>
-                </div>
-            </section>
-
-            <section id="about" class="section">
-                <div class="card about">
-                    <h2>About this mock</h2>
-                    <p>This static port reuses text and data from the original React + TypeScript app. Sections mirror the main pages—Landing, Login, Dashboard, Expenses, Analysis, Tips, Profile, and Split—to help you ship a lightweight marketing site or handoff to designers.</p>
-                    <p>Built with semantic HTML, vanilla CSS, and a small JavaScript bundle that simulates the original interactions using `localStorage`.</p>
                 </div>
             </section>
         </main>
 
         <footer class="site-footer">
-            <p>© 2025 EduFinance Team · Mock experience inspired by the Figma design</p>
-            <div class="footer-links">
-                <a href="https://github.com/Yoni-Berihun" target="_blank" rel="noreferrer">GitHub</a>
-                <a href="https://www.figma.com/design/eCcZirqtQctQjrw2z6v8iw/EduFinance-Website-Mockup-Design" target="_blank" rel="noreferrer">Figma file</a>
+            <div class="container footer-content">
+                <p>© 2025 EduFinance Team · Hawassa University</p>
+                <div class="footer-links" aria-label="Essential links">
+                    <a href="about.html">About</a>
+                    <a href="mailto:yonatan@example.com">Contact</a>
+                    <a href="https://github.com/Yoni-Berihun" target="_blank" rel="noreferrer">GitHub</a>
+                </div>
             </div>
         </footer>
-
-        <div id="modalOverlay" class="modal-overlay" hidden>
-            <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-                <header class="modal-header">
-                    <h2 id="modalTitle">Add expense (demo)</h2>
-                    <button id="modalClose" class="icon-button" aria-label="Close">✕</button>
-                </header>
-                <form id="expenseForm" class="form-grid">
-                    <label>Category
-                        <select id="expenseCategory" required>
-                            <option>Food</option>
-                            <option>Transport</option>
-                            <option>Books</option>
-                            <option>Entertainment</option>
-                            <option>Utilities</option>
-                            <option>Other</option>
-                        </select>
-                    </label>
-                    <label>Amount
-                        <input id="expenseAmount" type="number" min="0" step="0.01" required />
-                    </label>
-                    <label>Date
-                        <input id="expenseDate" type="date" required />
-                    </label>
-                    <label>Notes
-                        <textarea id="expenseNotes" rows="3" placeholder="Lunch with friends" required></textarea>
-                    </label>
-                    <div class="form-row form-right">
-                        <button type="button" class="btn btn-tertiary" id="modalCancel">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Save expense</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <div id="toast" class="toast" role="status" aria-live="polite" hidden>Saved</div>
     </body>
 </html>

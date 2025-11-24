@@ -1,37 +1,10 @@
 document.addEventListener("DOMContentLoaded", () => {
-    App.initTheme();
-
-    const session = App.loadState(App.STORAGE_KEYS.session, { isAuthenticated: false });
-    if (!session?.isAuthenticated) {
-        window.location.href = "login.html";
+    if (!App.initPageShell({ auth: true })) {
         return;
     }
 
-    const mobileToggle = document.getElementById("mobileToggle");
-    const mobileMenu = document.getElementById("mobileMenu");
-    mobileToggle?.addEventListener("click", () => {
-        const expanded = mobileToggle.getAttribute("aria-expanded") === "true";
-        mobileToggle.setAttribute("aria-expanded", (!expanded).toString());
-        mobileMenu?.toggleAttribute("hidden");
-    });
-
-    document.querySelectorAll('a[href^="#"]')?.forEach((link) => {
-        link.addEventListener("click", () => {
-            if (!mobileMenu) return;
-            mobileMenu.setAttribute("hidden", "");
-            mobileToggle?.setAttribute("aria-expanded", "false");
-        });
-    });
-
-    const performLogout = () => {
-        App.removeState(App.STORAGE_KEYS.session);
-        App.showToast("Logged out");
-        setTimeout(() => (window.location.href = "login.html"), 300);
-    };
-
-    const logoutButton = document.getElementById("logout");
-    logoutButton?.addEventListener("click", performLogout);
-    document.getElementById("logoutMobile")?.addEventListener("click", performLogout);
+    // Initialize modal with close handlers
+    const modal = App.initModal();
 
     let user = App.loadState(App.STORAGE_KEYS.user, App.defaultUser);
     let expenses = App.loadState(App.STORAGE_KEYS.expenses, App.defaultExpenses);
@@ -39,6 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let splitExpenses = App.loadState(App.STORAGE_KEYS.split, App.defaultSplitExpenses);
     let editingId = null;
     let filteredCategory = "all";
+    let spendingChart = null;
 
     const statusPill = App.qs("[data-key=\"statusPill\"]");
 
@@ -144,22 +118,59 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
-        if (chart) {
-            chart.innerHTML = "";
+        const chartCanvas = App.qs("#dailyTotalsChart");
+        if (chartCanvas && typeof Chart !== "undefined") {
             const today = new Date();
+            const labels = [];
+            const data = [];
             for (let i = 6; i >= 0; i -= 1) {
                 const date = new Date(today.getTime() - i * 24 * 60 * 60 * 1000);
                 const dateKey = date.toISOString().split("T")[0];
                 const dayTotal = expenses
                     .filter((expense) => expense.date === dateKey)
                     .reduce((sum, expense) => sum + expense.amount, 0);
-                const bar = document.createElement("div");
-                bar.className = "spark-bar";
-                const height = stats.total ? Math.max((dayTotal / stats.total) * 100, 6) : 6;
-                bar.style.height = `${height}%`;
-                bar.title = `${date.toLocaleDateString(undefined, { weekday: "short" })}: ${App.formatCurrency(dayTotal, user.currency)}`;
-                chart.appendChild(bar);
+                labels.push(date.toLocaleDateString(undefined, { weekday: "short" }));
+                data.push(dayTotal);
             }
+            const isDark = document.documentElement.getAttribute("data-theme") === "dark";
+            if (window.dashboardLineChart) {
+                window.dashboardLineChart.destroy();
+            }
+            const ctx = chartCanvas.getContext("2d");
+            window.dashboardLineChart = new Chart(ctx, {
+                type: "line",
+                data: {
+                    labels,
+                    datasets: [{
+                        label: "Daily spending",
+                        data,
+                        borderColor: isDark ? "#27ae60" : "#1f8a4e",
+                        backgroundColor: isDark ? "rgba(39, 174, 96, 0.2)" : "rgba(39, 174, 96, 0.1)",
+                        tension: 0.3,
+                        fill: true,
+                        pointRadius: 4,
+                        pointBackgroundColor: isDark ? "#27ae60" : "#1f8a4e",
+                    }],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { color: isDark ? "#bdc3c7" : "#7f8c8d" },
+                            grid: { color: isDark ? "#3e5368" : "#e0e3e7" },
+                        },
+                        x: {
+                            ticks: { color: isDark ? "#bdc3c7" : "#7f8c8d" },
+                            grid: { color: isDark ? "#3e5368" : "#e0e3e7" },
+                        },
+                    },
+                },
+            });
         }
     };
 
@@ -253,9 +264,6 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     const openModal = (expense) => {
-        const overlay = App.qs("#modalOverlay");
-        if (!overlay) return;
-        overlay.hidden = false;
         const dateInput = App.qs("#expenseDate");
         const amountInput = App.qs("#expenseAmount");
         const categoryInput = App.qs("#expenseCategory");
@@ -263,25 +271,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (expense) {
             editingId = expense.id;
-            dateInput.value = expense.date;
-            amountInput.value = expense.amount;
-            categoryInput.value = expense.category;
-            notesInput.value = expense.notes;
+            if (dateInput) dateInput.value = expense.date;
+            if (amountInput) amountInput.value = expense.amount;
+            if (categoryInput) categoryInput.value = expense.category;
+            if (notesInput) notesInput.value = expense.notes;
         } else {
             editingId = null;
-            dateInput.value = new Date().toISOString().split("T")[0];
-            amountInput.value = "";
-            categoryInput.value = "Food";
-            notesInput.value = "";
+            if (dateInput) dateInput.value = new Date().toISOString().split("T")[0];
+            if (amountInput) amountInput.value = "";
+            if (categoryInput) categoryInput.value = "Food";
+            if (notesInput) notesInput.value = "";
         }
-        dateInput.focus();
+        if (dateInput) dateInput.focus();
+        modal.open();
     };
 
     const closeModal = () => {
-        const overlay = App.qs("#modalOverlay");
-        if (!overlay) return;
-        overlay.hidden = true;
         editingId = null;
+        modal.close();
     };
 
     const handleExpenseSubmit = (event) => {
@@ -405,11 +412,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const initEvents = () => {
         App.qs("#openModal")?.addEventListener("click", () => openModal());
-        App.qs("#modalClose")?.addEventListener("click", closeModal);
-        App.qs("#modalCancel")?.addEventListener("click", closeModal);
-        App.qs("#modalOverlay")?.addEventListener("click", (event) => {
-            if (event.target === event.currentTarget) closeModal();
-        });
+        App.qs("#fab")?.addEventListener("click", () => openModal());
         App.qs("#expenseForm")?.addEventListener("submit", handleExpenseSubmit);
         App.qs("#expenseRows")?.addEventListener("click", handleExpenseAction);
         App.qs("#exportCsv")?.addEventListener("click", exportCsv);
@@ -429,4 +432,10 @@ document.addEventListener("DOMContentLoaded", () => {
     populateAnalysis();
     updateAll();
     initEvents();
+    
+    // Listen for expense updates to refresh charts
+    window.addEventListener("expensesUpdated", () => {
+        expenses = App.loadState(App.STORAGE_KEYS.expenses, App.defaultExpenses);
+        updateAll();
+    });
 });

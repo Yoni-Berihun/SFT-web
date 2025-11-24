@@ -3,16 +3,16 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>EduFinance — Login</title>
+        <title>About — EduFinance</title>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
         <link rel="stylesheet" href="css/global.css" />
-        <link rel="stylesheet" href="css/login.css" />
+        <link rel="stylesheet" href="css/about.css" />
         <script defer src="js/common.js"></script>
-        <script defer src="js/login.js"></script>
+        <script defer src="js/about.js"></script>
     </head>
-    <body data-page="login">
+    <body data-page="about">
         <a class="skip-link" href="#main-content">Skip to main content</a>
 
         <header class="site-header" role="banner">
@@ -38,35 +38,44 @@
                 </nav>
                 <div class="shell-actions">
                     <button id="themeToggle" class="icon-button" aria-label="Toggle theme" type="button">🌙</button>
-                    <a class="btn btn-secondary" href="index.html">Back home</a>
+                    <a class="btn btn-secondary" href="login.html">Login</a>
                 </div>
             </div>
         </header>
 
-        <main id="main-content" class="login-wrapper">
-            <section class="login-card" aria-labelledby="loginTitle">
-                <h1 id="loginTitle">Welcome back</h1>
-                <p>Sign in with any email and password to access the dashboard demo.</p>
-                <div id="loginMessage" class="login-message" role="alert"></div>
-                <form id="loginForm" novalidate>
-                    <label class="input-group">
-                        Email
-                        <input id="loginEmail" type="email" placeholder="student@edufinance.com" required autocomplete="email" />
-                    </label>
-                    <label class="input-group">
-                        Password
-                        <input id="loginPassword" type="password" placeholder="••••••" required autocomplete="current-password" />
-                    </label>
-                    <div class="remember-row">
-                        <label>
-                            <input id="rememberMe" type="checkbox" /> Remember me
-                        </label>
-                        <a href="#" aria-disabled="true">Forgot password?</a>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Sign in</button>
-                </form>
-                <p class="note">Need a refresher? Head back to the <a href="index.html">overview page</a>.</p>
-            </section>
+        <main id="main-content">
+            <div class="container page-shell about-grid">
+                <section class="page-hero" aria-labelledby="about-title">
+                    <h1 id="about-title" class="page-hero__title">About EduFinance</h1>
+                    <p class="page-hero__subtitle">A student-first toolkit from Hawassa University to teach budgeting, reporting, and collaborative expense tracking—all with vanilla web tech.</p>
+                </section>
+
+                <section class="page-card">
+                    <h2>Mission</h2>
+                    <p>Demystify personal finance for students by providing approachable UI, smart defaults, and accessible patterns that instructors can inspect line-by-line.</p>
+                </section>
+
+                <section class="page-card">
+                    <h2>Vision</h2>
+                    <p>Equip every faculty member with a ready-to-run demo that highlights best practices in semantic HTML, modular CSS, and testable JavaScript.</p>
+                </section>
+
+                <section class="page-card">
+                    <h2>Credits</h2>
+                    <ul class="page-list">
+                        <li>Yonatan Berihun · Lead developer</li>
+                        <li>Hawassa University · Academic partner</li>
+                        <li>Open-source community · Feedback &amp; QA</li>
+                    </ul>
+                </section>
+
+                <section class="page-card">
+                    <h2>Get in touch</h2>
+                    <p>Email: <a href="mailto:yonatan@example.com">yonatan@example.com</a></p>
+                    <p>GitHub: <a href="https://github.com/Yoni-Berihun" target="_blank" rel="noreferrer">Yoni-Berihun</a></p>
+                    <button class="btn btn-primary" type="button" id="aboutCommunity">Join community call</button>
+                </section>
+            </div>
         </main>
 
         <footer class="site-footer">
@@ -83,11 +92,11 @@
         <div id="modalOverlay" class="modal-overlay" hidden>
             <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
                 <header class="modal-header">
-                    <h2 id="modalTitle">EduFinance modal</h2>
+                    <h2 id="modalTitle">Community</h2>
                     <button id="modalClose" class="icon-button" type="button" aria-label="Close">✕</button>
                 </header>
                 <div id="modalContent" class="modal-body">
-                    <p>Modal content placeholder.</p>
+                    <p>Join the GitHub repo to submit feedback or PRs.</p>
                 </div>
             </div>
         </div>
@@ -95,3 +104,4 @@
         <div id="toast" class="toast" role="status" aria-live="polite" hidden>Ready</div>
     </body>
 </html>
+

@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-    App.initTheme();
+    App.initPageShell();
 
     const emailInput = document.getElementById("loginEmail");
     const passwordInput = document.getElementById("loginPassword");
@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("loginForm");
     const message = document.getElementById("loginMessage");
 
-    const session = App.loadState(App.STORAGE_KEYS.session, { isAuthenticated: false, remember: false, email: "" });
+    const session = App.getSession();
 
     if (session?.isAuthenticated) {
         window.location.href = "dashboard.html";
@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
         };
 
         App.saveState(App.STORAGE_KEYS.user, user);
-        App.saveState(App.STORAGE_KEYS.session, sessionPayload);
+        App.setSession(sessionPayload);
         showMessage("Success! Redirecting to dashboard…", "success");
 
         setTimeout(() => {

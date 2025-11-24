@@ -1,0 +1,10 @@
+.about-grid {
+    display: grid;
+    gap: var(--space-4);
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.about-grid .page-card {
+    min-height: 200px;
+}
+

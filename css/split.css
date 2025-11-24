@@ -1,0 +1,50 @@
+.split-layout {
+    display: grid;
+    gap: var(--space-4);
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+}
+
+.split-form {
+    display: grid;
+    gap: var(--space-3);
+}
+
+.split-form label {
+    display: grid;
+    gap: var(--space-2);
+}
+
+.split-list-card {
+    min-height: 100%;
+}
+
+.split-list {
+    margin-top: var(--space-3);
+}
+
+.split-list li {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: var(--space-3);
+    display: grid;
+    gap: var(--space-2);
+    background: var(--color-surface);
+}
+
+.split-list li button {
+    justify-self: flex-start;
+}
+
+.split-actions {
+    display: flex;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+}
+
+.split-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-3);
+}
+

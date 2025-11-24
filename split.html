@@ -3,16 +3,16 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>EduFinance — Login</title>
+        <title>EduFinance — Split</title>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
         <link rel="stylesheet" href="css/global.css" />
-        <link rel="stylesheet" href="css/login.css" />
+        <link rel="stylesheet" href="css/split.css" />
         <script defer src="js/common.js"></script>
-        <script defer src="js/login.js"></script>
+        <script defer src="js/split.js"></script>
     </head>
-    <body data-page="login">
+    <body data-page="split">
         <a class="skip-link" href="#main-content">Skip to main content</a>
 
         <header class="site-header" role="banner">
@@ -38,35 +38,55 @@
                 </nav>
                 <div class="shell-actions">
                     <button id="themeToggle" class="icon-button" aria-label="Toggle theme" type="button">🌙</button>
-                    <a class="btn btn-secondary" href="index.html">Back home</a>
+                    <button id="logout" class="btn btn-secondary" type="button">Log out</button>
                 </div>
             </div>
         </header>
 
-        <main id="main-content" class="login-wrapper">
-            <section class="login-card" aria-labelledby="loginTitle">
-                <h1 id="loginTitle">Welcome back</h1>
-                <p>Sign in with any email and password to access the dashboard demo.</p>
-                <div id="loginMessage" class="login-message" role="alert"></div>
-                <form id="loginForm" novalidate>
-                    <label class="input-group">
-                        Email
-                        <input id="loginEmail" type="email" placeholder="student@edufinance.com" required autocomplete="email" />
-                    </label>
-                    <label class="input-group">
-                        Password
-                        <input id="loginPassword" type="password" placeholder="••••••" required autocomplete="current-password" />
-                    </label>
-                    <div class="remember-row">
+        <main id="main-content">
+            <div class="container page-shell split-layout">
+                <section class="page-card split-form-card">
+                    <h1>Split a new expense</h1>
+                    <form id="splitForm" class="split-form">
                         <label>
-                            <input id="rememberMe" type="checkbox" /> Remember me
+                            Description
+                            <input type="text" id="splitDescription" placeholder="Dinner at cafe" required />
                         </label>
-                        <a href="#" aria-disabled="true">Forgot password?</a>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Sign in</button>
-                </form>
-                <p class="note">Need a refresher? Head back to the <a href="index.html">overview page</a>.</p>
-            </section>
+                        <label>
+                            Total amount
+                            <input type="number" id="splitAmount" min="0" step="0.01" required />
+                        </label>
+                        <label>
+                            Split mode
+                            <select id="splitMode">
+                                <option value="even">Even split</option>
+                                <option value="custom" disabled>Custom allocation (soon)</option>
+                            </select>
+                        </label>
+                        <label>
+                            Participants
+                            <select id="splitParticipants" multiple>
+                                <option value="me" selected>You</option>
+                                <option value="1">Alex</option>
+                                <option value="2">Sarah</option>
+                                <option value="3">Mike</option>
+                            </select>
+                        </label>
+                        <button class="btn btn-primary" type="submit">Create split</button>
+                    </form>
+                </section>
+
+                <section class="page-card split-list-card" aria-labelledby="splitListTitle">
+                    <header class="split-list-header">
+                        <div>
+                            <h2 id="splitListTitle">Recent splits</h2>
+                            <p class="helper-text">Tap a card to settle.</p>
+                        </div>
+                        <button class="btn btn-ghost" id="splitReset" type="button">Restore demo data</button>
+                    </header>
+                    <ul id="splitList" class="page-list split-list"></ul>
+                </section>
+            </div>
         </main>
 
         <footer class="site-footer">
@@ -83,15 +103,14 @@
         <div id="modalOverlay" class="modal-overlay" hidden>
             <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
                 <header class="modal-header">
-                    <h2 id="modalTitle">EduFinance modal</h2>
+                    <h2 id="modalTitle">Split detail</h2>
                     <button id="modalClose" class="icon-button" type="button" aria-label="Close">✕</button>
                 </header>
-                <div id="modalContent" class="modal-body">
-                    <p>Modal content placeholder.</p>
-                </div>
+                <div id="modalContent" class="modal-body"></div>
             </div>
         </div>
 
         <div id="toast" class="toast" role="status" aria-live="polite" hidden>Ready</div>
     </body>
 </html>
+

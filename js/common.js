@@ -6,6 +6,7 @@
         split: "edufinance-split-expenses",
         friends: "edufinance-friends",
         session: "edufinance-session",
+        tips: "edufinance-tips",
     };
 
     const defaultUser = {
@@ -14,6 +15,8 @@
         budget: 5000,
         currency: "Birr",
         notifications: true,
+        avatarBase64: null,
+        theme: "light",
     };
 
     const defaultExpenses = [
@@ -26,6 +29,7 @@
 
     const defaultTips = [
         {
+            id: "tip-track-daily",
             icon: "💡",
             title: "Track Daily Spending",
             preview: "Record every expense to understand your habits.",
@@ -37,6 +41,7 @@
             ],
         },
         {
+            id: "tip-set-budget",
             icon: "🎯",
             title: "Set Budget Goals",
             preview: "Break down monthly goals into daily limits.",
@@ -48,6 +53,7 @@
             ],
         },
         {
+            id: "tip-meal-plan",
             icon: "🍽️",
             title: "Meal Planning Saves Money",
             preview: "Plan meals to curb impulse purchases.",
@@ -59,6 +65,7 @@
             ],
         },
         {
+            id: "tip-smart-books",
             icon: "📚",
             title: "Smart Book Buying",
             preview: "Use library resources and second-hand books.",
@@ -70,6 +77,7 @@
             ],
         },
         {
+            id: "tip-transport",
             icon: "🚗",
             title: "Transportation Tips",
             preview: "Optimize commutes to save on transport costs.",
@@ -177,8 +185,7 @@
         const saved = localStorage.getItem(STORAGE_KEYS.theme);
         const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
         const isDark = saved ? saved === "dark" : prefersDark;
-        document.body.classList.toggle("theme-dark", isDark);
-        document.body.classList.toggle("theme-light", !isDark);
+        document.documentElement.setAttribute("data-theme", isDark ? "dark" : "light");
         const toggle = qs("#themeToggle");
         if (toggle) {
             toggle.textContent = isDark ? "☀️" : "🌙";
@@ -186,18 +193,183 @@
     };
 
     const toggleTheme = () => {
-        const isDark = document.body.classList.toggle("theme-dark");
-        document.body.classList.toggle("theme-light", !isDark);
+        const current = document.documentElement.getAttribute("data-theme");
+        const isDark = current !== "dark";
+        document.documentElement.setAttribute("data-theme", isDark ? "dark" : "light");
         localStorage.setItem(STORAGE_KEYS.theme, isDark ? "dark" : "light");
         const toggle = qs("#themeToggle");
         if (toggle) {
             toggle.textContent = isDark ? "☀️" : "🌙";
         }
+        // Dispatch event for charts to re-render
+        window.dispatchEvent(new CustomEvent("themechange", { detail: { theme: isDark ? "dark" : "light" } }));
     };
 
     const initTheme = () => {
         syncTheme();
         qs("#themeToggle")?.addEventListener("click", toggleTheme);
+    };
+
+    const getSession = () => loadState(STORAGE_KEYS.session, { isAuthenticated: false });
+
+    const setSession = (session) => saveState(STORAGE_KEYS.session, session);
+
+    const clearSession = () => removeState(STORAGE_KEYS.session);
+
+    const isAuthenticated = () => Boolean(getSession()?.isAuthenticated);
+
+    const requireAuth = () => {
+        if (!isAuthenticated()) {
+            window.location.href = "login.html";
+            return false;
+        }
+        return true;
+    };
+
+    const initShellNavigation = () => {
+        const navToggle = qs("[data-nav-toggle]");
+        const navDrawer = qs("[data-nav-drawer]");
+        if (!navDrawer) return;
+        const navLinks = Array.from(document.querySelectorAll("[data-nav-link]"));
+        const closeNav = () => {
+            navDrawer.removeAttribute("data-open");
+            navToggle?.setAttribute("aria-expanded", "false");
+            document.body.classList.remove("nav-open");
+        };
+        const openNav = () => {
+            navDrawer.setAttribute("data-open", "true");
+            navToggle?.setAttribute("aria-expanded", "true");
+            document.body.classList.add("nav-open");
+        };
+
+        navToggle?.addEventListener("click", () => {
+            const expanded = navToggle.getAttribute("aria-expanded") === "true";
+            if (expanded) {
+                closeNav();
+            } else {
+                openNav();
+            }
+        });
+
+        window.addEventListener("keydown", (event) => {
+            if (event.key === "Escape") {
+                closeNav();
+            }
+        });
+
+        navLinks.forEach((link) => {
+            link.addEventListener("click", () => closeNav());
+        });
+
+        const pageKey = document.body?.dataset?.page;
+        if (pageKey) {
+            navLinks.forEach((link) => {
+                link.classList.toggle("is-active", link.dataset.navLink === pageKey);
+            });
+        }
+    };
+
+    const bindLogoutButton = () => {
+        const logoutButton = qs("#logout");
+        if (!logoutButton) return;
+        logoutButton.addEventListener("click", () => {
+            clearSession();
+            showToast("Logged out");
+            setTimeout(() => {
+                window.location.href = "login.html";
+            }, 300);
+        });
+    };
+
+    const initModal = (overlayId = "modalOverlay", closeId = "modalClose", cancelId = "modalCancel") => {
+        const overlay = qs(`#${overlayId}`);
+        const closeBtn = qs(`#${closeId}`);
+        const cancelBtn = qs(`#${cancelId}`);
+        
+        const closeModal = () => {
+            if (overlay) overlay.hidden = true;
+        };
+        
+        closeBtn?.addEventListener("click", closeModal);
+        cancelBtn?.addEventListener("click", closeModal);
+        overlay?.addEventListener("click", (event) => {
+            if (event.target === overlay) closeModal();
+        });
+        
+        window.addEventListener("keydown", (event) => {
+            if (event.key === "Escape" && overlay && !overlay.hidden) {
+                closeModal();
+            }
+        });
+        
+        return { open: () => { if (overlay) overlay.hidden = false; }, close: closeModal };
+    };
+
+    const initPageShell = ({ auth = false } = {}) => {
+        initTheme();
+        initShellNavigation();
+        bindLogoutButton();
+        if (auth && !requireAuth()) {
+            return false;
+        }
+        return true;
+    };
+
+    const initNavHighlights = ({
+        linkSelector = ".nav-links a",
+        mobileLinkSelector = ".mobile-menu a",
+        sectionSelector = "main section[id]",
+        activeClass = "is-active",
+    } = {}) => {
+        if (!window.IntersectionObserver) return () => {};
+        const anchors = [
+            ...new Set([
+                ...Array.from(document.querySelectorAll(linkSelector) || []),
+                ...Array.from(document.querySelectorAll(mobileLinkSelector) || []),
+            ]),
+        ].filter((anchor) => anchor.hash && document.getElementById(anchor.hash.slice(1)));
+        const sections = Array.from(document.querySelectorAll(sectionSelector));
+        if (!anchors.length || !sections.length) return () => {};
+
+        const sectionToLinks = new Map();
+        anchors.forEach((anchor) => {
+            const id = anchor.hash.slice(1);
+            const list = sectionToLinks.get(id) || [];
+            list.push(anchor);
+            sectionToLinks.set(id, list);
+        });
+
+        const setActive = (id) => {
+            sectionToLinks.forEach((links, key) => {
+                links.forEach((link) => {
+                    link.classList.toggle(activeClass, key === id);
+                });
+            });
+        };
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                const visible = entries
+                    .filter((entry) => entry.isIntersecting)
+                    .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+                if (!visible.length) return;
+                setActive(visible[0].target.id);
+            },
+            { rootMargin: "-35% 0px -45% 0px", threshold: [0.2, 0.4, 0.6] }
+        );
+
+        sections.forEach((section) => observer.observe(section));
+
+        anchors.forEach((anchor) => {
+            anchor.addEventListener("click", () => setActive(anchor.hash.slice(1)));
+        });
+
+        const initialHash = window.location.hash.slice(1);
+        if (initialHash && sectionToLinks.has(initialHash)) {
+            setActive(initialHash);
+        }
+
+        return () => observer.disconnect();
     };
 
     const App = {
@@ -219,7 +391,59 @@
         syncTheme,
         toggleTheme,
         initTheme,
+        initNavHighlights,
+        initShellNavigation,
+        initPageShell,
+        initModal,
+        getSession,
+        setSession,
+        clearSession,
+        isAuthenticated,
+        requireAuth,
+        bindLogoutButton,
     };
 
-    window.App = App;
-})(window);
+        const updatePieChart = (canvasId, data, options = {}) => {
+            const canvas = qs(`#${canvasId}`);
+            if (!canvas || typeof Chart === "undefined") return null;
+            const ctx = canvas.getContext("2d");
+            const isDark = document.documentElement.getAttribute("data-theme") === "dark";
+            const defaultColors = ["#27ae60", "#f39c12", "#3498db", "#9b59b6", "#e74c3c"];
+            const colors = options.colors || defaultColors;
+            const labels = data.map((item) => item.label || item.category);
+            const values = data.map((item) => item.value || item.amount);
+            if (window[`pieChart_${canvasId}`]) {
+                window[`pieChart_${canvasId}`].destroy();
+            }
+            window[`pieChart_${canvasId}`] = new Chart(ctx, {
+                type: "pie",
+                data: {
+                    labels,
+                    datasets: [{
+                        data: values,
+                        backgroundColor: colors,
+                        borderColor: isDark ? "#34495e" : "#ffffff",
+                        borderWidth: 2,
+                    }],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: options.legendPosition || "bottom",
+                            labels: { 
+                                color: isDark ? "#bdc3c7" : "#7f8c8d",
+                                padding: 12,
+                            },
+                        },
+                    },
+                },
+            });
+            return window[`pieChart_${canvasId}`];
+        };
+
+        App.updatePieChart = updatePieChart;
+
+        window.App = App;
+    })(window);

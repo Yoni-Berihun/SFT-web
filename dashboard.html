@@ -9,39 +9,42 @@
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
         <link rel="stylesheet" href="css/global.css" />
         <link rel="stylesheet" href="css/dashboard.css" />
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" integrity="sha384-6FpEvGpK9x3TlKVUw6JO33dTUmL8/IpEW+uFfLgLxR72k3gI7mQ9mJd3Hhj3qHxN" crossorigin="anonymous"></script>
         <script defer src="js/common.js"></script>
         <script defer src="js/dashboard.js"></script>
     </head>
-    <body class="theme-light">
-        <header class="site-header">
-            <div class="site-nav">
-                <a class="brand" href="index.html">EduFinance</a>
-                <button id="mobileToggle" class="icon-button" aria-expanded="false" aria-controls="mobileMenu">☰</button>
-                <nav class="nav-links" aria-label="Primary">
-                    <a href="#overview">Overview</a>
-                    <a href="#expenses">Expenses</a>
-                    <a href="#analysis">Analysis</a>
-                    <a href="#tips">Tips</a>
-                    <a href="#profile">Profile</a>
-                    <a href="#split">Split</a>
+    <body data-page="dashboard">
+        <a class="skip-link" href="#main-content">Skip to main content</a>
+
+        <header class="site-header" role="banner">
+            <div class="nav-inner container">
+                <a class="brand" href="index.html" aria-label="EduFinance home">
+                    <span class="brand-mark" aria-hidden="true">EF</span>
+                    EduFinance
+                </a>
+                <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" data-nav-toggle>
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="nav-toggle-bar"></span>
+                    <span class="nav-toggle-bar"></span>
+                    <span class="nav-toggle-bar"></span>
+                </button>
+                <nav id="primary-navigation" class="primary-nav" aria-label="Primary" data-nav-drawer>
+                    <a class="nav-link" data-nav-link="dashboard" href="dashboard.html">Dashboard</a>
+                    <a class="nav-link" data-nav-link="expenses" href="expenses.html">Expenses</a>
+                    <a class="nav-link" data-nav-link="analysis" href="analysis.html">Analysis</a>
+                    <a class="nav-link" data-nav-link="tips" href="tips.html">Tips</a>
+                    <a class="nav-link" data-nav-link="profile" href="profile.html">Profile</a>
+                    <a class="nav-link" data-nav-link="split" href="split.html">Split</a>
+                    <a class="nav-link" data-nav-link="about" href="about.html">About</a>
                 </nav>
-                <div class="nav-actions">
-                    <button id="themeToggle" class="icon-button" aria-label="Toggle theme">🌙</button>
+                <div class="shell-actions">
+                    <button id="themeToggle" class="icon-button" aria-label="Toggle theme" type="button">🌙</button>
                     <button id="logout" class="btn btn-secondary" type="button">Log out</button>
                 </div>
             </div>
-            <div id="mobileMenu" class="mobile-menu" hidden>
-                <a href="#overview">Overview</a>
-                <a href="#expenses">Expenses</a>
-                <a href="#analysis">Analysis</a>
-                <a href="#tips">Tips</a>
-                <a href="#profile">Profile</a>
-                <a href="#split">Split</a>
-                <button id="logoutMobile" class="btn btn-secondary" type="button">Log out</button>
-            </div>
         </header>
 
-        <main>
+        <main id="main-content">
             <section id="overview" class="section">
                 <header class="section-header">
                     <div>
@@ -147,7 +150,9 @@
                     </article>
                     <article class="card">
                         <h3>Daily totals</h3>
-                        <div class="spark" id="dailyTotals"></div>
+                        <div class="chart-preview" id="dailyTotals">
+                            <canvas id="dailyTotalsChart"></canvas>
+                        </div>
                     </article>
                     <article class="card">
                         <h3>Summary</h3>
@@ -233,10 +238,13 @@
         </main>
 
         <footer class="site-footer">
-            <p>© 2025 EduFinance Team · Mock experience inspired by the Figma design</p>
-            <div class="footer-links">
-                <a href="https://github.com/Yoni-Berihun" target="_blank" rel="noreferrer">GitHub</a>
-                <a href="https://www.figma.com/design/eCcZirqtQctQjrw2z6v8iw/EduFinance-Website-Mockup-Design" target="_blank" rel="noreferrer">Figma file</a>
+            <div class="container footer-content">
+                <p>© 2025 EduFinance Team · Hawassa University</p>
+                <div class="footer-links" aria-label="Utility links">
+                    <a href="about.html">About</a>
+                    <a href="mailto:yonatan@example.com">Contact</a>
+                    <a href="https://github.com/Yoni-Berihun" target="_blank" rel="noreferrer">GitHub</a>
+                </div>
             </div>
         </footer>
 
@@ -276,6 +284,8 @@
                 </form>
             </div>
         </div>
+
+        <button id="fab" class="floating-action" aria-label="Add expense" type="button">+</button>
 
         <div id="toast" class="toast" role="status" aria-live="polite" hidden>Saved</div>
     </body>

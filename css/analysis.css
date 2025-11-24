@@ -1,0 +1,89 @@
+.analysis-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    align-items: flex-end;
+    justify-content: space-between;
+}
+
+.analysis-controls__group {
+    display: grid;
+    gap: var(--space-3);
+    flex: 1;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+}
+
+.analysis-controls label {
+    display: grid;
+    gap: var(--space-2);
+    font-size: 0.9rem;
+}
+
+.analysis-card__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    margin-bottom: var(--space-3);
+}
+
+.chart-preview {
+    height: 230px;
+    border: 1px dashed var(--color-border);
+    border-radius: var(--radius);
+    padding: var(--space-3);
+    display: grid;
+    align-items: end;
+    grid-auto-flow: column;
+    gap: var(--space-2);
+}
+
+.chart-preview--pie {
+    grid-auto-flow: row;
+    align-items: center;
+    justify-items: center;
+}
+
+.chart-preview__bar {
+    width: 100%;
+    border-radius: 6px 6px 0 0;
+    background: linear-gradient(180deg, var(--color-secondary), rgba(39, 174, 96, 0.3));
+}
+
+.chart-preview__slice {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: conic-gradient(
+        var(--color-secondary) 0deg,
+        var(--color-secondary) 120deg,
+        var(--color-accent) 120deg,
+        var(--color-accent) 220deg,
+        var(--color-primary) 220deg,
+        var(--color-primary) 360deg
+    );
+}
+
+.analysis-log__list li {
+    padding: var(--space-3);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+}
+
+@media (max-width: 640px) {
+    .analysis-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .analysis-card__header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .chart-preview {
+        grid-auto-flow: row;
+    }
+}
+

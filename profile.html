@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>EduFinance — Profile</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+        <link rel="stylesheet" href="css/global.css" />
+        <link rel="stylesheet" href="css/profile.css" />
+        <script defer src="js/common.js"></script>
+        <script defer src="js/profile.js"></script>
+    </head>
+    <body data-page="profile">
+        <a class="skip-link" href="#main-content">Skip to main content</a>
+
+        <header class="site-header" role="banner">
+            <div class="nav-inner container">
+                <a class="brand" href="index.html" aria-label="EduFinance home">
+                    <span class="brand-mark" aria-hidden="true">EF</span>
+                    EduFinance
+                </a>
+                <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" data-nav-toggle>
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="nav-toggle-bar"></span>
+                    <span class="nav-toggle-bar"></span>
+                    <span class="nav-toggle-bar"></span>
+                </button>
+                <nav id="primary-navigation" class="primary-nav" aria-label="Primary" data-nav-drawer>
+                    <a class="nav-link" data-nav-link="dashboard" href="dashboard.html">Dashboard</a>
+                    <a class="nav-link" data-nav-link="expenses" href="expenses.html">Expenses</a>
+                    <a class="nav-link" data-nav-link="analysis" href="analysis.html">Analysis</a>
+                    <a class="nav-link" data-nav-link="tips" href="tips.html">Tips</a>
+                    <a class="nav-link" data-nav-link="profile" href="profile.html">Profile</a>
+                    <a class="nav-link" data-nav-link="split" href="split.html">Split</a>
+                    <a class="nav-link" data-nav-link="about" href="about.html">About</a>
+                </nav>
+                <div class="shell-actions">
+                    <button id="themeToggle" class="icon-button" aria-label="Toggle theme" type="button">🌙</button>
+                    <button id="logout" class="btn btn-secondary" type="button">Log out</button>
+                </div>
+            </div>
+        </header>
+
+        <main id="main-content">
+            <div class="container page-shell profile-grid">
+                <section class="page-card profile-card">
+                    <div class="profile-card__header">
+                        <div class="avatar" id="profileAvatarPreview" aria-hidden="true">EF</div>
+                        <div>
+                            <h1 id="profileNameHeading">Student</h1>
+                            <p class="helper-text" id="profileEmailLabel">student@edufinance.com</p>
+                        </div>
+                    </div>
+                    <form id="profileForm" class="profile-form">
+                        <label>
+                            Full name
+                            <input type="text" id="profileName" required />
+                        </label>
+                        <label>
+                            Email
+                            <input type="email" id="profileEmail" required />
+                        </label>
+                        <label>
+                            Monthly budget
+                            <input type="number" id="profileBudget" min="0" step="0.01" required />
+                        </label>
+                        <label>
+                            Currency
+                            <select id="profileCurrency">
+                                <option value="Birr">Birr (ETB)</option>
+                                <option value="USD">USD ($)</option>
+                            </select>
+                        </label>
+                        <label class="switch">
+                            <input type="checkbox" id="profileNotifications" />
+                            <span>Enable notifications</span>
+                        </label>
+                        <div class="profile-form__actions">
+                            <button class="btn btn-primary" type="submit">Save profile</button>
+                            <button class="btn btn-tertiary" type="button" id="profileReset">Reset changes</button>
+                        </div>
+                    </form>
+                </section>
+
+                <section class="page-card profile-preferences">
+                    <h2>Avatar &amp; preferences</h2>
+                    <label class="upload-field">
+                        Upload avatar
+                        <input type="file" id="profileAvatarInput" accept="image/*" />
+                    </label>
+                    <div class="profile-preferences__actions">
+                        <button class="btn btn-secondary" type="button" id="removeAvatar">Remove avatar</button>
+                    </div>
+                    <p class="helper-text">Square images look best. We store it locally in your browser.</p>
+                </section>
+
+                <section class="page-card profile-actions">
+                    <h2>Danger zone</h2>
+                    <p>Need to start fresh? Clear local data and sign out.</p>
+                    <div class="profile-actions__buttons">
+                        <button class="btn btn-ghost" type="button" id="profileExport">Export profile JSON</button>
+                        <button class="btn btn-danger" type="button" id="clearData">Clear data</button>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <footer class="site-footer">
+            <div class="container footer-content">
+                <p>© 2025 EduFinance Team · Hawassa University</p>
+                <div class="footer-links" aria-label="Utility links">
+                    <a href="about.html">About</a>
+                    <a href="mailto:yonatan@example.com">Contact</a>
+                    <a href="https://github.com/Yoni-Berihun" target="_blank" rel="noreferrer">GitHub</a>
+                </div>
+            </div>
+        </footer>
+
+        <div id="modalOverlay" class="modal-overlay" hidden>
+            <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+                <header class="modal-header">
+                    <h2 id="modalTitle">Export profile</h2>
+                    <button id="modalClose" class="icon-button" type="button" aria-label="Close">✕</button>
+                </header>
+                <div id="modalContent" class="modal-body">
+                    <p>Copy the JSON below to share profile settings.</p>
+                    <textarea id="profileExportContent" rows="6"></textarea>
+                    <div class="form-row form-right" style="margin-top: var(--space-4);">
+                        <button type="button" class="btn btn-tertiary" id="modalCancel">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="toast" class="toast" role="status" aria-live="polite" hidden>Ready</div>
+    </body>
+</html>
+

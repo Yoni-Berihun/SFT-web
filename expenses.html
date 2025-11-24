@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>EduFinance — Expenses</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+        <link rel="stylesheet" href="css/global.css" />
+        <link rel="stylesheet" href="css/expenses.css" />
+        <script defer src="js/common.js"></script>
+        <script defer src="js/expenses.js"></script>
+    </head>
+    <body data-page="expenses">
+        <a class="skip-link" href="#main-content">Skip to main content</a>
+
+        <header class="site-header" role="banner">
+            <div class="nav-inner container">
+                <a class="brand" href="index.html" aria-label="EduFinance home">
+                    <span class="brand-mark" aria-hidden="true">EF</span>
+                    EduFinance
+                </a>
+                <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" data-nav-toggle>
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="nav-toggle-bar"></span>
+                    <span class="nav-toggle-bar"></span>
+                    <span class="nav-toggle-bar"></span>
+                </button>
+                <nav id="primary-navigation" class="primary-nav" aria-label="Primary" data-nav-drawer>
+                    <a class="nav-link" data-nav-link="dashboard" href="dashboard.html">Dashboard</a>
+                    <a class="nav-link" data-nav-link="expenses" href="expenses.html">Expenses</a>
+                    <a class="nav-link" data-nav-link="analysis" href="analysis.html">Analysis</a>
+                    <a class="nav-link" data-nav-link="tips" href="tips.html">Tips</a>
+                    <a class="nav-link" data-nav-link="profile" href="profile.html">Profile</a>
+                    <a class="nav-link" data-nav-link="split" href="split.html">Split</a>
+                    <a class="nav-link" data-nav-link="about" href="about.html">About</a>
+                </nav>
+                <div class="shell-actions">
+                    <button id="themeToggle" class="icon-button" aria-label="Toggle theme" type="button">🌙</button>
+                    <button id="logout" class="btn btn-secondary" type="button">Log out</button>
+                </div>
+            </div>
+        </header>
+
+        <main id="main-content">
+            <div class="container page-shell">
+                <section class="page-hero" aria-labelledby="expenses-title">
+                    <h1 id="expenses-title" class="page-hero__title">Expenses</h1>
+                    <p class="page-hero__subtitle">Review every Birr that leaves your wallet. Filter, search, and export data the moment you need it.</p>
+                    <div class="page-hero__actions">
+                        <button class="btn btn-primary" id="addExpenseButton" type="button">Add expense</button>
+                        <button class="btn btn-secondary" id="exportExpensesCsv" type="button">Export CSV</button>
+                    </div>
+                </section>
+
+                <section class="page-card expenses-toolbar" aria-label="Expense filters">
+                    <div class="filter-group">
+                        <label>
+                            Category
+                            <select id="filterCategory">
+                                <option value="all">All categories</option>
+                                <option value="Food">Food</option>
+                                <option value="Transport">Transport</option>
+                                <option value="Books">Books</option>
+                                <option value="Entertainment">Entertainment</option>
+                                <option value="Supplies">Supplies</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </label>
+                        <label>
+                            Search notes
+                            <input type="search" id="searchExpenses" placeholder="e.g., textbooks" />
+                        </label>
+                        <label>
+                            Date
+                            <input type="date" id="filterDate" />
+                        </label>
+                    </div>
+                    <button class="btn btn-tertiary" id="resetFilters" type="button">Reset filters</button>
+                </section>
+
+                <section class="page-grid expenses-highlights" aria-label="Expense highlights">
+                    <article class="page-card">
+                        <p class="label">Total spent</p>
+                        <h3 id="expensesTotal">ETB 0</h3>
+                        <p class="helper-text">Across all filtered expenses.</p>
+                    </article>
+                    <article class="page-card">
+                        <p class="label">Average daily</p>
+                        <h3 id="expensesAverage">ETB 0</h3>
+                        <p class="helper-text">Based on selected period.</p>
+                    </article>
+                    <article class="page-card">
+                        <p class="label">Entries in view</p>
+                        <h3 id="expensesCount">0</h3>
+                        <p class="helper-text">Click delete to remove an item.</p>
+                    </article>
+                </section>
+
+                <section class="page-card expenses-table" aria-labelledby="expenses-table-title">
+                    <div class="expenses-table__header">
+                        <div>
+                            <h2 id="expenses-table-title">Expense log</h2>
+                            <p class="helper-text">Latest additions appear first.</p>
+                        </div>
+                        <button class="btn btn-ghost" id="refreshExpenses" type="button">Reload data</button>
+                    </div>
+                    <div class="table">
+                        <div class="table-head">
+                            <span>Date</span>
+                            <span>Category</span>
+                            <span class="align-right">Amount</span>
+                            <span>Notes</span>
+                            <span class="align-right">Actions</span>
+                        </div>
+                        <div id="expensesTableBody" class="table-body"></div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <footer class="site-footer">
+            <div class="container footer-content">
+                <p>© 2025 EduFinance Team · Hawassa University</p>
+                <div class="footer-links" aria-label="Utility links">
+                    <a href="about.html">About</a>
+                    <a href="mailto:yonatan@example.com">Contact</a>
+                    <a href="https://github.com/Yoni-Berihun" target="_blank" rel="noreferrer">GitHub</a>
+                </div>
+            </div>
+        </footer>
+
+        <div id="modalOverlay" class="modal-overlay" hidden>
+            <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+                <header class="modal-header">
+                    <h2 id="modalTitle">Record expense</h2>
+                    <button id="modalClose" class="icon-button" type="button" aria-label="Close">✕</button>
+                </header>
+                <form id="expensesModalForm" class="form-grid">
+                    <label class="input-group">
+                        Date
+                        <input type="date" id="modalDate" required />
+                    </label>
+                    <label class="input-group">
+                        Category
+                        <select id="modalCategory" required>
+                            <option value="Food">Food</option>
+                            <option value="Transport">Transport</option>
+                            <option value="Books">Books</option>
+                            <option value="Entertainment">Entertainment</option>
+                            <option value="Supplies">Supplies</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </label>
+                    <label class="input-group">
+                        Amount
+                        <input type="number" id="modalAmount" min="0" step="0.01" required />
+                    </label>
+                    <label class="input-group">
+                        Notes
+                        <textarea id="modalNotes" rows="3" placeholder="Add a short memo"></textarea>
+                    </label>
+                    <div class="form-row">
+                        <button class="btn btn-tertiary" id="modalCancel" type="button">Cancel</button>
+                        <button class="btn btn-primary" type="submit">Save expense</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="toast" class="toast" role="status" aria-live="polite" hidden>Ready</div>
+    </body>
+</html>
+
