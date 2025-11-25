@@ -49,7 +49,9 @@
                         <p class="hero__subtitle">Manage your allowance and build smart habits with a responsive, accessible toolkit designed for students and mentors.</p>
                         <div class="hero__actions">
                             <a class="btn btn-primary" href="login.html">Get Started</a>
-                            <a class="btn btn-secondary" href="#features">Learn More</a>
+                            <a class="btn btn-secondary btn-secondary--contrast" href="#features" data-learn-more aria-expanded="false">
+                                Learn More
+                            </a>
                         </div>
                         <ul class="hero__list" aria-label="Highlights">
                             <li>Full expense CRUD with friendly microcopy.</li>
@@ -86,13 +88,21 @@
                 </div>
             </section>
 
-            <section id="features" class="section features" aria-labelledby="features-title">
+            <section
+                id="features"
+                class="section features"
+                aria-labelledby="features-title"
+                data-learn-panel
+                hidden
+            >
                 <div class="container">
                     <header class="section-header">
                         <div>
                             <p class="eyebrow">Why EduFinance</p>
                             <h2 id="features-title">Built for budgeting confidence</h2>
-                            <p class="section-subtitle">Each module uses the same design system, keyboard-friendly controls, and localStorage persistence.</p>
+                            <p class="section-subtitle">
+                                Each module uses the same design system, keyboard-friendly controls, and localStorage persistence.
+                            </p>
                         </div>
                     </header>
                     <div class="feature-grid">
@@ -115,7 +125,7 @@
                 </div>
             </section>
 
-            <section class="section info-panels" aria-labelledby="info-title">
+            <section class="section info-panels" aria-labelledby="info-title" data-learn-panel hidden>
                 <div class="container info-grid">
                     <article class="panel-card">
                         <p class="eyebrow">Design system</p>

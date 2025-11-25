@@ -1,7 +1,88 @@
+.page-hero--tips {
+    position: relative;
+    overflow: hidden;
+    padding: var(--space-6);
+    border-radius: var(--radius-lg);
+    display: grid;
+    gap: var(--space-5);
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    background:
+        radial-gradient(circle at top left, rgba(46, 204, 113, 0.2), transparent 65%),
+        radial-gradient(circle at bottom right, rgba(52, 152, 219, 0.2), transparent 60%),
+        linear-gradient(135deg, rgba(39, 174, 96, 0.15), rgba(52, 152, 219, 0.15));
+    box-shadow: 0 25px 60px rgba(15, 23, 42, 0.25);
+}
+
+.page-hero--tips::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    pointer-events: none;
+}
+
+.tips-hero__list {
+    list-style: none;
+    margin: var(--space-4) 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-2);
+    color: var(--color-text-muted);
+}
+
+.tips-hero__list li::before {
+    content: "•";
+    color: var(--color-secondary);
+    margin-right: var(--space-2);
+}
+
+.tips-hero__stats {
+    display: grid;
+    gap: var(--space-3);
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.tips-hero__stats article {
+    border-radius: var(--radius);
+    padding: var(--space-4);
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.tips-highlights,
+.tips-advice {
+    margin-top: var(--space-6);
+}
+
+.tips-highlight__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-top: var(--space-3);
+}
+
+.tips-advice__list {
+    list-style: disc;
+    margin: var(--space-3) 0 0;
+    padding-left: var(--space-5);
+    color: var(--color-text-muted);
+}
+
+.tips-advice__quote {
+    margin: var(--space-3) 0;
+    padding: var(--space-3);
+    border-left: 3px solid var(--color-secondary);
+    background: var(--card-muted);
+    font-style: italic;
+}
+
 .tips-grid {
     display: grid;
     gap: var(--space-4);
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    margin-top: var(--space-5);
 }
 
 .tips-grid article {
@@ -36,15 +117,26 @@
 
 .tips-quotes {
     margin-top: var(--space-5);
+    text-align: center;
 }
 
 .tips-quotes blockquote {
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     margin: 0 0 var(--space-2);
 }
 
 .tips-quotes cite {
     font-style: normal;
     color: var(--color-text-muted);
+}
+
+@media (max-width: 640px) {
+    .page-hero--tips {
+        padding: var(--space-5);
+    }
+
+    .tips-hero__stats {
+        grid-template-columns: 1fr;
+    }
 }
 

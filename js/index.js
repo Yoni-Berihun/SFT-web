@@ -1,4 +1,9 @@
 document.addEventListener("DOMContentLoaded", () => {
+    // Initialize theme and navigation
+    if (window.App && window.App.initPageShell) {
+        window.App.initPageShell();
+    }
+
     const navDrawer = document.querySelector("[data-nav-drawer]");
     const navToggle = document.querySelector("[data-nav-toggle]");
     const navLinks = Array.from(document.querySelectorAll("[data-nav-link]"));
@@ -57,5 +62,29 @@ document.addEventListener("DOMContentLoaded", () => {
     setActiveNav();
 
     window.addEventListener("hashchange", setActiveNav);
+
+    const learnMoreBtn = document.querySelector("[data-learn-more]");
+    const learnPanels = document.querySelectorAll("[data-learn-panel]");
+
+    if (learnMoreBtn && learnPanels.length) {
+        learnMoreBtn.addEventListener("click", (event) => {
+            event.preventDefault();
+            const willShow = Array.from(learnPanels).some((panel) => panel.hasAttribute("hidden"));
+
+            learnPanels.forEach((panel) => {
+                panel.hidden = !willShow;
+            });
+
+            learnMoreBtn.textContent = willShow ? "Hide details" : "Learn More";
+            learnMoreBtn.setAttribute("aria-expanded", willShow ? "true" : "false");
+
+            if (willShow) {
+                document.getElementById("features")?.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start",
+                });
+            }
+        });
+    }
 });
 

@@ -45,13 +45,67 @@
 
         <main id="main-content">
             <div class="container page-shell">
-                <section class="page-hero" aria-labelledby="tips-title">
-                    <h1 id="tips-title" class="page-hero__title">Financial Tips &amp; Challenges</h1>
-                    <p class="page-hero__subtitle">Micro lessons and bite-sized challenges keep you consistent. Track completion, celebrate streaks, and reset whenever you need a fresh start.</p>
-                    <div class="page-hero__actions">
-                        <button class="btn btn-primary" id="tipsCompleteNext" type="button">Complete next challenge</button>
-                        <button class="btn btn-secondary" id="tipsResetProgress" type="button">Reset progress</button>
+                <section class="page-hero page-hero--tips" aria-labelledby="tips-title">
+                    <div>
+                        <p class="eyebrow">Smart habits for students</p>
+                        <h1 id="tips-title" class="page-hero__title">Financial Tips &amp; Challenges</h1>
+                        <p class="page-hero__subtitle">Micro lessons and bite-sized challenges that keep you consistent. Track completion, celebrate streaks, and reset whenever you need a fresh start.</p>
+                        <ul class="tips-hero__list">
+                            <li>Weekly mini-missions designed for campus life.</li>
+                            <li>Automated streak tracker nudges you forward.</li>
+                            <li>Share progress with friends for accountability.</li>
+                        </ul>
+                        <div class="page-hero__actions">
+                            <button class="btn btn-primary" id="tipsCompleteNext" type="button">Complete next challenge</button>
+                            <button class="btn btn-secondary" id="tipsResetProgress" type="button">Reset progress</button>
+                        </div>
                     </div>
+                    <div class="tips-hero__stats">
+                        <article>
+                            <p class="label">Streak goal</p>
+                            <strong>7 days</strong>
+                            <p class="helper-text">Keep logging tips to unlock rewards.</p>
+                        </article>
+                        <article>
+                            <p class="label">Cash confidence</p>
+                            <strong>+18%</strong>
+                            <p class="helper-text">Average bump after 30 days on EduFinance.</p>
+                        </article>
+                        <article>
+                            <p class="label">Focus area</p>
+                            <strong>Savings</strong>
+                            <p class="helper-text">Recommended next priority.</p>
+                        </article>
+                    </div>
+                </section>
+
+                <section class="page-grid tips-highlights" aria-label="Featured advice">
+                    <article class="page-card">
+                        <p class="label">Advice spotlight</p>
+                        <h3>50/30/20 remix</h3>
+                        <p>Try shrinking wants to 20%, freeing 10% for textbooks or lab fees. Revisit the ratio at the end of each semester.</p>
+                        <ul>
+                            <li>Split transfers the day your stipend lands.</li>
+                            <li>Use two bank accounts to separate needs vs. wants.</li>
+                            <li>Invest the surplus into your emergency fund.</li>
+                        </ul>
+                    </article>
+                    <article class="page-card">
+                        <p class="label">Campus hack</p>
+                        <h3>Community buying power</h3>
+                        <p>Pool recurring purchases (data plans, transport cards, groceries) with roommates. Rotate who pays and settle inside the Split tab.</p>
+                        <div class="tips-highlight__chips">
+                            <span class="pill">Average save: 12%</span>
+                            <span class="pill">Time to set up: 8 min</span>
+                            <span class="pill">Best for: dorm mates</span>
+                        </div>
+                    </article>
+                    <article class="page-card">
+                        <p class="label">Next best action</p>
+                        <h3>Automate “micro investments”</h3>
+                        <p>Every time you log a luxury spend above ETB 300, match 10% into savings. Use the Expenses rules tab to remind yourself.</p>
+                        <button class="btn btn-tertiary" type="button">Add to my playbook</button>
+                    </article>
                 </section>
 
                 <section class="page-card tips-progress" aria-label="Tips progress">
@@ -66,6 +120,28 @@
                 </section>
 
                 <section class="tips-grid" id="tipsList" aria-label="Tips list"></section>
+
+                <section class="page-grid tips-advice" aria-label="Financial advice">
+                    <article class="page-card">
+                        <p class="label">Financial hygiene</p>
+                        <h3>Weekly money retro</h3>
+                        <p>Every Sunday, review wins and leaks. Screenshot your dashboard, highlight one thing to repeat and one to drop.</p>
+                        <ul class="tips-advice__list">
+                            <li>Check for duplicate charges and subscriptions.</li>
+                            <li>Move small windfalls into your high-yield goal.</li>
+                            <li>Update your wishlist so spending stays intentional.</li>
+                        </ul>
+                    </article>
+                    <article class="page-card">
+                        <p class="label">Mindful spending</p>
+                        <h3>Pause before you pay</h3>
+                        <p>Introduce a 24-hour rule for anything above ETB 500. Log the item inside EduFinance, tag it “parked”, and review tomorrow.</p>
+                        <div class="tips-advice__quote">
+                            “Future-you deserves a vote on present-you’s purchases.”
+                        </div>
+                        <button class="btn btn-primary" type="button">Set reminder</button>
+                    </article>
+                </section>
 
                 <section class="page-card tips-quotes" aria-label="Motivational quote">
                     <blockquote id="tipsQuote">Stay curious about your money story.</blockquote>

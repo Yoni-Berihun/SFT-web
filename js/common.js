@@ -19,12 +19,23 @@
         theme: "light",
     };
 
+    // Default expenses are generated relative to "today" so charts always have
+    // visible structure in the current range for brand-new users.
+    const today = new Date();
+    const toDateKey = (offsetDays) => {
+        const d = new Date(today.getTime() - offsetDays * 86400000);
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, "0");
+        const day = String(d.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
+    };
+
     const defaultExpenses = [
-        { id: "1", date: "2025-11-20", category: "Food", amount: 120, notes: "Lunch at cafeteria" },
-        { id: "2", date: "2025-11-19", category: "Transport", amount: 80, notes: "Bus fare" },
-        { id: "3", date: "2025-11-19", category: "Books", amount: 450, notes: "Textbooks for semester" },
-        { id: "4", date: "2025-11-18", category: "Entertainment", amount: 200, notes: "Movie with friends" },
-        { id: "5", date: "2025-11-17", category: "Food", amount: 95, notes: "Groceries" },
+        { id: "1", date: toDateKey(1), category: "Food", amount: 120, notes: "Lunch at cafeteria" },
+        { id: "2", date: toDateKey(2), category: "Transport", amount: 80, notes: "Bus fare" },
+        { id: "3", date: toDateKey(3), category: "Books", amount: 450, notes: "Textbooks for semester" },
+        { id: "4", date: toDateKey(4), category: "Entertainment", amount: 200, notes: "Movie with friends" },
+        { id: "5", date: toDateKey(5), category: "Food", amount: 95, notes: "Groceries" },
     ];
 
     const defaultTips = [
@@ -161,11 +172,17 @@
     };
 
     const formatCurrency = (amount, currency) => {
-        const prefix = currency === "USD" ? "$" : "Birr";
-        return `${prefix} ${amount.toLocaleString(undefined, {
+        const formatted = amount.toLocaleString(undefined, {
             minimumFractionDigits: 0,
             maximumFractionDigits: 0,
-        })}`;
+        });
+
+        if (currency === "Birr" || currency === "ETB") {
+            return `${formatted} Birr`;
+        }
+
+        const symbol = currency === "USD" ? "$" : currency;
+        return `${symbol} ${formatted}`;
     };
 
     const calculateStats = (expenses) => {

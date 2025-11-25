@@ -77,6 +77,19 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         App.qs('[data-key="avgDaily"]').textContent = App.formatCurrency(stats.averageDaily, user.currency);
+
+        const applySparkline = (selector, value) => {
+            const el = App.qs(`[data-sparkline="${selector}"]`);
+            if (!el) return;
+            const scale = Math.min(Math.max(value, 0), 1);
+            el.style.setProperty("--spark-scale", scale);
+            el.querySelector("::after"); // ensure computed
+        };
+
+        applySparkline("total", Math.min(total / (user.budget || 1), 1));
+        applySparkline("remain", Math.min(remaining / (user.budget || 1), 1));
+        applySparkline("count", Math.min(rangeExpenses.length / 10, 1));
+        applySparkline("avg", Math.min(stats.averageDaily / ((user.budget || 1) / 7), 1));
     };
 
     const renderExpenseRow = (expense) => {
@@ -84,11 +97,11 @@ document.addEventListener("DOMContentLoaded", () => {
         row.className = "table-row";
         row.dataset.id = expense.id;
         row.innerHTML = `
-            <span>${expense.date}</span>
-            <span>${expense.category}</span>
-            <span class="align-right">${App.formatCurrency(expense.amount, user.currency)}</span>
-            <span>${expense.notes}</span>
-            <span class="align-right">
+            <span data-label="Date">${expense.date}</span>
+            <span data-label="Category">${expense.category}</span>
+            <span data-label="Amount" class="align-right">${App.formatCurrency(expense.amount, user.currency)}</span>
+            <span data-label="Notes">${expense.notes}</span>
+            <span data-label="Actions" class="align-right">
                 <button class="btn btn-ghost" data-action="edit">Edit</button>
                 <button class="btn btn-ghost" data-action="delete">Delete</button>
             </span>
@@ -111,6 +124,8 @@ document.addEventListener("DOMContentLoaded", () => {
             .sort((a, b) => new Date(b.date) - new Date(a.date))
             .slice(0, 7);
 
+        updateExpenseInsights(getExpensesInRange());
+
         if (!source.length) {
             const empty = document.createElement("div");
             empty.className = "table-row";
@@ -120,6 +135,127 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         source.forEach((expense) => container.appendChild(renderExpenseRow(expense)));
+    };
+
+    const spendChartId = "expensesRangeChart";
+    const topChartId = "expensesTopChart";
+    const avgChartId = "expensesAvgChart";
+
+    const chartStore = {};
+
+    const renderMiniChart = (key, configBuilder) => {
+        const canvas = App.qs(`#${key}`);
+        if (!canvas || typeof Chart === "undefined") return;
+        const ctx = canvas.getContext("2d");
+        if (chartStore[key]) chartStore[key].destroy();
+        chartStore[key] = new Chart(ctx, configBuilder());
+    };
+
+    const updateExpenseInsights = (rangeSource) => {
+        const stats = App.calculateStats(rangeSource);
+        const totalEl = App.qs('[data-key="expensesRangeTotal"]');
+        const countEl = App.qs('[data-key="expensesRangeCount"]');
+        const topEl = App.qs('[data-key="expensesTopCategory"]');
+        const shareEl = App.qs('[data-key="expensesTopShare"]');
+        const avgEl = App.qs('[data-key="expensesAverage"]');
+
+        if (totalEl) totalEl.textContent = App.formatCurrency(stats.total, user.currency);
+        if (countEl) countEl.textContent = `${rangeSource.length || 0} transactions`;
+
+        const avgTicket = rangeSource.length ? stats.total / rangeSource.length : 0;
+        if (avgEl) avgEl.textContent = App.formatCurrency(avgTicket, user.currency);
+
+        const totals = computeCategoryTotals(rangeSource);
+        if (totals.length && topEl && shareEl) {
+            const [category, value] = totals[0];
+            const share = stats.total ? ((value / stats.total) * 100).toFixed(1) : 0;
+            topEl.textContent = category;
+            shareEl.textContent = `${share}% of spending`;
+        } else {
+            if (topEl) topEl.textContent = "—";
+            if (shareEl) shareEl.textContent = "Waiting for data";
+        }
+
+        const isDark = document.documentElement.getAttribute("data-theme") === "dark";
+        const baseText = isDark ? "#bdc3c7" : "#7f8c8d";
+        const borderColor = isDark ? "#3e5368" : "#e0e3e7";
+
+        renderMiniChart(spendChartId, () => ({
+            type: "doughnut",
+            data: {
+                labels: ["Spent", "Remaining"],
+                datasets: [
+                    {
+                        data: [stats.total, Math.max(user.budget - stats.total, 0)],
+                        backgroundColor: ["#27ae60", borderColor],
+                        borderWidth: 0,
+                    },
+                ],
+            },
+            options: {
+                cutout: "70%",
+                plugins: { legend: { display: false } },
+                maintainAspectRatio: false,
+            },
+        }));
+
+        const topShare = totals.length && stats.total ? (totals[0][1] / stats.total) * 100 : 0;
+        renderMiniChart(topChartId, () => ({
+            type: "polarArea",
+            data: {
+                labels: ["Top category", "Other"],
+                datasets: [
+                    {
+                        data: [topShare, 100 - topShare],
+                        backgroundColor: ["rgba(39, 174, 96, 0.85)", "rgba(44, 62, 80, 0.12)"],
+                        borderColor: borderColor,
+                    },
+                ],
+            },
+            options: {
+                plugins: { legend: { display: false } },
+                maintainAspectRatio: false,
+            },
+        }));
+
+        const dailyAvg = stats.total ? stats.total / 7 : 0;
+        renderMiniChart(avgChartId, () => ({
+            type: "bar",
+            data: {
+                labels: ["Avg ticket"],
+                datasets: [
+                    {
+                        data: [avgTicket],
+                        backgroundColor: "rgba(243, 156, 18, 0.85)",
+                        borderRadius: 6,
+                        barThickness: 26,
+                    },
+                ],
+            },
+            options: {
+                scales: {
+                    y: { display: false, suggestedMax: Math.max(avgTicket * 1.3, dailyAvg) },
+                    x: { display: false },
+                },
+                plugins: { legend: { display: false } },
+                maintainAspectRatio: false,
+            },
+        }));
+    };
+
+    const bindExpenseChips = () => {
+        const chips = Array.from(document.querySelectorAll("[data-expense-chip]"));
+        if (!chips.length) return;
+        chips.forEach((chip) => {
+            chip.addEventListener("click", () => {
+                const category = chip.dataset.expenseChip;
+                filteredCategory = category;
+                chips.forEach((c) => c.classList.toggle("is-active", c === chip));
+                const select = App.qs("#categoryFilter");
+                if (select) select.value = category;
+                populateExpensesTable();
+            });
+        });
     };
 
     const computeCategoryTotals = (source) => {
@@ -222,6 +358,44 @@ document.addEventListener("DOMContentLoaded", () => {
                         x: {
                             ticks: { color: isDark ? "#bdc3c7" : "#7f8c8d" },
                             grid: { color: isDark ? "#3e5368" : "#e0e3e7" },
+                        },
+                    },
+                },
+            });
+        }
+
+        const categoryCanvas = App.qs("#categoryShareChart");
+        if (categoryCanvas && typeof Chart !== "undefined") {
+            const totals = computeCategoryTotals(rangeExpenses);
+            const labels = totals.map(([category]) => category);
+            const values = totals.map(([, amount]) => amount);
+            const colors = ["#27ae60", "#f39c12", "#3498db", "#9b59b6", "#e74c3c"];
+
+            if (window.dashboardPieChart) window.dashboardPieChart.destroy();
+
+            window.dashboardPieChart = new Chart(categoryCanvas.getContext("2d"), {
+                type: "doughnut",
+                data: {
+                    labels,
+                    datasets: [
+                        {
+                            data: values,
+                            backgroundColor: colors,
+                            borderWidth: 1,
+                        },
+                    ],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: "bottom",
+                            labels: {
+                                color: document.documentElement.getAttribute("data-theme") === "dark"
+                                    ? "#bdc3c7"
+                                    : "#7f8c8d",
+                            },
                         },
                     },
                 },
@@ -524,6 +698,100 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         initDateRangeControls();
+        bindExpenseChips();
+    };
+
+    const GOALS_KEY = "edufinance-goals";
+    const DEFAULT_GOALS = [
+        { id: "goal-log", label: "Log every expense the day it happens", completed: false },
+        { id: "goal-budget", label: "Stay under 80% of budget", completed: false },
+        { id: "goal-savings", label: "Add at least one savings entry", completed: false },
+    ];
+
+    let goalsState = App.loadState(GOALS_KEY, DEFAULT_GOALS);
+
+    const renderGoals = () => {
+        const list = App.qs("#goalsList");
+        const summary = App.qs("#goalsSummary");
+        if (!list || !summary) return;
+
+        list.innerHTML = "";
+        goalsState.forEach((goal) => {
+            const li = document.createElement("li");
+            li.innerHTML = `
+                <label>
+                    <input type="checkbox" data-goal-id="${goal.id}" ${goal.completed ? "checked" : ""} />
+                    ${goal.label}
+                </label>
+            `;
+            list.appendChild(li);
+        });
+
+        const completed = goalsState.filter((goal) => goal.completed).length;
+        summary.textContent = `${completed} of ${goalsState.length} complete`;
+
+        list.querySelectorAll("input[type='checkbox']").forEach((checkbox) => {
+            checkbox.addEventListener("change", () => {
+                const id = checkbox.dataset.goalId;
+                goalsState = goalsState.map((goal) =>
+                    goal.id === id ? { ...goal, completed: checkbox.checked } : goal
+                );
+                App.saveState(GOALS_KEY, goalsState);
+                renderGoals();
+            });
+        });
+    };
+
+    const attachGoalButtons = () => {
+        App.qs("#addGoal")?.addEventListener("click", () => {
+            const label = prompt("Add a weekly focus:");
+            if (!label || !label.trim()) return;
+            const newGoal = {
+                id: `goal-${Date.now()}`,
+                label: label.trim(),
+                completed: false,
+            };
+            goalsState = [...goalsState, newGoal];
+            App.saveState(GOALS_KEY, goalsState);
+            addActivity?.(`Added weekly goal: ${label.trim()}`);
+            renderGoals();
+        });
+
+        App.qs("#resetGoals")?.addEventListener("click", () => {
+            goalsState = DEFAULT_GOALS.map((goal) => ({ ...goal }));
+            App.saveState(GOALS_KEY, goalsState);
+            addActivity?.("Reset weekly goals");
+            renderGoals();
+        });
+    };
+
+    let activityLog = App.loadState("edufinance-activity", []);
+
+    const addActivity = (message) => {
+        const entry = {
+            id: Date.now(),
+            message,
+            timestamp: new Date().toISOString(),
+        };
+        activityLog = [entry, ...activityLog].slice(0, 10);
+        App.saveState("edufinance-activity", activityLog);
+        renderActivityFeed();
+    };
+
+    const renderActivityFeed = () => {
+        const feed = App.qs("#activityFeed");
+        if (!feed) return;
+        feed.innerHTML = "";
+        if (!activityLog.length) {
+            feed.innerHTML = "<li>No activity yet</li>";
+            return;
+        }
+        activityLog.forEach((item) => {
+            const li = document.createElement("li");
+            const date = new Date(item.timestamp).toLocaleString();
+            li.innerHTML = `<span>${item.message}</span><small>${date}</small>`;
+            feed.appendChild(li);
+        });
     };
 
     populateTips();
@@ -531,6 +799,9 @@ document.addEventListener("DOMContentLoaded", () => {
     populateSplit();
     populateAnalysis();
     updateAll();
+    renderGoals();
+    attachGoalButtons();
+    renderActivityFeed();
     initEvents();
 
     // Listen for expense updates to refresh charts
@@ -542,5 +813,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // Refresh chart colors on theme change
     window.addEventListener("themechange", () => {
         populateAnalysis();
+        updateExpenseInsights(getExpensesInRange());
     });
 });

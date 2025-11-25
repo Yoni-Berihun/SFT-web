@@ -46,13 +46,59 @@
 
         <main id="main-content">
             <div class="container page-shell">
-                <section class="page-hero" aria-labelledby="analysis-title">
-                    <h1 id="analysis-title" class="page-hero__title">Analysis &amp; Reports</h1>
-                    <p class="page-hero__subtitle">Understand trends with a monthly calendar, daily totals, and category comparisons. Export a snapshot for classmates or mentors.</p>
+                <section class="page-hero page-hero--analysis" aria-labelledby="analysis-title">
+                    <div>
+                        <h1 id="analysis-title" class="page-hero__title">Analysis &amp; Reports</h1>
+                        <p class="page-hero__subtitle">Understand trends with daily totals, category comparisons, and live projections that respond instantly to every filter change.</p>
+                    </div>
+                    <ul class="analysis-hero__list">
+                        <li>Adaptive charts update in real time as you tweak ranges.</li>
+                        <li>See how actual spend stacks against a smart target.</li>
+                        <li>Share or export polished snapshots for your accountability squad.</li>
+                    </ul>
                     <div class="page-hero__actions">
-                        <button class="btn btn-primary" id="analysisShare" type="button">Share summary</button>
+                        <div class="share-control">
+                            <button class="btn btn-primary" id="analysisShare" type="button" aria-haspopup="menu" aria-expanded="false">
+                                Share summary
+                            </button>
+                            <div class="share-menu" id="analysisShareMenu" role="menu" hidden>
+                                <button class="share-menu__item" type="button" data-share="native">
+                                    <span>📱 System share</span>
+                                    <small>Use your device share sheet</small>
+                                </button>
+                                <button class="share-menu__item" type="button" data-share="copy">
+                                    <span>📋 Copy summary</span>
+                                    <small>Copy text to clipboard</small>
+                                </button>
+                                <button class="share-menu__item" type="button" data-share="email">
+                                    <span>✉️ Email</span>
+                                    <small>Create an email draft</small>
+                                </button>
+                                <button class="share-menu__item" type="button" data-share="telegram">
+                                    <span>📨 Telegram</span>
+                                    <small>Share to a Telegram chat</small>
+                                </button>
+                                <button class="share-menu__item" type="button" data-share="unigram">
+                                    <span>📡 Unigram</span>
+                                    <small>Share via Unigram client</small>
+                                </button>
+                                <button class="share-menu__item" type="button" data-share="whatsapp">
+                                    <span>🟢 WhatsApp</span>
+                                    <small>Share via WhatsApp</small>
+                                </button>
+                                <button class="share-menu__item" type="button" data-share="sms">
+                                    <span>💬 Messages / SMS</span>
+                                    <small>Send as a text message</small>
+                                </button>
+                                <button class="share-menu__item" type="button" data-share="x">
+                                    <span>𝕏 / Twitter</span>
+                                    <small>Open a post with this summary</small>
+                                </button>
+                            </div>
+                        </div>
                         <button class="btn btn-secondary" id="analysisExportPdf" type="button">Export PDF</button>
                         <button class="btn btn-ghost" id="analysisExportCsv" type="button">Export CSV</button>
+                        <a class="btn btn-ghost" href="expenses.html">Edit data</a>
                     </div>
                 </section>
 
@@ -108,24 +154,56 @@
                     </article>
                 </section>
 
-                <section class="page-grid analysis-charts" aria-label="Chart views">
-                    <article class="page-card">
+                <section class="analysis-charts" aria-label="Visual spending insights">
+                    <article class="page-card chart-card chart-card--wide">
                         <div class="analysis-card__header">
-                            <h3>Daily totals</h3>
-                            <span class="helper-text">Simple bar preview</span>
+                            <div>
+                                <p class="label">Spending overview</p>
+                                <h3>Daily flow &amp; running trend</h3>
+                            </div>
+                            <span class="helper-text">Bars show each day, line tracks how it builds up over time.</span>
                         </div>
-                        <div id="analysisDailyChart" class="chart-preview">
+                        <div id="analysisDailyChart" class="chart-surface">
                             <canvas id="analysisDailyChartCanvas"></canvas>
                         </div>
                     </article>
-                    <article class="page-card">
+                    <article class="page-card chart-card">
                         <div class="analysis-card__header">
-                            <h3>Category breakdown</h3>
-                            <span class="helper-text">Top 5 categories</span>
+                            <div>
+                                <p class="label">Top categories</p>
+                                <h3>Category breakdown</h3>
+                            </div>
+                            <span class="helper-text">Live top five split</span>
                         </div>
-                        <div id="analysisCategoryChart" class="chart-preview chart-preview--pie">
+                        <div id="analysisCategoryChart" class="chart-surface chart-surface--compact">
                             <canvas id="analysisCategoryChartCanvas"></canvas>
                         </div>
+                        <ul id="analysisCategoryList" class="category-table" aria-live="polite"></ul>
+                    </article>
+                </section>
+
+                <section class="analysis-insights" aria-label="Insight shortcuts">
+                    <article class="page-card insight-panel">
+                        <header>
+                            <p class="label">Action board</p>
+                            <h3>What the charts are saying</h3>
+                        </header>
+                        <ul class="insight-panel__list">
+                            <li>Spikes in the bar chart show ideal moments to reschedule repeat buys.</li>
+                            <li>The projection chart reveals whether you are pacing ahead or behind plan.</li>
+                            <li>Category pie helps cap lifestyle spending before it overtakes essentials.</li>
+                        </ul>
+                    </article>
+                    <article class="page-card insight-panel">
+                        <header>
+                            <p class="label">Workflow</p>
+                            <h3>How to use these filters</h3>
+                        </header>
+                        <ul class="insight-panel__list insight-panel__list--badges">
+                            <li><span class="insight-badge">1</span> Pick a preset range, then tighten it with exact dates.</li>
+                            <li><span class="insight-badge">2</span> Compare categories individually to surface hidden leaks.</li>
+                            <li><span class="insight-badge">3</span> Share/export once the graphs tell a compelling story.</li>
+                        </ul>
                     </article>
                 </section>
 

@@ -84,18 +84,22 @@
                             <div>
                                 <p class="label">Total spent</p>
                                 <p class="metric-value" data-key="totalSpent">Birr 0</p>
+                                <span class="sparkline" data-sparkline="total"></span>
                             </div>
                             <div>
                                 <p class="label">Remaining budget</p>
                                 <p class="metric-value" data-key="remainingBudget">Birr 0</p>
+                                <span class="sparkline" data-sparkline="remain"></span>
                             </div>
                             <div>
                                 <p class="label">Transactions this week</p>
                                 <p class="metric-value" data-key="transactionCount">0</p>
+                                <span class="sparkline" data-sparkline="count"></span>
                             </div>
                             <div>
                                 <p class="label">Average daily spend</p>
                                 <p class="metric-value" data-key="avgDaily">Birr 0</p>
+                                <span class="sparkline" data-sparkline="avg"></span>
                             </div>
                             <div class="progress">
                                 <div class="progress-bar" data-key="budgetProgress"></div>
@@ -113,15 +117,12 @@
                     </article>
                     <article class="card metric-card">
                         <h3>Upcoming reminders</h3>
+                        <p class="helper-text">Keep these cleared to stay on track this week.</p>
                         <ul class="list upcoming-list">
                             <li>Pay library fine — Birr 45 (due Friday)</li>
                             <li>Class trip contribution — Birr 150 (next week)</li>
                             <li>Monthly savings transfer — Birr 300 (1st of month)</li>
                         </ul>
-                        <div class="badges-row">
-                            <span class="badge">Syncs to local storage</span>
-                            <span class="badge">Dark mode ready</span>
-                        </div>
                     </article>
                 </div>
             </section>
@@ -146,6 +147,40 @@
                         </label>
                     </div>
                 </header>
+                <div class="expenses-insights">
+                    <article class="insight-card">
+                        <div>
+                            <p class="label">Spent this range</p>
+                            <p class="insight-value" data-key="expensesRangeTotal">0 Birr</p>
+                            <small class="insight-note" data-key="expensesRangeCount">0 transactions</small>
+                        </div>
+                        <div class="insight-graphic">
+                            <canvas id="expensesRangeChart" aria-label="Spend progress"></canvas>
+                        </div>
+                    </article>
+
+                    <article class="insight-card">
+                        <div>
+                            <p class="label">Top category</p>
+                            <p class="insight-value" data-key="expensesTopCategory">—</p>
+                            <small class="insight-note" data-key="expensesTopShare">Waiting for data</small>
+                        </div>
+                        <div class="insight-graphic">
+                            <canvas id="expensesTopChart" aria-label="Top category share"></canvas>
+                        </div>
+                    </article>
+
+                    <article class="insight-card">
+                        <div>
+                            <p class="label">Average ticket</p>
+                            <p class="insight-value" data-key="expensesAverage">0 Birr</p>
+                            <small class="insight-note">Per transaction</small>
+                        </div>
+                        <div class="insight-graphic">
+                            <canvas id="expensesAvgChart" aria-label="Average spend trend"></canvas>
+                        </div>
+                    </article>
+                </div>
                 <div class="table">
                     <div class="table-head">
                         <span>Date</span>
@@ -180,6 +215,12 @@
                         <h3>Daily totals</h3>
                         <div class="chart-preview" id="dailyTotals">
                             <canvas id="dailyTotalsChart"></canvas>
+                        </div>
+                    </article>
+                    <article class="card">
+                        <h3>Category share</h3>
+                        <div class="chart-preview" id="categoryShare">
+                            <canvas id="categoryShareChart"></canvas>
                         </div>
                     </article>
                     <article class="card">
@@ -256,13 +297,35 @@
                 </div>
             </section>
 
-            <section class="section">
-                <article class="card about-card">
-                    <h2>About this conversion</h2>
-                    <p>This dashboard is built entirely with semantic HTML, responsive CSS, and vanilla JavaScript, mirroring all interactions from the original TSX components.</p>
-                    <p>All data persists locally using <code>localStorage</code>, making it ready to demonstrate in any classroom without a backend.</p>
+            <section class="section section-split">
+                <article class="card goals-card">
+                    <div class="card-header goals-header">
+                        <div>
+                            <h2>Weekly goals</h2>
+                            <small class="helper-text" id="goalsSummary">0 of 0 complete</small>
+                        </div>
+                        <button
+                            class="icon-button icon-button--ghost"
+                            type="button"
+                            id="addGoal"
+                            aria-label="Add weekly plan"
+                        >
+                            +
+                        </button>
+                    </div>
+                    <ul class="goals-list" id="goalsList"></ul>
+                    <button class="btn btn-secondary" type="button" id="resetGoals">Reset goals</button>
+                </article>
+
+                <article class="card activity-card">
+                    <div class="card-header">
+                        <h2>Activity timeline</h2>
+                        <small class="helper-text">Recent changes</small>
+                    </div>
+                    <ol class="activity-feed" id="activityFeed"></ol>
                 </article>
             </section>
+            
         </main>
 
         <footer class="site-footer">

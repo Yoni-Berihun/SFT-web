@@ -9,6 +9,7 @@
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
         <link rel="stylesheet" href="css/global.css" />
         <link rel="stylesheet" href="css/split.css" />
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" integrity="sha384-6FpEvGpK9x3TlKVUw6JO33dTUmL8/IpEW+uFfLgLxR72k3gI7mQ9mJd3Hhj3qHxN" crossorigin="anonymous"></script>
         <script defer src="js/common.js"></script>
         <script defer src="js/split.js"></script>
     </head>
@@ -44,47 +45,163 @@
         </header>
 
         <main id="main-content">
-            <div class="container page-shell split-layout">
-                <section class="page-card split-form-card">
-                    <h1>Split a new expense</h1>
-                    <form id="splitForm" class="split-form">
-                        <label>
-                            Description
-                            <input type="text" id="splitDescription" placeholder="Dinner at cafe" required />
-                        </label>
-                        <label>
-                            Total amount
-                            <input type="number" id="splitAmount" min="0" step="0.01" required />
-                        </label>
-                        <label>
-                            Split mode
-                            <select id="splitMode">
-                                <option value="even">Even split</option>
-                                <option value="custom" disabled>Custom allocation (soon)</option>
-                            </select>
-                        </label>
-                        <label>
-                            Participants
-                            <select id="splitParticipants" multiple>
-                                <option value="me" selected>You</option>
-                                <option value="1">Alex</option>
-                                <option value="2">Sarah</option>
-                                <option value="3">Mike</option>
-                            </select>
-                        </label>
-                        <button class="btn btn-primary" type="submit">Create split</button>
-                    </form>
+            <div class="container page-shell split-shell">
+                <section class="split-layout split-layout--primary">
+                    <article class="page-card split-form-card">
+                        <header>
+                            <p class="label">Split calculator</p>
+                            <h2>How should we break it down?</h2>
+                        </header>
+                        <form id="splitForm" class="split-form">
+                            <label>
+                                Total amount
+                                <input type="number" id="splitAmount" min="0" step="0.01" placeholder="Enter total bill" required />
+                            </label>
+                            <label>
+                                Number of people
+                                <input type="number" id="splitPeople" min="1" max="25" step="1" placeholder="How many friends?" required />
+                            </label>
+                            <div class="split-form__quick">
+                                <div>
+                                    <p class="label">Quick total</p>
+                                    <div class="split-form__pills" data-quick-amounts>
+                                        <button type="button" data-quick-amount="250">ETB 250</button>
+                                        <button type="button" data-quick-amount="500">ETB 500</button>
+                                        <button type="button" data-quick-amount="1000">ETB 1K</button>
+                                    </div>
+                                </div>
+                                <div>
+                                    <p class="label">Party size</p>
+                                    <div class="split-form__pills split-form__pills--ghost" data-quick-people>
+                                        <button type="button" data-quick-people="2">Pair</button>
+                                        <button type="button" data-quick-people="4">Squad</button>
+                                        <button type="button" data-quick-people="6">Full table</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="split-participants" id="splitParticipantsContainer"></div>
+                            <button class="btn btn-primary split-recalc" type="submit">
+                                <span>Recalculate</span>
+                            </button>
+                            <div class="split-form__note">
+                                <p class="helper-text">Need inspiration? Tap quick presets above, tweak sliders, and watch the visuals react instantly.</p>
+                                <div class="split-form__note-glow" aria-hidden="true"></div>
+                            </div>
+                        </form>
+                    </article>
+
+                    <article class="page-card split-result-card">
+                        <header class="split-result__header">
+                            <div>
+                                <p class="label">Result</p>
+                                <h2>Each person pays</h2>
+                            </div>
+                            <div class="share-control">
+                                <button class="btn btn-ghost" type="button" id="splitShareSummary" aria-haspopup="menu" aria-expanded="false">Share summary</button>
+                                <div class="share-menu" id="splitShareMenu" role="menu" hidden>
+                                    <button class="share-menu__item" type="button" data-share="whatsapp">🟢 WhatsApp</button>
+                                    <button class="share-menu__item" type="button" data-share="telegram">📨 Telegram</button>
+                                    <button class="share-menu__item" type="button" data-share="instagram">📸 Instagram</button>
+                                    <button class="share-menu__item" type="button" data-share="email">✉️ Email</button>
+                                    <button class="share-menu__item" type="button" data-share="sms">💬 SMS / Message</button>
+                                </div>
+                            </div>
+                        </header>
+                        <div class="split-result__figures">
+                            <strong id="splitShareAmount">ETB 0</strong>
+                            <p class="helper-text">Based on <span id="splitPeopleLabel">0</span> people sharing <span id="splitTotalLabel">ETB 0</span></p>
+                        </div>
+                        <div class="split-visuals">
+                            <div class="split-chart split-chart--primary">
+                                <canvas id="splitChart"></canvas>
+                            </div>
+                            <div class="split-chart split-chart--secondary">
+                                <canvas id="splitStatusChart"></canvas>
+                                <p class="helper-text">Track how much is already covered vs pending at a glance.</p>
+                            </div>
+                        </div>
+                        <div class="split-breakdown">
+                            <h3>Breakdown</h3>
+                            <ul id="splitBreakdownList"></ul>
+                            <p class="helper-text" id="splitRemainder" hidden></p>
+                        </div>
+                    </article>
                 </section>
 
-                <section class="page-card split-list-card" aria-labelledby="splitListTitle">
-                    <header class="split-list-header">
-                        <div>
-                            <h2 id="splitListTitle">Recent splits</h2>
-                            <p class="helper-text">Tap a card to settle.</p>
+                <section class="page-card split-hero">
+                    <div class="split-hero__content">
+                        <p class="eyebrow">Instant splitter</p>
+                        <h1>Tell us the bill, we’ll split it</h1>
+                        <p class="helper-text">Input the total, invite your crew, and nudge sliders if someone owes a different amount. EduFinance keeps the math honest.</p>
+                        <div class="split-hero__pulse" aria-hidden="true">
+                            <span></span>
+                            <span></span>
+                            <span></span>
                         </div>
-                        <button class="btn btn-ghost" id="splitReset" type="button">Restore demo data</button>
-                    </header>
-                    <ul id="splitList" class="page-list split-list"></ul>
+                    </div>
+                    <div class="split-hero__stats">
+                        <article>
+                            <p class="label">Fast splits</p>
+                            <strong>&lt; 1 sec</strong>
+                            <p class="helper-text">Average calculation time</p>
+                        </article>
+                        <article>
+                            <p class="label">Smart balance</p>
+                            <strong>Live weights</strong>
+                            <p class="helper-text">Fine-tuned sliders stay ready for nuance</p>
+                        </article>
+                        <article>
+                            <p class="label">Custom control</p>
+                            <strong>Weights &amp; names</strong>
+                            <p class="helper-text">Dial in exactly who owes what</p>
+                        </article>
+                    </div>
+                    <div class="split-hero__animation" aria-hidden="true">
+                        <div class="split-orb split-orb--one"></div>
+                        <div class="split-orb split-orb--two"></div>
+                        <div class="split-orb split-orb--three"></div>
+                        <svg class="split-wave" viewBox="0 0 300 120" preserveAspectRatio="none">
+                            <path d="M0,80 C60,20 120,140 180,70 C220,30 260,90 300,60 L300,120 L0,120 Z"></path>
+                        </svg>
+                    </div>
+                </section>
+
+                <section class="split-ribbon" aria-hidden="true">
+                    <div class="split-ribbon__inner">
+                        <span>Preset vibes</span>
+                        <span>Live sliders</span>
+                        <span>Instant charts</span>
+                        <span>One-tap sharing</span>
+                    </div>
+                </section>
+
+                <section class="split-spotlight">
+                    <article class="split-spotlight__card">
+                        <div>
+                            <p class="label">Vibe tracker</p>
+                            <h3>Live share pulse</h3>
+                        </div>
+                        <div class="split-spotlight__sparkline" aria-hidden="true">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                        <p class="helper-text">Animated bars echo the doughnut chart to preview how uneven the current bill is.</p>
+                    </article>
+                    <article class="split-spotlight__card split-spotlight__card--accent">
+                        <div>
+                            <p class="label">Share ready</p>
+                            <h3>Drop-in summary</h3>
+                        </div>
+                        <p class="helper-text">One click share menu, complete with paid vs pending overview.</p>
+                        <div class="split-spotlight__orbit" aria-hidden="true">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </article>
                 </section>
             </div>
         </main>
@@ -99,16 +216,6 @@
                 </div>
             </div>
         </footer>
-
-        <div id="modalOverlay" class="modal-overlay" hidden>
-            <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-                <header class="modal-header">
-                    <h2 id="modalTitle">Split detail</h2>
-                    <button id="modalClose" class="icon-button" type="button" aria-label="Close">✕</button>
-                </header>
-                <div id="modalContent" class="modal-body"></div>
-            </div>
-        </div>
 
         <div id="toast" class="toast" role="status" aria-live="polite" hidden>Ready</div>
     </body>

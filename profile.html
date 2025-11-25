@@ -44,64 +44,334 @@
         </header>
 
         <main id="main-content">
-            <div class="container page-shell profile-grid">
-                <section class="page-card profile-card">
-                    <div class="profile-card__header">
-                        <div class="avatar" id="profileAvatarPreview" aria-hidden="true">EF</div>
+            <div class="container page-shell profile-shell">
+                <section class="page-card profile-hero">
+                    <div class="profile-hero__grid">
+                        <div class="profile-hero__identity">
+                            <div class="profile-avatar" id="profileAvatarPreview" aria-hidden="true">EF</div>
+                            <div>
+                                <p class="eyebrow">Student profile</p>
+                                <h1 id="profileNameHeading">Student</h1>
+                                <p id="profileProgram">BSc Computer Science · Year 3</p>
+                                <div class="profile-contact">
+                                    <span id="profileEmailLabel">student@edufinance.com</span>
+                                    <span id="profilePhoneLabel">+251 900 000 000</span>
+                                </div>
+                            </div>
+                        </div>
+                        <dl class="profile-hero__meta">
+                            <div>
+                                <dt>Student ID</dt>
+                                <dd id="profileStudentId">HU-2023-001</dd>
+                            </div>
+                            <div>
+                                <dt>Major</dt>
+                                <dd id="profileMajor">Software Engineering</dd>
+                            </div>
+                            <div>
+                                <dt>Semester</dt>
+                                <dd id="profileSemester">Semester 2</dd>
+                            </div>
+                        </dl>
+                        <div class="profile-hero__actions">
+                            <button class="btn btn-primary" type="button" id="profileEditTrigger">Edit profile</button>
+                            <div class="share-control">
+                                <button class="btn btn-ghost" id="profileShareSummary" type="button" aria-haspopup="menu" aria-expanded="false">Share summary</button>
+                                <div class="share-menu" id="profileShareMenu" role="menu" hidden>
+                                    <button class="share-menu__item" type="button" data-share="whatsapp">🟢 WhatsApp</button>
+                                    <button class="share-menu__item" type="button" data-share="telegram">📨 Telegram</button>
+                                    <button class="share-menu__item" type="button" data-share="instagram">📸 Instagram</button>
+                                    <button class="share-menu__item" type="button" data-share="email">✉️ Email</button>
+                                    <button class="share-menu__item" type="button" data-share="sms">💬 SMS / Message</button>
+                                </div>
+                            </div>
+                            <button class="btn btn-secondary" type="button" id="profileExportPdf">Export as PDF</button>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="profile-section profile-overview">
+                    <header class="profile-section__header">
                         <div>
-                            <h1 id="profileNameHeading">Student</h1>
-                            <p class="helper-text" id="profileEmailLabel">student@edufinance.com</p>
+                            <p class="label">Financial overview</p>
+                            <h2>Where your money stands</h2>
                         </div>
+                        <div class="profile-overview__legend">
+                            <span class="legend-dot is-safe"></span> Paid
+                            <span class="legend-dot is-pending"></span> Pending
+                            <span class="legend-dot is-risk"></span> Overdue
+                        </div>
+                    </header>
+                    <div class="profile-overview__grid">
+                        <article class="overview-card">
+                            <p class="label">Current balance</p>
+                            <h3 id="overviewBalance">ETB 0</h3>
+                            <span class="status-chip is-safe">✅ On track</span>
+                        </article>
+                        <article class="overview-card">
+                            <p class="label">Outstanding dues</p>
+                            <h3 id="overviewDues">ETB 0</h3>
+                            <span class="status-chip is-risk">❌ Overdue</span>
+                        </article>
+                        <article class="overview-card">
+                            <p class="label">Upcoming payments</p>
+                            <h3 id="overviewUpcoming">ETB 0</h3>
+                            <span class="status-chip is-pending">⚠️ Pending</span>
+                        </article>
+                        <article class="overview-card">
+                            <p class="label">Financial aid received</p>
+                            <h3 id="overviewAid">ETB 0</h3>
+                            <span class="status-chip is-safe">✅ Cleared</span>
+                        </article>
                     </div>
-                    <form id="profileForm" class="profile-form">
-                        <label>
-                            Full name
-                            <input type="text" id="profileName" required />
-                        </label>
-                        <label>
-                            Email
-                            <input type="email" id="profileEmail" required />
-                        </label>
-                        <label>
-                            Monthly budget
-                            <input type="number" id="profileBudget" min="0" step="0.01" required />
-                        </label>
-                        <label>
-                            Currency
-                            <select id="profileCurrency">
-                                <option value="Birr">Birr (ETB)</option>
-                                <option value="USD">USD ($)</option>
+                </section>
+
+                <section class="profile-section profile-analytics">
+                    <article class="page-card profile-basic-card">
+                        <header class="profile-section__header">
+                            <div>
+                                <p class="label">Student basics</p>
+                                <h2>Onboarding information</h2>
+                            </div>
+                        </header>
+                        <dl class="profile-basic__list" id="profileBasicDetails">
+                            <div>
+                                <dt>Full name</dt>
+                                <dd>Student</dd>
+                            </div>
+                            <div>
+                                <dt>Email</dt>
+                                <dd>student@edufinance.com</dd>
+                            </div>
+                            <div>
+                                <dt>Phone</dt>
+                                <dd>+251 900 000 000</dd>
+                            </div>
+                            <div>
+                                <dt>Monthly budget</dt>
+                                <dd>ETB 0</dd>
+                            </div>
+                            <div>
+                                <dt>Preferred currency</dt>
+                                <dd>Birr (ETB)</dd>
+                            </div>
+                        </dl>
+                        <button class="btn btn-tertiary" type="button" id="profileEditSecondary">Update info</button>
+                    </article>
+                    <article class="page-card profile-obligations">
+                        <header class="profile-section__header">
+                            <div>
+                                <p class="label">Obligations</p>
+                                <h2>Upcoming dues &amp; aid</h2>
+                            </div>
+                        </header>
+                        <ul class="profile-obligations__list" id="profileObligations"></ul>
+                    </article>
+                </section>
+
+                <section class="profile-section profile-transactions">
+                    <header class="profile-section__header">
+                        <div>
+                            <p class="label">Transactions</p>
+                            <h2>Detailed activity</h2>
+                        </div>
+                        <div class="profile-table__controls">
+                            <input type="search" id="transactionSearch" placeholder="Search description or method" />
+                            <select id="transactionFilter">
+                                <option value="all">All statuses</option>
+                                <option value="paid">Paid</option>
+                                <option value="pending">Pending</option>
+                                <option value="overdue">Overdue</option>
                             </select>
-                        </label>
-                        <label class="switch">
-                            <input type="checkbox" id="profileNotifications" />
-                            <span>Enable notifications</span>
-                        </label>
-                        <div class="profile-form__actions">
-                            <button class="btn btn-primary" type="submit">Save profile</button>
-                            <button class="btn btn-tertiary" type="button" id="profileReset">Reset changes</button>
                         </div>
-                    </form>
-                </section>
-
-                <section class="page-card profile-preferences">
-                    <h2>Avatar &amp; preferences</h2>
-                    <label class="upload-field">
-                        Upload avatar
-                        <input type="file" id="profileAvatarInput" accept="image/*" />
-                    </label>
-                    <div class="profile-preferences__actions">
-                        <button class="btn btn-secondary" type="button" id="removeAvatar">Remove avatar</button>
+                    </header>
+                    <div class="profile-table__wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Description</th>
+                                    <th>Amount</th>
+                                    <th>Method</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="profileTransactions"></tbody>
+                        </table>
                     </div>
-                    <p class="helper-text">Square images look best. We store it locally in your browser.</p>
                 </section>
 
-                <section class="page-card profile-actions">
-                    <h2>Danger zone</h2>
-                    <p>Need to start fresh? Clear local data and sign out.</p>
-                    <div class="profile-actions__buttons">
-                        <button class="btn btn-ghost" type="button" id="profileExport">Export profile JSON</button>
-                        <button class="btn btn-danger" type="button" id="clearData">Clear data</button>
+                <section class="profile-section profile-documents">
+                    <header class="profile-section__header">
+                        <div>
+                            <p class="label">Documents &amp; receipts</p>
+                            <h2>Keep everything handy</h2>
+                        </div>
+                        <div class="profile-documents__actions">
+                            <button class="btn btn-ghost" type="button" id="uploadReceipt">Upload proof</button>
+                            <button class="btn btn-secondary" type="button">Download all</button>
+                        </div>
+                    </header>
+                    <div class="profile-documents__grid" id="profileDocuments"></div>
+                </section>
+
+                <section class="profile-section profile-budgets">
+                    <header class="profile-section__header">
+                        <div>
+                            <p class="label">Budget &amp; goals</p>
+                            <h2>Control your categories</h2>
+                        </div>
+                        <div class="profile-budgets__actions">
+                            <button class="btn btn-tertiary" type="button">Set new goal</button>
+                            <button class="btn btn-ghost" type="button">Manage alerts</button>
+                        </div>
+                    </header>
+                    <div class="profile-budgets__grid" id="profileBudgets"></div>
+                </section>
+
+                <section class="profile-section profile-notifications">
+                    <header class="profile-section__header">
+                        <div>
+                            <p class="label">Notifications &amp; alerts</p>
+                            <h2>Stay in the loop</h2>
+                        </div>
+                        <div class="profile-notifications__prefs">
+                            <label class="switch">
+                                <input type="checkbox" id="notifyEmail" checked />
+                                <span>Email alerts</span>
+                            </label>
+                            <label class="switch">
+                                <input type="checkbox" id="notifySms" />
+                                <span>SMS alerts</span>
+                            </label>
+                            <label class="switch">
+                                <input type="checkbox" id="notifyInApp" checked />
+                                <span>In-app</span>
+                            </label>
+                        </div>
+                    </header>
+                    <ul class="profile-notifications__list" id="profileNotifications"></ul>
+                </section>
+
+                <section class="profile-section profile-settings">
+                    <header class="profile-section__header">
+                        <div>
+                            <p class="label">Settings &amp; preferences</p>
+                            <h2>Make it yours</h2>
+                        </div>
+                    </header>
+                    <div class="profile-settings__grid">
+                        <form id="profileForm" class="page-card profile-form">
+                            <h3>Personal info</h3>
+                            <label>
+                                Full name
+                                <input type="text" id="profileName" required />
+                            </label>
+                            <label>
+                                Email
+                                <input type="email" id="profileEmail" required />
+                            </label>
+                            <label>
+                                Monthly budget
+                                <input type="number" id="profileBudget" min="0" step="0.01" required />
+                            </label>
+                            <div class="form-row">
+                                <label>
+                                    Currency
+                                    <select id="profileCurrency">
+                                        <option value="Birr">Birr (ETB)</option>
+                                        <option value="USD">USD ($)</option>
+                                    </select>
+                                </label>
+                                <label>
+                                    Phone
+                                    <input type="tel" id="profilePhone" placeholder="+251" />
+                                </label>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="profileNotifications" />
+                                <span>Enable weekly digests</span>
+                            </label>
+                            <div class="profile-form__actions">
+                                <button class="btn btn-primary" type="submit">Save changes</button>
+                                <button class="btn btn-tertiary" type="button" id="profileReset">Reset</button>
+                            </div>
+                        </form>
+                        <div class="page-card profile-security">
+                            <h3>Security &amp; access</h3>
+                            <div class="profile-security__item">
+                                <div>
+                                    <strong>Password</strong>
+                                    <p class="helper-text">Last updated 45 days ago</p>
+                                </div>
+                                <button class="btn btn-ghost" type="button">Change</button>
+                            </div>
+                            <div class="profile-security__item">
+                                <div>
+                                    <strong>Two-factor authentication</strong>
+                                    <p class="helper-text">Add a second step for logins</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="twoFactorToggle" />
+                                    <span>Enable 2FA</span>
+                                </label>
+                            </div>
+                            <div class="profile-security__item">
+                                <div>
+                                    <strong>Preferred language</strong>
+                                    <p class="helper-text">Apply instantly across app</p>
+                                </div>
+                                <select id="profileLanguage">
+                                    <option value="en">English</option>
+                                    <option value="am">Amharic</option>
+                                </select>
+                            </div>
+                            <div class="profile-security__item">
+                                <div>
+                                    <strong>Payment methods</strong>
+                                    <p class="helper-text">Cards, wallets, mobile money</p>
+                                </div>
+                                <button class="btn btn-secondary" type="button">Manage</button>
+                            </div>
+                            <label class="upload-field">
+                                Upload avatar
+                                <input type="file" id="profileAvatarInput" accept="image/*" />
+                            </label>
+                            <button class="btn btn-ghost" type="button" id="removeAvatar">Remove avatar</button>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="profile-section profile-support">
+                    <div class="page-card">
+                        <p class="label">Help &amp; support</p>
+                        <h2>Need a hand?</h2>
+                        <ul class="profile-support__list">
+                            <li>
+                                <strong>Financial FAQs</strong>
+                                <p>From scholarships to late fees, find the answers fast.</p>
+                                <button class="btn btn-tertiary" type="button">Browse FAQs</button>
+                            </li>
+                            <li>
+                                <strong>Contact finance office</strong>
+                                <p>Reach Hawassa University finance between 8:00–17:00.</p>
+                                <button class="btn btn-secondary" type="button">Call now</button>
+                            </li>
+                            <li>
+                                <strong>Emergency support</strong>
+                                <p>Flag urgent issues to our student care line.</p>
+                                <button class="btn btn-danger" type="button">Alert support</button>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="page-card profile-danger">
+                        <p class="label">Data controls</p>
+                        <h2>Backup or reset</h2>
+                        <div class="profile-actions__buttons">
+                            <button class="btn btn-ghost" type="button" id="profileExportSummary">Export summary (Excel)</button>
+                            <button class="btn btn-ghost" type="button" id="profileExportJson">Export profile JSON</button>
+                            <button class="btn btn-danger" type="button" id="clearData">Clear all data</button>
+                        </div>
                     </div>
                 </section>
             </div>

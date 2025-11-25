@@ -81,9 +81,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     <span>${expense.category}</span>
                     <span class="align-right">${formatAmount(expense.amount)}</span>
                     <span>${expense.notes}</span>
-                    <span class="align-right">
-                        <button class="btn btn-ghost" data-action="edit">Edit</button>
-                        <button class="btn btn-ghost" data-action="delete">Delete</button>
+                    <span class="align-right table-actions">
+                        <button class="action-chip action-chip--edit" data-action="edit">Edit</button>
+                        <button class="action-chip action-chip--delete" data-action="delete">Delete</button>
                     </span>
                 `;
                 elements.tableBody.appendChild(row);

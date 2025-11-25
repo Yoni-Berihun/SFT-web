@@ -44,36 +44,119 @@
         </header>
 
         <main id="main-content">
-            <div class="container page-shell about-grid">
-                <section class="page-hero" aria-labelledby="about-title">
-                    <h1 id="about-title" class="page-hero__title">About EduFinance</h1>
-                    <p class="page-hero__subtitle">A student-first toolkit from Hawassa University to teach budgeting, reporting, and collaborative expense tracking—all with vanilla web tech.</p>
+            <div class="container page-shell about-shell">
+                <section class="page-card about-hero" aria-labelledby="about-title">
+                    <div class="about-hero__content">
+                        <p class="eyebrow">Hawassa-born project</p>
+                        <h1 id="about-title">Built for students, shaped by educators</h1>
+                        <p class="about-hero__subtitle">EduFinance is an open learning lab that turns budgeting lessons into immersive, data-informed simulations powered by clean, auditable code.</p>
+                        <div class="about-hero__actions">
+                            <a class="btn btn-primary" href="https://mail.google.com/mail/?view=cm&to=HuIS2team-luminary@gmail.com&su=Join Community Call" target="_blank" rel="noreferrer">Join community call</a>
+                            <button class="btn btn-ghost" type="button" id="aboutContactUs">Contact us</button>
+                        </div>
+                    </div>
+                    <div class="about-hero__stats" aria-label="Impact metrics">
+                        <article>
+                            <p class="label">Active faculties</p>
+                            <strong>12+</strong>
+                            <p class="helper-text">Using EduFinance in workshops</p>
+                        </article>
+                        <article>
+                            <p class="label">Experience sprints</p>
+                            <strong>24</strong>
+                            <p class="helper-text">Rapid prototyping cycles per year</p>
+                        </article>
+                        <article>
+                            <p class="label">Open modules</p>
+                            <strong>9</strong>
+                            <p class="helper-text">Dashboards, splits, analysis &amp; more</p>
+                        </article>
+                    </div>
+                    <div class="about-hero__orbit" aria-hidden="true">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
                 </section>
 
-                <section class="page-card">
-                    <h2>Mission</h2>
-                    <p>Demystify personal finance for students by providing approachable UI, smart defaults, and accessible patterns that instructors can inspect line-by-line.</p>
+                <section class="about-panels">
+                    <article class="page-card about-panel">
+                        <p class="label">Mission</p>
+                        <h2>Demystify finance for every cohort</h2>
+                        <p>We translate complex budgeting flows into transparent UI so facilitators can walk students through each decision, slider, and chart with confidence.</p>
+                    </article>
+                    <article class="page-card about-panel">
+                        <p class="label">Vision</p>
+                        <h2>Curriculum-ready building blocks</h2>
+                        <p>EduFinance aims to be the reference implementation for modern, inclusive financial literacy labs—ready to fork, remix, and ship across campuses.</p>
+                    </article>
                 </section>
 
-                <section class="page-card">
-                    <h2>Vision</h2>
-                    <p>Equip every faculty member with a ready-to-run demo that highlights best practices in semantic HTML, modular CSS, and testable JavaScript.</p>
+                <section class="page-card about-pillars">
+                    <header>
+                        <p class="label">Pillars</p>
+                        <h2>What makes EduFinance different?</h2>
+                        <p class="helper-text">Each release focuses on clarity, accountability, and collaborative learning so instructors spend time teaching, not debugging.</p>
+                    </header>
+                    <div class="about-pillars__grid">
+                        <article>
+                            <h3>Learning-first flows</h3>
+                            <p>Every screen narrates its own purpose with inline helper copy, status chips, and meaningful defaults.</p>
+                        </article>
+                        <article>
+                            <h3>Visual explainers</h3>
+                            <p>Doughnut charts, bar comparisons, and live breakdowns keep students oriented when numbers shift.</p>
+                        </article>
+                        <article>
+                            <h3>Community governance</h3>
+                            <p>Faculty partners and students submit pull requests that shape accessibility, language, and features.</p>
+                        </article>
+                    </div>
                 </section>
 
-                <section class="page-card">
-                    <h2>Credits</h2>
-                    <ul class="page-list">
-                        <li>Yonatan Berihun · Lead developer</li>
-                        <li>Hawassa University · Academic partner</li>
-                        <li>Open-source community · Feedback &amp; QA</li>
-                    </ul>
+                <section class="page-card about-showcase">
+                    <header>
+                        <p class="label">Operating system</p>
+                        <h2>The EduFinance studio stack</h2>
+                        <p class="helper-text">We mix research, prototyping, and storytelling tools so every drop-in contributor can ship polished lessons fast.</p>
+                    </header>
+                    <div class="about-showcase__grid">
+                        <article>
+                            <h3>Design sprints</h3>
+                            <p>Structured workshops guide mentors through mapping financial pain points, sketching UI, and validating narratives in under 48 hours.</p>
+                        </article>
+                        <article>
+                            <h3>Systems kit</h3>
+                            <p>Token-driven CSS, chart presets, and micro-copy libraries ensure each module feels unified even when authored by different teams.</p>
+                        </article>
+                        <article>
+                            <h3>Story decks</h3>
+                            <p>Ready-to-present slides and walkthrough scripts help lecturers contextualize every interaction, from split rules to dashboard insights.</p>
+                        </article>
+                        <article>
+                            <h3>Field notes</h3>
+                            <p>We log what resonates in real classrooms, then convert the findings into release notes so improvements stay transparent.</p>
+                        </article>
+                    </div>
                 </section>
 
-                <section class="page-card">
-                    <h2>Get in touch</h2>
-                    <p>Email: <a href="mailto:yonatan@example.com">yonatan@example.com</a></p>
-                    <p>GitHub: <a href="https://github.com/Yoni-Berihun" target="_blank" rel="noreferrer">Yoni-Berihun</a></p>
-                    <button class="btn btn-primary" type="button" id="aboutCommunity">Join community call</button>
+                <section class="page-card about-cta">
+                    <div>
+                        <p class="label">Get in touch</p>
+                        <h2>Co-create the next release</h2>
+                        <p class="helper-text">We host monthly community calls and async reviews. Bring your curriculum challenges, and we’ll prototype together.</p>
+                    </div>
+                    <div class="about-cta__actions">
+                        <button class="about-cta__link" type="button" id="aboutContactUsCTA">
+                            <span>Contact us</span>
+                            <strong>HuIS2team-luminary@gmail.com</strong>
+                        </button>
+                        <a class="about-cta__link" href="https://github.com/Yoni-Berihun/EduFinance/wiki" target="_blank" rel="noreferrer">
+                            <span>Resource hub</span>
+                            <strong>Release playbook</strong>
+                        </a>
+                        <button class="btn btn-secondary about-cta__btn" type="button" data-community-trigger>Reserve a seat</button>
+                    </div>
                 </section>
             </div>
         </main>
@@ -83,7 +166,7 @@
                 <p>© 2025 EduFinance Team · Hawassa University</p>
                 <div class="footer-links" aria-label="Utility links">
                     <a href="about.html">About</a>
-                    <a href="mailto:yonatan@example.com">Contact</a>
+                    <a href="mailto:HuIS2team-luminary@gmail.com">Contact</a>
                     <a href="https://github.com/Yoni-Berihun" target="_blank" rel="noreferrer">GitHub</a>
                 </div>
             </div>

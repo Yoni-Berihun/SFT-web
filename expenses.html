@@ -45,16 +45,55 @@
 
         <main id="main-content">
             <div class="container page-shell">
-                <section class="page-hero" aria-labelledby="expenses-title">
-                    <h1 id="expenses-title" class="page-hero__title">Expenses</h1>
-                    <p class="page-hero__subtitle">Review every Birr that leaves your wallet. Filter, search, and export data the moment you need it.</p>
-                    <div class="page-hero__actions">
-                        <button class="btn btn-primary" id="addExpenseButton" type="button">Add expense</button>
-                        <button class="btn btn-secondary" id="exportExpensesCsv" type="button">Export CSV</button>
+                <section class="page-hero page-hero--expenses" aria-labelledby="expenses-title">
+                    <div class="page-hero__content">
+                        <p class="eyebrow">Live spending control</p>
+                        <h1 id="expenses-title" class="page-hero__title">Expenses</h1>
+                        <p class="page-hero__subtitle">
+                            Review every Birr that leaves your wallet. Stay organized with filters, insights, and exports that feel effortless across any screen size.
+                        </p>
+                        <div class="hero-pills" aria-label="Page status">
+                            <span class="pill pill--success">Cash flow steady</span>
+                            <span class="pill pill--muted">Auto-sync every hour</span>
+                        </div>
+                        <div class="page-hero__actions">
+                            <button class="btn btn-primary" id="addExpenseButton" type="button">
+                                <span aria-hidden="true">＋</span>
+                                Add expense
+                            </button>
+                            <button class="btn btn-secondary" id="exportExpensesCsv" type="button">
+                                <span aria-hidden="true">⤓</span>
+                                Export CSV
+                            </button>
+                        </div>
+                    </div>
+                    <div class="page-hero__glance" aria-label="Key expense metrics">
+                        <article class="metric-card">
+                            <p class="label">Total spent</p>
+                            <p class="metric-card__value" id="expensesTotal">ETB 0</p>
+                            <p class="helper-text">Across all filtered expenses.</p>
+                        </article>
+                        <article class="metric-card">
+                            <p class="label">Average daily</p>
+                            <p class="metric-card__value" id="expensesAverage">ETB 0</p>
+                            <p class="helper-text">Based on the selected period.</p>
+                        </article>
+                        <article class="metric-card">
+                            <p class="label">Entries in view</p>
+                            <p class="metric-card__value" id="expensesCount">0</p>
+                            <p class="helper-text">Click delete to remove an item.</p>
+                        </article>
                     </div>
                 </section>
 
                 <section class="page-card expenses-toolbar" aria-label="Expense filters">
+                    <div class="toolbar-header">
+                        <div>
+                            <p class="label">Filters</p>
+                            <p class="helper-text">Combine filters to drill into a specific story.</p>
+                        </div>
+                        <button class="btn btn-tertiary" id="resetFilters" type="button">Reset filters</button>
+                    </div>
                     <div class="filter-group">
                         <label>
                             Category
@@ -65,6 +104,9 @@
                                 <option value="Books">Books</option>
                                 <option value="Entertainment">Entertainment</option>
                                 <option value="Supplies">Supplies</option>
+                                <option value="Cosmetics">Cosmetics</option>
+                                <option value="Coffee">Coffee</option>
+                                <option value="Gym">Gym</option>
                                 <option value="Other">Other</option>
                             </select>
                         </label>
@@ -77,46 +119,328 @@
                             <input type="date" id="filterDate" />
                         </label>
                     </div>
-                    <button class="btn btn-tertiary" id="resetFilters" type="button">Reset filters</button>
                 </section>
 
                 <section class="page-grid expenses-highlights" aria-label="Expense highlights">
-                    <article class="page-card">
-                        <p class="label">Total spent</p>
-                        <h3 id="expensesTotal">ETB 0</h3>
-                        <p class="helper-text">Across all filtered expenses.</p>
+                    <article class="page-card highlight-card highlight-card--accent">
+                        <header>
+                            <p class="label">Budget health</p>
+                            <span class="trend trend--up">▲ 8% vs last week</span>
+                        </header>
+                        <p class="highlight-card__value">ETB 4,200 remaining</p>
+                        <div class="progress-track" role="img" aria-label="70% of budget used">
+                            <span style="width: 70%"></span>
+                        </div>
+                        <p class="helper-text">Weekly limit set at ETB 14,000.</p>
                     </article>
-                    <article class="page-card">
-                        <p class="label">Average daily</p>
-                        <h3 id="expensesAverage">ETB 0</h3>
-                        <p class="helper-text">Based on selected period.</p>
+                    <article class="page-card highlight-card">
+                        <header>
+                            <p class="label">Most active day</p>
+                            <span class="trend trend--neutral">Tuesday</span>
+                        </header>
+                        <p class="highlight-card__value">ETB 1,120 spent</p>
+                        <ul class="mini-list">
+                            <li>Food · ETB 420</li>
+                            <li>Transport · ETB 210</li>
+                            <li>Books · ETB 490</li>
+                        </ul>
                     </article>
-                    <article class="page-card">
-                        <p class="label">Entries in view</p>
-                        <h3 id="expensesCount">0</h3>
-                        <p class="helper-text">Click delete to remove an item.</p>
+                    <article class="page-card highlight-card">
+                        <header>
+                            <p class="label">Saved via discounts</p>
+                            <span class="trend trend--up">▲ 15%</span>
+                        </header>
+                        <p class="highlight-card__value">ETB 620</p>
+                        <p class="helper-text">Campus cafeteria loyalty & bundle deals.</p>
                     </article>
                 </section>
 
-                <section class="page-card expenses-table" aria-labelledby="expenses-table-title">
-                    <div class="expenses-table__header">
-                        <div>
-                            <h2 id="expenses-table-title">Expense log</h2>
-                            <p class="helper-text">Latest additions appear first.</p>
-                        </div>
-                        <button class="btn btn-ghost" id="refreshExpenses" type="button">Reload data</button>
+                <section class="page-card detail-focus" aria-label="Detailed expense view">
+                    <div>
+                        <p class="label">Deep dive</p>
+                        <h2>See every Birr in context</h2>
+                        <p class="helper-text">
+                            Swipe through filters, expand notes, and jump directly into the expense log to understand exactly where your money goes each day.
+                        </p>
                     </div>
-                    <div class="table">
-                        <div class="table-head">
-                            <span>Date</span>
-                            <span>Category</span>
-                            <span class="align-right">Amount</span>
-                            <span>Notes</span>
-                            <span class="align-right">Actions</span>
-                        </div>
-                        <div id="expensesTableBody" class="table-body"></div>
+                    <ul class="detail-focus__list">
+                        <li>Powerful filters & search keep the table relevant.</li>
+                        <li>Real-time metrics adjust as you edit or delete entries.</li>
+                        <li>Scroll-safe table preserves headers and actions.</li>
+                    </ul>
+                    <div class="detail-focus__actions">
+                        <button class="btn btn-primary" type="button" onclick="document.querySelector('#addExpenseButton')?.click();">Add a detailed entry</button>
+                        <button class="btn btn-ghost" type="button" onclick="document.querySelector('#expensesTableBody')?.scrollIntoView({ behavior: 'smooth' });">Jump to log</button>
                     </div>
                 </section>
+
+
+                <section class="page-grid insights-grid" aria-label="Smart insights">
+                    <article class="page-card insight-card">
+                        <header class="insight-card__head">
+                            <div>
+                                <p class="label">Category mix</p>
+                                <h3>Where your money is going</h3>
+                            </div>
+                            <span class="pill pill--muted">Live</span>
+                        </header>
+                        <div class="insight-chart">
+                            <div class="donut-chart" role="img" aria-label="Food 38%, Transport 22%, Books 18%, Lifestyle 22%">
+                                <div class="donut-chart__center">
+                                    <strong>Food</strong>
+                                    <span>38%</span>
+                                </div>
+                            </div>
+                            <ul class="chart-legend">
+                                <li><span class="dot dot--food"></span>Food · 38%</li>
+                                <li><span class="dot dot--transport"></span>Transport · 22%</li>
+                                <li><span class="dot dot--books"></span>Books · 18%</li>
+                                <li><span class="dot dot--lifestyle"></span>Lifestyle · 22%</li>
+                            </ul>
+                        </div>
+                    </article>
+                    <article class="page-card insight-card">
+                        <header class="insight-card__head">
+                            <div>
+                                <p class="label">Weekly pulse</p>
+                                <h3>Momentum tracker</h3>
+                            </div>
+                            <span class="trend trend--up">Steady climb</span>
+                        </header>
+                        <div class="pulse-figure" role="img" aria-label="Weekly spending trend chart">
+                            <svg viewBox="0 0 400 160" preserveAspectRatio="none">
+                                <defs>
+                                    <linearGradient id="pulseGradient" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="0%" stop-color="rgba(39, 174, 96, 0.9)" />
+                                        <stop offset="100%" stop-color="rgba(39, 174, 96, 0.1)" />
+                                    </linearGradient>
+                                </defs>
+                                <path class="pulse-area" d="M0,120 L50,90 L100,60 L150,80 L200,55 L250,40 L300,70 L350,45 L400,65 L400,160 L0,160 Z"></path>
+                                <polyline class="pulse-line" points="0,120 50,90 100,60 150,80 200,55 250,40 300,70 350,45 400,65"></polyline>
+                            </svg>
+                        </div>
+                        <div class="pulse-stats">
+                            <div>
+                                <p class="label">Today</p>
+                                <strong>ETB 640</strong>
+                                <p class="helper-text">↓ 6% vs yesterday</p>
+                            </div>
+                            <div>
+                                <p class="label">Safe-to-spend</p>
+                                <strong>ETB 3,420</strong>
+                                <p class="helper-text">Keeps budget in the green</p>
+                            </div>
+                        </div>
+                    </article>
+                    <article class="page-card insight-card">
+                        <header class="insight-card__head">
+                            <div>
+                                <p class="label">Upcoming reminders</p>
+                                <h3>Never miss a bill</h3>
+                            </div>
+                        </header>
+                        <ul class="timeline">
+                            <li>
+                                <span>Nov 26</span>
+                                <div>
+                                    <strong>Lab materials</strong>
+                                    <p>Expected ETB 350 · Supplies</p>
+                                </div>
+                            </li>
+                            <li>
+                                <span>Nov 28</span>
+                                <div>
+                                    <strong>Library membership</strong>
+                                    <p>ETB 150 · Books</p>
+                                </div>
+                            </li>
+                            <li>
+                                <span>Nov 30</span>
+                                <div>
+                                    <strong>Gym renewal</strong>
+                                    <p>ETB 220 · Gym</p>
+                                </div>
+                            </li>
+                            <li>
+                                <span>Dec 01</span>
+                                <div>
+                                    <strong>Class trip deposit</strong>
+                                    <p>ETB 600 · Transport</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </article>
+                    <article class="page-card insight-card suggestion-card">
+                        <header class="insight-card__head">
+                            <div>
+                                <p class="label">Smart suggestions</p>
+                                <h3>Make the next Birr count</h3>
+                            </div>
+                        </header>
+                        <div class="spark-grid">
+                            <div class="spark-card">
+                                <span>Cosmetics</span>
+                                <strong>↓ 12%</strong>
+                                <div class="spark-line" aria-hidden="true">
+                                    <span style="height: 40%"></span>
+                                    <span style="height: 55%"></span>
+                                    <span style="height: 35%"></span>
+                                    <span style="height: 60%"></span>
+                                    <span style="height: 48%"></span>
+                                </div>
+                            </div>
+                            <div class="spark-card">
+                                <span>Coffee</span>
+                                <strong>↑ 6%</strong>
+                                <div class="spark-line" aria-hidden="true">
+                                    <span style="height: 35%"></span>
+                                    <span style="height: 42%"></span>
+                                    <span style="height: 60%"></span>
+                                    <span style="height: 72%"></span>
+                                    <span style="height: 64%"></span>
+                                </div>
+                            </div>
+                            <div class="spark-card">
+                                <span>Gym</span>
+                                <strong>Flat</strong>
+                                <div class="spark-line" aria-hidden="true">
+                                    <span style="height: 50%"></span>
+                                    <span style="height: 48%"></span>
+                                    <span style="height: 52%"></span>
+                                    <span style="height: 51%"></span>
+                                    <span style="height: 50%"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <ul class="mini-list">
+                            <li>Bundle transport rides between 6–8 AM for 12% savings.</li>
+                            <li>Convert weekly cafeteria meals into a discounted meal plan.</li>
+                            <li>Sell unused lab materials in the market hub to offset costs.</li>
+                        </ul>
+                    </article>
+                </section>
+
+                <div class="expenses-layout">
+                    <section class="page-card expenses-table" aria-labelledby="expenses-table-title">
+                        <div class="card-header card-header--log">
+                            <div>
+                                <p class="label">Expense log</p>
+                                <h2 id="expenses-table-title">Expense log</h2>
+                                <p class="helper-text">Latest additions appear first.</p>
+                            </div>
+                            <div class="log-actions">
+                                <button class="btn btn-ghost" id="refreshExpenses" type="button">Refresh</button>
+                                <button class="btn btn-tertiary" type="button" onclick="document.querySelector('#expensesTableBody')?.scrollIntoView({behavior: 'smooth'});">Jump to entries</button>
+                            </div>
+                        </div>
+                        <div class="log-summary" aria-label="Expense log summary">
+                            <article>
+                                <p class="label">Spent this week</p>
+                                <strong>ETB 6,540</strong>
+                                <p class="helper-text">Across 18 recorded expenses.</p>
+                            </article>
+                            <article>
+                                <p class="label">Top category</p>
+                                <strong>Food & coffee</strong>
+                                <p class="helper-text">42% of the current list.</p>
+                            </article>
+                            <article>
+                                <p class="label">Biggest day</p>
+                                <strong>Wednesday</strong>
+                                <p class="helper-text">ETB 1,420 · 6 entries.</p>
+                            </article>
+                        </div>
+                        <div class="table-legend" aria-label="Column legend">
+                            <article class="table-legend__item">
+                                <div class="table-legend__icon" aria-hidden="true">📅</div>
+                                <div>
+                                    <p>Date</p>
+                                    <span>Calendar day of the purchase</span>
+                                </div>
+                            </article>
+                            <article class="table-legend__item">
+                                <div class="table-legend__icon" aria-hidden="true">📝</div>
+                                <div>
+                                    <p>Notes</p>
+                                    <span>Add emojis or tags for faster scanning</span>
+                                </div>
+                            </article>
+                        </div>
+                        <div class="table-wrapper">
+                            <div class="table table--structured">
+                                <div class="table-head">
+                                    <span>Date</span>
+                                    <span>Category</span>
+                                    <span class="align-right">Amount</span>
+                                    <span>Notes</span>
+                                    <span class="align-right">Actions</span>
+                                </div>
+                                <div id="expensesTableBody" class="table-body"></div>
+                            </div>
+                        </div>
+                        <p class="helper-text table-note">Tip: Hover a row to reveal quick actions. Edit details regularly to keep insights accurate.</p>
+                    </section>
+                    <aside class="insights-stack" aria-label="Quick tips">
+                        <article class="page-card">
+                            <p class="label">Spend rhythm</p>
+                            <h3>Weekday vs weekend</h3>
+                            <div class="split-bars">
+                                <div>
+                                    <span>Weekdays</span>
+                                    <strong>72%</strong>
+                                </div>
+                                <div class="progress-track">
+                                    <span style="width: 72%"></span>
+                                </div>
+                                <div>
+                                    <span>Weekends</span>
+                                    <strong>28%</strong>
+                                </div>
+                                <div class="progress-track">
+                                    <span style="width: 28%"></span>
+                                </div>
+                            </div>
+                            <p class="helper-text">Plan outings on Friday to keep Saturday light.</p>
+                        </article>
+                        <article class="page-card">
+                            <p class="label">Cash alerts</p>
+                            <h3>Stay proactive</h3>
+                            <ul class="mini-list">
+                                <li>Enable push alerts for any expense above ETB 800.</li>
+                                <li>Schedule a Friday review to archive receipts.</li>
+                                <li>Add emojis to notes for quick scanning 📌.</li>
+                            </ul>
+                        </article>
+                        <article class="page-card focus-card">
+                            <p class="label">Focus budget</p>
+                            <h3>Cosmetics vs coffee</h3>
+                            <div class="focus-bars">
+                                <div>
+                                    <span>Cosmetics</span>
+                                    <strong>ETB 420</strong>
+                                </div>
+                                <div class="progress-track">
+                                    <span style="width: 48%"></span>
+                                </div>
+                                <div>
+                                    <span>Coffee</span>
+                                    <strong>ETB 380</strong>
+                                </div>
+                                <div class="progress-track">
+                                    <span style="width: 44%"></span>
+                                </div>
+                                <div>
+                                    <span>Gym</span>
+                                    <strong>ETB 260</strong>
+                                </div>
+                                <div class="progress-track">
+                                    <span style="width: 30%"></span>
+                                </div>
+                            </div>
+                            <p class="helper-text">Lock-in recurring payments to avoid spikes.</p>
+                        </article>
+                    </aside>
+                </div>
             </div>
         </main>
 
@@ -150,6 +474,9 @@
                             <option value="Books">Books</option>
                             <option value="Entertainment">Entertainment</option>
                             <option value="Supplies">Supplies</option>
+                            <option value="Cosmetics">Cosmetics</option>
+                            <option value="Coffee">Coffee</option>
+                            <option value="Gym">Gym</option>
                             <option value="Other">Other</option>
                         </select>
                     </label>

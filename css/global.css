@@ -44,6 +44,12 @@
     --radius-pill: 999px;
     --focus-ring: 0 0 0 2px rgba(39, 174, 96, 0.45);
     --shadow: var(--shadow-card);
+
+    /* Additional variables for dashboard */
+    --border-subtle: rgba(224, 227, 231, 0.5);
+    --accent-soft: rgba(243, 156, 18, 0.15);
+    --accent-strong: #d67f07;
+    --surface-subtle: #f0f2f4;
 }
 
 html[data-theme="dark"] {
@@ -54,6 +60,11 @@ html[data-theme="dark"] {
     --color-border: #3e5368;
     --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.35);
     color-scheme: dark;
+    
+    --border-subtle: rgba(62, 83, 104, 0.5);
+    --accent-soft: rgba(243, 156, 18, 0.25);
+    --accent-strong: #f39c12;
+    --surface-subtle: #3e5368;
 }
 
 *,
@@ -76,6 +87,8 @@ body {
     color: var(--color-text);
     line-height: 1.6;
     transition: background var(--transition-base), color var(--transition-base);
+    word-wrap: break-word;
+    overflow-x: hidden;
 }
 
 body.nav-open {
@@ -230,6 +243,9 @@ textarea {
     background: rgba(255, 255, 255, 0.15);
     border: 1px solid rgba(255, 255, 255, 0.3);
     color: #fff;
+    width: 40px;
+    height: 40px;
+    font-size: 1.1rem;
 }
 
 .shell-actions .icon-button:hover,
@@ -256,6 +272,26 @@ textarea {
     height: 2px;
     background: currentColor;
     display: block;
+}
+
+.icon-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border-radius: 50%;
+    border: 1px solid transparent;
+    background: transparent;
+    font-size: 1.2rem;
+    transition: background var(--transition-base), transform var(--transition-base);
+    cursor: pointer;
+}
+
+.icon-button:hover,
+.icon-button:focus-visible {
+    transform: scale(1.05);
 }
 
 .primary-nav[data-open="true"] {
@@ -398,6 +434,16 @@ main {
     color: var(--color-text-muted);
     font-size: 0.9rem;
     margin: 0;
+}
+
+code {
+    background: var(--card-muted);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9em;
+    word-break: break-word;
+    overflow-wrap: break-word;
 }
 
 .feature-grid {
@@ -771,6 +817,18 @@ textarea:disabled {
     .shell-actions {
         margin-left: auto;
         order: 2;
+        gap: var(--space-1);
+    }
+
+    .shell-actions .icon-button {
+        width: 36px;
+        height: 36px;
+        font-size: 1rem;
+    }
+
+    .shell-actions .btn {
+        padding: 6px 14px;
+        font-size: 0.85rem;
     }
 
     .nav-inner {
@@ -822,4 +880,187 @@ textarea:disabled {
     .align-right {
         text-align: left;
     }
+
+    /* Hero card stats responsive fix for index.html */
+    .hero-card__stats {
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    }
+}
+
+@media (max-width: 480px) {
+    /* Feature grid single column on mobile */
+    .feature-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* Hero card stats single column on very small screens */
+    .hero-card__stats {
+        grid-template-columns: 1fr;
+        gap: var(--space-3);
+    }
+
+    /* Reduce hero card padding on mobile */
+    .hero-card {
+        padding: var(--space-4);
+    }
+
+    /* Reduce container padding on very small screens */
+    .container {
+        padding: 0 var(--space-3);
+    }
+
+    /* Stack section headers on mobile */
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    /* Theme toggle button mobile fix */
+    .shell-actions .icon-button {
+        width: 32px;
+        height: 32px;
+        font-size: 0.9rem;
+    }
+
+    .shell-actions {
+        gap: var(--space-1);
+    }
+
+    /* Further reduce hero preview blur on very small screens */
+    .hero__preview::after {
+        inset: -5px;
+    }
+
+    /* Prevent footer links from overflowing */
+    .footer-links a {
+        word-break: break-word;
+        font-size: 0.85rem;
+    }
+    
+    /* Ensure brand doesn't overflow */
+    .brand {
+        font-size: 1rem;
+    }
+}
+
+.input-group {
+    display: grid;
+    gap: var(--space-2);
+    font-size: 0.9rem;
+}
+
+.toolbar {
+    display: flex;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+    align-items: flex-end;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+}
+
+.section-split {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--space-4);
+}
+
+.card-tight {
+    padding: var(--space-4);
+}
+
+.profile-card {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+}
+
+.avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--color-secondary);
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.switch {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    cursor: pointer;
+}
+
+.switch input[type="checkbox"] {
+    width: auto;
+    margin: 0;
+}
+
+.btn-ghost {
+    background: transparent;
+    border: 1px solid var(--color-border);
+    color: var(--color-text);
+}
+
+.btn-ghost:hover,
+.btn-ghost:focus-visible {
+    background: var(--card-muted);
+    border-color: var(--color-secondary);
+}
+
+.btn-danger {
+    background: var(--color-danger);
+    color: #fff;
+    border-color: var(--color-danger);
+}
+
+.btn-danger:hover,
+.btn-danger:focus-visible {
+    background: #c0392b;
+    border-color: #c0392b;
+}
+
+.link {
+    color: var(--color-secondary);
+    text-decoration: underline;
+    font-weight: 500;
+}
+
+.big-number {
+    font-size: 2.5rem;
+    line-height: 1;
+    display: block;
+    margin-bottom: var(--space-2);
+}
+
+.analysis-grid {
+    display: grid;
+    gap: var(--space-4);
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-4);
+}
+
+.modal-header h2 {
+    margin: 0;
+}
+
+.form-right {
+    justify-content: flex-end;
 }

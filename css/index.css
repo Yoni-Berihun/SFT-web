@@ -61,6 +61,7 @@
 
 .hero__preview {
     position: relative;
+    overflow: hidden;
 }
 
 .hero__preview::after {
@@ -97,6 +98,19 @@
     margin-bottom: var(--space-2);
 }
 
+.btn-secondary--contrast {
+    border-color: var(--color-secondary);
+    color: var(--color-secondary);
+    background: rgba(39, 174, 96, 0.12);
+    font-weight: 600;
+}
+
+.btn-secondary--contrast:hover,
+.btn-secondary--contrast:focus-visible {
+    background: var(--color-secondary);
+    color: #fff;
+}
+
 @media (max-width: 1024px) {
     .hero__grid {
         grid-template-columns: minmax(0, 1fr);
@@ -115,6 +129,45 @@
     .hero__actions {
         flex-direction: column;
         align-items: stretch;
+    }
+
+    /* Remove min-width on mobile to prevent overflow */
+    .hero__actions .btn {
+        min-width: unset;
+        width: 100%;
+    }
+
+    /* Reduce hero subtitle font size */
+    .hero__subtitle {
+        font-size: 1rem;
+    }
+
+    /* Reduce hero preview blur overflow */
+    .hero__preview::after {
+        inset: -10px;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Further reduce hero padding on very small screens */
+    .hero {
+        padding: 80px 0 48px;
+    }
+
+    /* Reduce hero title size on very small screens */
+    .hero__content h1 {
+        font-size: clamp(1.8rem, 5vw, 2.5rem);
+    }
+
+    /* Ensure info grid is single column */
+    .info-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-4);
+    }
+
+    /* Further reduce hero preview blur on very small screens */
+    .hero__preview::after {
+        inset: -5px;
     }
 }
 
