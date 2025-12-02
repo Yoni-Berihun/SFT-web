@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>EduFinance — Create Account</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+        <link rel="stylesheet" href="css/global.css" />
+        <link rel="stylesheet" href="css/signup.css" />
+        
+        <!-- Firebase SDKs (NO defer) -->
+        <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+        
+        <!-- Firebase Config (NO defer) -->
+        <script src="js/firebase-config.js"></script>
+        
+        <!-- App scripts (can use defer) -->
+        <script defer src="js/common.js"></script>
+        <script defer src="js/auth.js"></script>
+        <script defer src="js/signup.js"></script>
+    </head>
+    <body data-page="signup">
+        <a class="skip-link" href="#main-content">Skip to main content</a>
+
+        <header class="site-header" role="banner">
+            <div class="nav-inner container">
+                <a class="brand" href="index.html" aria-label="EduFinance home">
+                    <span class="brand-mark" aria-hidden="true">EF</span>
+                    EduFinance
+                </a>
+                <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" data-nav-toggle>
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="nav-toggle-bar"></span>
+                    <span class="nav-toggle-bar"></span>
+                    <span class="nav-toggle-bar"></span>
+                </button>
+                <nav id="primary-navigation" class="primary-nav" aria-label="Primary" data-nav-drawer>
+                    <a class="nav-link" data-nav-link="login" href="login.html">Login</a>
+                    <a class="nav-link" data-nav-link="signup" href="signup.html">Sign Up</a>
+                    <a class="nav-link" data-nav-link="about" href="about.html">About</a>
+                </nav>
+                <div class="shell-actions">
+                    <button id="themeToggle" class="icon-button" aria-label="Toggle theme" type="button">🌙</button>
+                    <a class="btn btn-secondary" href="index.html">Back home</a>
+                </div>
+            </div>
+        </header>
+
+        <main id="main-content" class="signup-wrapper">
+            <section class="signup-card" aria-labelledby="signupTitle">
+                <h1 id="signupTitle">Create your account</h1>
+                <p>Start tracking your finances in minutes. Already have an account? <a href="login.html">Sign in</a></p>
+                
+                <div id="signupMessage" class="signup-message" role="alert"></div>
+                
+                <form id="signupForm" novalidate>
+                    <div class="name-fields">
+                        <label class="input-group">
+                            First Name
+                            <input id="firstName" type="text" placeholder="John" required autocomplete="given-name" />
+                        </label>
+                        <label class="input-group">
+                            Last Name
+                            <input id="lastName" type="text" placeholder="Doe" autocomplete="family-name" />
+                        </label>
+                    </div>
+                    
+                    <label class="input-group">
+                        Email Address
+                        <input id="signupEmail" type="email" placeholder="student@example.com" required autocomplete="email" />
+                        <small class="helper-text">We'll use this for login and notifications</small>
+                    </label>
+                    
+                    <label class="input-group">
+                        Password
+                        <input id="signupPassword" type="password" placeholder="••••••" required autocomplete="new-password" />
+                        <small class="helper-text">At least 6 characters</small>
+                    </label>
+                    
+                    <label class="input-group">
+                        Confirm Password
+                        <input id="confirmPassword" type="password" placeholder="••••••" required autocomplete="new-password" />
+                    </label>
+                    
+                    <div class="budget-row">
+                        <label class="input-group">
+                            Monthly Budget
+                            <input id="monthlyBudget" type="number" min="0" value="5000" required />
+                            <small class="helper-text">You can change this later</small>
+                        </label>
+                        <label class="input-group">
+                            Currency
+                            <select id="currency" required>
+                                <option value="Birr">Birr (ETB)</option>
+                                <option value="USD">US Dollar ($)</option>
+                                <option value="EUR">Euro (€)</option>
+                                <option value="GBP">British Pound (£)</option>
+                            </select>
+                        </label>
+                    </div>
+                    
+                    <div class="terms-row">
+                        <label>
+                            <input id="acceptTerms" type="checkbox" required />
+                            I agree to the <a href="#" onclick="return false">Terms of Service</a> and <a href="#" onclick="return false">Privacy Policy</a>
+                        </label>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Create Account</button>
+                    
+                    <p class="auth-switch">
+                        Already have an account? <a href="login.html">Sign in here</a>
+                    </p>
+                </form>
+                
+                <div class="signup-note">
+                    <p><strong>Note:</strong> You'll be able to:</p>
+                    <ul>
+                        <li>Track expenses across devices</li>
+                        <li>Set budgets and get insights</li>
+                        <li>Access financial tips</li>
+                        <li>Sync data securely</li>
+                    </ul>
+                </div>
+            </section>
+        </main>
+
+        <footer class="site-footer">
+            <div class="container footer-content">
+                <p>© 2025 EduFinance Team · Hawassa University</p>
+                <div class="footer-links" aria-label="Utility links">
+                    <a href="about.html">About</a>
+                    <a href="mailto:yonatan@example.com">Contact</a>
+                    <a href="https://github.com/Yoni-Berihun" target="_blank" rel="noreferrer">GitHub</a>
+                </div>
+            </div>
+        </footer>
+
+        <div id="modalOverlay" class="modal-overlay" hidden>
+            <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+                <header class="modal-header">
+                    <h2 id="modalTitle">EduFinance modal</h2>
+                    <button id="modalClose" class="icon-button" type="button" aria-label="Close">✕</button>
+                </header>
+                <div id="modalContent" class="modal-body">
+                    <p>Modal content placeholder.</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="toast" class="toast" role="status" aria-live="polite" hidden>Ready</div>
+    </body>
+</html>

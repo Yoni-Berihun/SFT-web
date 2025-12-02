@@ -9,7 +9,16 @@
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
         <link rel="stylesheet" href="css/global.css" />
         <link rel="stylesheet" href="css/login.css" />
+        
+        <!-- Firebase SDKs -->
+        <script defer src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+        <script defer src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+        <script defer src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+        
+        <!-- App scripts -->
         <script defer src="js/common.js"></script>
+        <script defer src="js/firebase-config.js"></script> <!-- Must come before auth.js -->
+        <script defer src="js/auth.js"></script>
         <script defer src="js/login.js"></script>
     </head>
     <body data-page="login">
@@ -28,12 +37,8 @@
                     <span class="nav-toggle-bar"></span>
                 </button>
                 <nav id="primary-navigation" class="primary-nav" aria-label="Primary" data-nav-drawer>
-                    <a class="nav-link" data-nav-link="dashboard" href="dashboard.html">Dashboard</a>
-                    <a class="nav-link" data-nav-link="expenses" href="expenses.html">Expenses</a>
-                    <a class="nav-link" data-nav-link="analysis" href="analysis.html">Analysis</a>
-                    <a class="nav-link" data-nav-link="tips" href="tips.html">Tips</a>
-                    <a class="nav-link" data-nav-link="profile" href="profile.html">Profile</a>
-                    <a class="nav-link" data-nav-link="split" href="split.html">Split</a>
+                    <a class="nav-link" data-nav-link="login" href="login.html">Login</a>
+                    <a class="nav-link" data-nav-link="signup" href="signup.html">Sign Up</a>
                     <a class="nav-link" data-nav-link="about" href="about.html">About</a>
                 </nav>
                 <div class="shell-actions">
@@ -46,26 +51,38 @@
         <main id="main-content" class="login-wrapper">
             <section class="login-card" aria-labelledby="loginTitle">
                 <h1 id="loginTitle">Welcome back</h1>
-                <p>Sign in with any email and password to access the dashboard demo.</p>
+                <p>Sign in to access your personal finance dashboard.</p>
+                
                 <div id="loginMessage" class="login-message" role="alert"></div>
+                
                 <form id="loginForm" novalidate>
                     <label class="input-group">
                         Email
-                        <input id="loginEmail" type="email" placeholder="student@edufinance.com" required autocomplete="email" />
+                        <input id="loginEmail" type="email" placeholder="you@example.com" required autocomplete="email" />
                     </label>
+                    
                     <label class="input-group">
                         Password
                         <input id="loginPassword" type="password" placeholder="••••••" required autocomplete="current-password" />
                     </label>
+                    
                     <div class="remember-row">
                         <label>
                             <input id="rememberMe" type="checkbox" /> Remember me
                         </label>
-                        <a href="#" aria-disabled="true">Forgot password?</a>
+                        <a href="forgot-password.html">Forgot password?</a>
                     </div>
+                    
                     <button type="submit" class="btn btn-primary">Sign in</button>
+                    
+                    <p class="auth-switch">
+                        Don't have an account? <a href="signup.html">Sign up here</a>
+                    </p>
                 </form>
-                <p class="note">Need a refresher? Head back to the <a href="index.html">overview page</a>.</p>
+                
+                <p class="note">
+                    Demo account: demo@edufinance.com / password: demo123
+                </p>
             </section>
         </main>
 

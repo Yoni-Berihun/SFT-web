@@ -1,3 +1,4 @@
+// Updated login.js with Firebase
 document.addEventListener("DOMContentLoaded", () => {
     App.initPageShell();
 
@@ -7,13 +8,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("loginForm");
     const message = document.getElementById("loginMessage");
 
+    // Check if already logged in
+    Auth.onAuthStateChanged((user) => {
+        if (user) {
+            window.location.href = "dashboard.html";
+        }
+    });
+
+    // Load remembered email
     const session = App.getSession();
-
-    if (session?.isAuthenticated) {
-        window.location.href = "dashboard.html";
-        return;
-    }
-
     if (session?.remember && session.email) {
         emailInput.value = session.email;
         rememberInput.checked = true;
@@ -27,7 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
         setTimeout(() => message.classList.remove("show"), 2800);
     };
 
-    form?.addEventListener("submit", (event) => {
+    form?.addEventListener("submit", async (event) => {
         event.preventDefault();
         const email = emailInput.value.trim();
         const password = passwordInput.value.trim();
@@ -37,26 +40,54 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        const user = {
-            ...App.defaultUser,
-            ...App.loadState(App.STORAGE_KEYS.user, App.defaultUser),
-            email,
-            name: email.split("@")[0] || "Student",
-        };
+        // Try Firebase authentication
+        const result = await Auth.signIn(email, password);
+        
+        if (result.success) {
+            // Save session with Firebase user
+            const sessionPayload = {
+                isAuthenticated: true,
+                email: result.user.email,
+                uid: result.user.uid,
+                remember: rememberInput.checked,
+                authenticatedAt: new Date().toISOString(),
+            };
 
-        const sessionPayload = {
-            isAuthenticated: true,
-            email,
-            remember: rememberInput.checked,
-            authenticatedAt: new Date().toISOString(),
-        };
+            App.setSession(sessionPayload);
+            
+            // Save user data locally as fallback
+            const userData = {
+                ...App.defaultUser,
+                email: result.user.email,
+                name: result.user.email.split("@")[0] || "Student",
+            };
+            
+            App.saveState(App.STORAGE_KEYS.user, userData);
+            
+            showMessage("Success! Redirecting to dashboard…", "success");
 
-        App.saveState(App.STORAGE_KEYS.user, user);
-        App.setSession(sessionPayload);
-        showMessage("Success! Redirecting to dashboard…", "success");
-
-        setTimeout(() => {
-            window.location.href = "dashboard.html";
-        }, 600);
+            setTimeout(() => {
+                window.location.href = "dashboard.html";
+            }, 600);
+        } else {
+            // Firebase authentication failed
+            let errorMessage = "Login failed. Please check your credentials.";
+            
+            // User-friendly error messages
+            switch(result.code) {
+                case 'auth/user-not-found':
+                case 'auth/wrong-password':
+                    errorMessage = "Invalid email or password.";
+                    break;
+                case 'auth/too-many-requests':
+                    errorMessage = "Too many failed attempts. Try again later.";
+                    break;
+                case 'auth/network-request-failed':
+                    errorMessage = "Network error. Check your connection.";
+                    break;
+            }
+            
+            showMessage(errorMessage);
+        }
     });
 });

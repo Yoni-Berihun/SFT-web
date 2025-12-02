@@ -227,14 +227,60 @@
         qs("#themeToggle")?.addEventListener("click", toggleTheme);
     };
 
-    const getSession = () => loadState(STORAGE_KEYS.session, { isAuthenticated: false });
+    // ========== UPDATED AUTHENTICATION FUNCTIONS ==========
+    
+    // Get session with Firebase support
+    const getSession = () => {
+        const storedSession = loadState(STORAGE_KEYS.session, { isAuthenticated: false });
+        
+        // Check Firebase auth state if available
+        if (window.Auth?.getCurrentUser) {
+            const firebaseUser = Auth.getCurrentUser();
+            if (firebaseUser && firebaseUser.uid) {
+                return {
+                    ...storedSession,
+                    isAuthenticated: true,
+                    uid: firebaseUser.uid,
+                    email: firebaseUser.email,
+                    firebaseUser: true,
+                    authenticatedAt: new Date().toISOString()
+                };
+            }
+        }
+        
+        return storedSession;
+    };
 
-    const setSession = (session) => saveState(STORAGE_KEYS.session, session);
+    // Set session (supports Firebase user data)
+    const setSession = (session) => {
+        // If we have Firebase user, include that data
+        if (window.Auth?.getCurrentUser) {
+            const firebaseUser = Auth.getCurrentUser();
+            if (firebaseUser) {
+                session.uid = firebaseUser.uid;
+                session.email = firebaseUser.email;
+                session.firebaseUser = true;
+            }
+        }
+        saveState(STORAGE_KEYS.session, session);
+    };
 
     const clearSession = () => removeState(STORAGE_KEYS.session);
 
-    const isAuthenticated = () => Boolean(getSession()?.isAuthenticated);
+    // Check authentication with Firebase support
+    const isAuthenticated = () => {
+        // First check Firebase
+        if (window.Auth?.getCurrentUser) {
+            const firebaseUser = Auth.getCurrentUser();
+            if (firebaseUser) return true;
+        }
+        
+        // Fallback to localStorage
+        const session = getSession();
+        return Boolean(session?.isAuthenticated);
+    };
 
+    // Require authentication with Firebase support
     const requireAuth = () => {
         if (!isAuthenticated()) {
             window.location.href = "login.html";
@@ -242,6 +288,23 @@
         }
         return true;
     };
+
+    // Get current user ID (Firebase priority)
+    const getCurrentUserId = () => {
+        // Try Firebase first
+        if (window.Auth?.getCurrentUser) {
+            const firebaseUser = Auth.getCurrentUser();
+            if (firebaseUser?.uid) {
+                return firebaseUser.uid;
+            }
+        }
+        
+        // Fallback to localStorage
+        const session = getSession();
+        return session?.uid || 'local-user';
+    };
+
+    // ========== END UPDATED AUTH FUNCTIONS ==========
 
     const initShellNavigation = () => {
         const navToggle = qs("[data-nav-toggle]");
@@ -286,12 +349,28 @@
         }
     };
 
+    // Updated logout to work with Firebase
     const bindLogoutButton = () => {
         const logoutButton = qs("#logout");
         if (!logoutButton) return;
-        logoutButton.addEventListener("click", () => {
+        
+        logoutButton.addEventListener("click", async () => {
+            // Sign out from Firebase if available
+            if (window.Auth?.signOut) {
+                try {
+                    await Auth.signOut();
+                } catch (error) {
+                    console.warn("Firebase sign out error:", error);
+                }
+            }
+            
+            // Clear localStorage session
             clearSession();
-            showToast("Logged out");
+            
+            // Show notification
+            showToast("Logged out successfully");
+            
+            // Redirect to login page
             setTimeout(() => {
                 window.location.href = "login.html";
             }, 300);
@@ -418,49 +497,52 @@
         isAuthenticated,
         requireAuth,
         bindLogoutButton,
+        getCurrentUserId, // NEW: Added this function
     };
 
-        const updatePieChart = (canvasId, data, options = {}) => {
-            const canvas = qs(`#${canvasId}`);
-            if (!canvas || typeof Chart === "undefined") return null;
-            const ctx = canvas.getContext("2d");
-            const isDark = document.documentElement.getAttribute("data-theme") === "dark";
-            const defaultColors = ["#27ae60", "#f39c12", "#3498db", "#9b59b6", "#e74c3c"];
-            const colors = options.colors || defaultColors;
-            const labels = data.map((item) => item.label || item.category);
-            const values = data.map((item) => item.value || item.amount);
-            if (window[`pieChart_${canvasId}`]) {
-                window[`pieChart_${canvasId}`].destroy();
-            }
-            window[`pieChart_${canvasId}`] = new Chart(ctx, {
-                type: "pie",
-                data: {
-                    labels,
-                    datasets: [{
-                        data: values,
-                        backgroundColor: colors,
-                        borderColor: isDark ? "#34495e" : "#ffffff",
-                        borderWidth: 2,
-                    }],
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: options.legendPosition || "bottom",
-                            labels: { 
-                                color: isDark ? "#bdc3c7" : "#7f8c8d",
-                                padding: 12,
-                            },
+    const updatePieChart = (canvasId, data, options = {}) => {
+        const canvas = qs(`#${canvasId}`);
+        if (!canvas || typeof Chart === "undefined") return null;
+        const ctx = canvas.getContext("2d");
+        const isDark = document.documentElement.getAttribute("data-theme") === "dark";
+        const defaultColors = ["#27ae60", "#f39c12", "#3498db", "#9b59b6", "#e74c3c"];
+        const colors = options.colors || defaultColors;
+        const labels = data.map((item) => item.label || item.category);
+        const values = data.map((item) => item.value || item.amount);
+        if (window[`pieChart_${canvasId}`]) {
+            window[`pieChart_${canvasId}`].destroy();
+        }
+        window[`pieChart_${canvasId}`] = new Chart(ctx, {
+            type: "pie",
+            data: {
+                labels,
+                datasets: [{
+                    data: values,
+                    backgroundColor: colors,
+                    borderColor: isDark ? "#34495e" : "#ffffff",
+                    borderWidth: 2,
+                }],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: options.legendPosition || "bottom",
+                        labels: { 
+                            color: isDark ? "#bdc3c7" : "#7f8c8d",
+                            padding: 12,
                         },
                     },
                 },
-            });
-            return window[`pieChart_${canvasId}`];
-        };
+            },
+        });
+        return window[`pieChart_${canvasId}`];
+    };
 
-        App.updatePieChart = updatePieChart;
+    App.updatePieChart = updatePieChart;
 
-        window.App = App;
-    })(window);
+    window.App = App;
+    
+    console.log('✅ App module loaded with Firebase support');
+})(window);
