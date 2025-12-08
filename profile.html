@@ -2,14 +2,25 @@
 <html lang="en">
     <head>
         <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
         <title>EduFinance — Profile</title>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
         <link rel="stylesheet" href="css/global.css" />
         <link rel="stylesheet" href="css/profile.css" />
+        
+        <!-- Firebase SDKs (load synchronously, no defer) -->
+        <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+        
+        <!-- Firebase Config (load synchronously, must be before auth.js) -->
+        <script src="js/firebase-config.js"></script>
+        
+        <!-- App scripts (can use defer) -->
         <script defer src="js/common.js"></script>
+        <script defer src="js/auth.js"></script>
         <script defer src="js/profile.js"></script>
     </head>
     <body data-page="profile">
@@ -75,17 +86,7 @@
                         </dl>
                         <div class="profile-hero__actions">
                             <button class="btn btn-primary" type="button" id="profileEditTrigger">Edit profile</button>
-                            <div class="share-control">
-                                <button class="btn btn-ghost" id="profileShareSummary" type="button" aria-haspopup="menu" aria-expanded="false">Share summary</button>
-                                <div class="share-menu" id="profileShareMenu" role="menu" hidden>
-                                    <button class="share-menu__item" type="button" data-share="whatsapp">🟢 WhatsApp</button>
-                                    <button class="share-menu__item" type="button" data-share="telegram">📨 Telegram</button>
-                                    <button class="share-menu__item" type="button" data-share="instagram">📸 Instagram</button>
-                                    <button class="share-menu__item" type="button" data-share="email">✉️ Email</button>
-                                    <button class="share-menu__item" type="button" data-share="sms">💬 SMS / Message</button>
-                                </div>
-                            </div>
-                            <button class="btn btn-secondary" type="button" id="profileExportPdf">Export as PDF</button>
+                            <a class="btn btn-primary" href="#share-profile" id="profileShareSummary" style="background-color: #10b981; border-color: #10b981;">Share profile</a>
                         </div>
                     </div>
                 </section>
@@ -201,19 +202,6 @@
                     </div>
                 </section>
 
-                <section class="profile-section profile-documents">
-                    <header class="profile-section__header">
-                        <div>
-                            <p class="label">Documents &amp; receipts</p>
-                            <h2>Keep everything handy</h2>
-                        </div>
-                        <div class="profile-documents__actions">
-                            <button class="btn btn-ghost" type="button" id="uploadReceipt">Upload proof</button>
-                            <button class="btn btn-secondary" type="button">Download all</button>
-                        </div>
-                    </header>
-                    <div class="profile-documents__grid" id="profileDocuments"></div>
-                </section>
 
                 <section class="profile-section profile-budgets">
                     <header class="profile-section__header">
@@ -355,12 +343,10 @@
                             <li>
                                 <strong>Contact finance office</strong>
                                 <p>Reach Hawassa University finance between 8:00–17:00.</p>
-                                <button class="btn btn-secondary" type="button">Call now</button>
                             </li>
                             <li>
                                 <strong>Emergency support</strong>
                                 <p>Flag urgent issues to our student care line.</p>
-                                <button class="btn btn-danger" type="button">Alert support</button>
                             </li>
                         </ul>
                     </div>
@@ -380,11 +366,6 @@
         <footer class="site-footer">
             <div class="container footer-content">
                 <p>© 2025 EduFinance Team · Hawassa University</p>
-                <div class="footer-links" aria-label="Utility links">
-                    <a href="about.html">About</a>
-                    <a href="mailto:yonatan@example.com">Contact</a>
-                    <a href="https://github.com/Yoni-Berihun" target="_blank" rel="noreferrer">GitHub</a>
-                </div>
             </div>
         </footer>
 

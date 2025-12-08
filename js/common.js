@@ -41,7 +41,10 @@
     const defaultTips = [
         {
             id: "tip-track-daily",
-            icon: "💡",
+            icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-line-chart">
+                <path d="M3 3v18h18"/>
+                <path d="m19 9-5 5-4-4-3 3"/>
+            </svg>`,
             title: "Track Daily Spending",
             preview: "Record every expense to understand your habits.",
             checklist: [
@@ -53,7 +56,11 @@
         },
         {
             id: "tip-set-budget",
-            icon: "🎯",
+            icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-target">
+                <circle cx="12" cy="12" r="10"/>
+                <circle cx="12" cy="12" r="6"/>
+                <circle cx="12" cy="12" r="2"/>
+            </svg>`,
             title: "Set Budget Goals",
             preview: "Break down monthly goals into daily limits.",
             checklist: [
@@ -65,7 +72,11 @@
         },
         {
             id: "tip-meal-plan",
-            icon: "🍽️",
+            icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-utensils">
+                <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/>
+                <path d="M7 2v20"/>
+                <path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/>
+            </svg>`,
             title: "Meal Planning Saves Money",
             preview: "Plan meals to curb impulse purchases.",
             checklist: [
@@ -74,31 +85,7 @@
                 "Cook in batches",
                 "Pack lunch instead of buying",
             ],
-        },
-        {
-            id: "tip-smart-books",
-            icon: "📚",
-            title: "Smart Book Buying",
-            preview: "Use library resources and second-hand books.",
-            checklist: [
-                "Check library first",
-                "Buy used when possible",
-                "Share with classmates",
-                "Sell books after use",
-            ],
-        },
-        {
-            id: "tip-transport",
-            icon: "🚗",
-            title: "Transportation Tips",
-            preview: "Optimize commutes to save on transport costs.",
-            checklist: [
-                "Use monthly transport passes",
-                "Carpool when possible",
-                "Walk short distances",
-                "Plan efficient routes",
-            ],
-        },
+        }
     ];
 
     const defaultSplitFriends = [
@@ -198,33 +185,108 @@
         };
     };
 
-    const syncTheme = () => {
-        const saved = localStorage.getItem(STORAGE_KEYS.theme);
-        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-        const isDark = saved ? saved === "dark" : prefersDark;
-        document.documentElement.setAttribute("data-theme", isDark ? "dark" : "light");
-        const toggle = qs("#themeToggle");
-        if (toggle) {
-            toggle.textContent = isDark ? "☀️" : "🌙";
+    const updateThemeIcon = (isDark) => {
+        const html = document.documentElement;
+        const themeToggle = qs('#themeToggle');
+        
+        if (themeToggle) {
+            themeToggle.setAttribute('aria-label', isDark ? 'Switch to light mode' : 'Switch to dark mode');
+            themeToggle.setAttribute('title', isDark ? 'Switch to light mode' : 'Switch to dark mode');
+            
+            // Toggle data-theme attribute for CSS custom properties
+            if (isDark) {
+                html.setAttribute('data-theme', 'dark');
+                html.classList.add('dark');
+            } else {
+                html.setAttribute('data-theme', 'light');
+                html.classList.remove('dark');
+            }
         }
+    };
+
+    const syncTheme = () => {
+        const savedTheme = localStorage.getItem(STORAGE_KEYS.theme);
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+        
+        document.documentElement.setAttribute('data-theme', theme);
+        if (theme === 'dark') {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+        
+        updateThemeIcon(theme === 'dark');
     };
 
     const toggleTheme = () => {
-        const current = document.documentElement.getAttribute("data-theme");
-        const isDark = current !== "dark";
-        document.documentElement.setAttribute("data-theme", isDark ? "dark" : "light");
-        localStorage.setItem(STORAGE_KEYS.theme, isDark ? "dark" : "light");
-        const toggle = qs("#themeToggle");
-        if (toggle) {
-            toggle.textContent = isDark ? "☀️" : "🌙";
+        console.log('Toggling theme...');
+        const html = document.documentElement;
+        const currentTheme = html.getAttribute('data-theme') || 'light';
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        
+        console.log(`Changing theme from ${currentTheme} to ${newTheme}`);
+        
+        // Apply new theme
+        html.setAttribute('data-theme', newTheme);
+        
+        // Toggle dark class for Tailwind dark mode
+        if (newTheme === 'dark') {
+            html.classList.add('dark');
+        } else {
+            html.classList.remove('dark');
         }
-        // Dispatch event for charts to re-render
-        window.dispatchEvent(new CustomEvent("themechange", { detail: { theme: isDark ? "dark" : "light" } }));
+        
+        // Save preference
+        localStorage.setItem(STORAGE_KEYS.theme, newTheme);
+        console.log('Theme saved to localStorage');
+        
+        // Update icon and ARIA attributes
+        updateThemeIcon(newTheme === 'dark');
+        
+        // Dispatch event for other scripts that might need to know about theme changes
+        const event = new CustomEvent('themeChange', { detail: { theme: newTheme } });
+        document.dispatchEvent(event);
+        console.log('Dispatched themeChange event');
     };
 
     const initTheme = () => {
+        console.log('Initializing theme...');
+        // Set initial theme
         syncTheme();
-        qs("#themeToggle")?.addEventListener("click", toggleTheme);
+        
+        // Set up theme toggle button
+        const themeToggle = qs('#themeToggle');
+        console.log('Theme toggle button:', themeToggle);
+        
+        if (themeToggle) {
+            console.log('Adding event listeners to theme toggle');
+            themeToggle.addEventListener('click', (e) => {
+                console.log('Theme toggle clicked');
+                e.preventDefault();
+                toggleTheme();
+            });
+            
+            // Add keyboard support
+            themeToggle.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    console.log('Theme toggle activated via keyboard');
+                    e.preventDefault();
+                    toggleTheme();
+                }
+            });
+        } else {
+            console.warn('Theme toggle button not found!');
+        }
+        
+        // Watch for system theme changes
+        const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+        darkModeMediaQuery.addEventListener('change', (e) => {
+            console.log('System color scheme changed:', e.matches ? 'dark' : 'light');
+            if (!localStorage.getItem(STORAGE_KEYS.theme)) {
+                syncTheme();
+            }
+        });
     };
 
     // ========== UPDATED AUTHENTICATION FUNCTIONS ==========
@@ -269,21 +331,159 @@
 
     // Check authentication with Firebase support
     const isAuthenticated = () => {
-        // First check Firebase
-        if (window.Auth?.getCurrentUser) {
-            const firebaseUser = Auth.getCurrentUser();
-            if (firebaseUser) return true;
+        // First check Firebase - this is the source of truth
+        if (window.firebaseAuth && window.firebaseAuth.currentUser) {
+            const firebaseUser = window.firebaseAuth.currentUser;
+            if (firebaseUser && firebaseUser.uid && firebaseUser.email) {
+                return true;
+            }
         }
         
-        // Fallback to localStorage
-        const session = getSession();
-        return Boolean(session?.isAuthenticated);
+        // Also check via Auth module
+        if (window.Auth?.getCurrentUser) {
+            const firebaseUser = Auth.getCurrentUser();
+            if (firebaseUser && firebaseUser.uid && firebaseUser.email) {
+                return true;
+            }
+        }
+        
+        // Don't rely on localStorage alone - it can be stale
+        // Only use it if Firebase is not available
+        if (!window.firebaseAuth && !window.Auth) {
+            const session = getSession();
+            return Boolean(session?.isAuthenticated);
+        }
+        
+        return false;
     };
 
-    // Require authentication with Firebase support
+    // Require authentication with Firebase support (async version)
     const requireAuth = () => {
-        if (!isAuthenticated()) {
-            window.location.href = "login.html";
+        // Don't redirect if we're on login or signup pages
+        const currentPath = window.location.pathname;
+        if (currentPath.includes('login.html') || 
+            currentPath.includes('signup.html') ||
+            window.__onAuthPage) {
+            return true; // Return true to allow page to load
+        }
+        
+        // Use a flag to prevent multiple redirect attempts
+        if (window.__authCheckInProgress) {
+            return true; // Already checking, wait
+        }
+        window.__authCheckInProgress = true;
+        
+        // First, check if Firebase has a current user immediately
+        // This handles the case where auth state is already restored
+        if (window.firebaseAuth && window.firebaseAuth.currentUser) {
+            const user = window.firebaseAuth.currentUser;
+            if (user && user.uid && user.email) {
+                // User is authenticated, allow access
+                window.__authCheckInProgress = false;
+                console.log('✅ User authenticated (currentUser check)');
+                return true;
+            }
+        }
+        
+        // Check localStorage session as quick fallback
+        const session = getSession();
+        if (session?.isAuthenticated && session?.uid) {
+            // Has session, allow access while Firebase initializes
+            window.__authCheckInProgress = false;
+            console.log('⚠️ Using localStorage session, allowing access');
+            return true;
+        }
+        
+        // Check Firebase auth state properly using onAuthStateChanged
+        // This handles the case where Firebase is still restoring auth state
+        if (window.firebaseAuth && typeof window.firebaseAuth.onAuthStateChanged === 'function') {
+            // Use Firebase's auth state observer
+            let authChecked = false;
+            let redirectTimeout = null;
+            
+            const unsubscribe = window.firebaseAuth.onAuthStateChanged((user) => {
+                if (authChecked) return; // Only check once
+                
+                if (user && user.uid && user.email) {
+                    // User is authenticated
+                    authChecked = true;
+                    window.__authCheckInProgress = false;
+                    console.log('✅ User authenticated (onAuthStateChanged)');
+                    if (redirectTimeout) clearTimeout(redirectTimeout);
+                    // Don't unsubscribe - keep listener active for auth state changes
+                    return; // Stay on page
+                } else {
+                    // User is not authenticated - only redirect if we haven't checked yet
+                    if (!authChecked) {
+                        authChecked = true;
+                        window.__authCheckInProgress = false;
+                        unsubscribe(); // Clean up listener
+                        console.log('❌ User not authenticated, redirecting to login');
+                        
+                        // Small delay to prevent redirect loops
+                        redirectTimeout = setTimeout(() => {
+                            if (!window.__onAuthPage && !currentPath.includes('login.html') && !currentPath.includes('signup.html')) {
+                                // Double-check before redirecting
+                                if (!window.firebaseAuth?.currentUser && !getSession()?.isAuthenticated) {
+                                    window.location.href = "login.html";
+                                }
+                            }
+                        }, 500);
+                    }
+                }
+            });
+            
+            // Set a timeout to prevent infinite waiting
+            // Give Firebase up to 3 seconds to restore auth state
+            setTimeout(() => {
+                if (!authChecked) {
+                    authChecked = true;
+                    window.__authCheckInProgress = false;
+                    
+                    // Final check before redirecting
+                    if (window.firebaseAuth && window.firebaseAuth.currentUser) {
+                        const user = window.firebaseAuth.currentUser;
+                        if (user && user.uid && user.email) {
+                            console.log('✅ User authenticated (timeout check)');
+                            unsubscribe();
+                            return; // User is authenticated
+                        }
+                    }
+                    
+                    // Check localStorage one more time
+                    const finalSession = getSession();
+                    if (finalSession?.isAuthenticated && finalSession?.uid) {
+                        console.log('⚠️ Using localStorage session as final fallback');
+                        unsubscribe();
+                        return; // Has session, allow access
+                    }
+                    
+                    // No auth found anywhere, redirect to login
+                    unsubscribe();
+                    if (!window.__onAuthPage && !currentPath.includes('login.html') && !currentPath.includes('signup.html')) {
+                        console.log('❌ No authentication found, redirecting to login');
+                        setTimeout(() => {
+                            if (!window.firebaseAuth?.currentUser && !getSession()?.isAuthenticated) {
+                                window.location.href = "login.html";
+                            }
+                        }, 500);
+                    }
+                }
+            }, 3000);
+            
+            return true; // Return true to allow page to load while checking
+        }
+        
+        // If no Firebase and no session, redirect to login
+        window.__authCheckInProgress = false;
+        if (!isAuthenticated() && !window.__onAuthPage) {
+            if (!currentPath.includes('login.html') && !currentPath.includes('signup.html')) {
+                setTimeout(() => {
+                    if (!window.firebaseAuth?.currentUser && !getSession()?.isAuthenticated) {
+                        window.location.href = "login.html";
+                    }
+                }, 500);
+            }
             return false;
         }
         return true;
@@ -305,6 +505,44 @@
     };
 
     // ========== END UPDATED AUTH FUNCTIONS ==========
+
+    // Smooth scrolling to anchor links
+    function initSmoothScrolling() {
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const targetId = this.getAttribute('href');
+                if (targetId === '#' || targetId === '#!') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    e.preventDefault();
+                    
+                    // Close mobile menu if open
+                    const nav = document.querySelector('.primary-nav');
+                    if (nav && nav.classList.contains('is-active')) {
+                        document.querySelector('.nav-toggle').click();
+                    }
+                    
+                    // Scroll to the target element
+                    const headerOffset = 80; // Adjust this value based on your header height
+                    const elementPosition = targetElement.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'smooth'
+                    });
+
+                    // Update URL without adding to history
+                    if (history.pushState) {
+                        history.pushState(null, null, targetId);
+                    } else {
+                        location.hash = targetId;
+                    }
+                }
+            });
+        });
+    }
 
     const initShellNavigation = () => {
         const navToggle = qs("[data-nav-toggle]");
@@ -404,6 +642,7 @@
     const initPageShell = ({ auth = false } = {}) => {
         initTheme();
         initShellNavigation();
+        initSmoothScrolling();
         bindLogoutButton();
         if (auth && !requireAuth()) {
             return false;
@@ -464,17 +703,23 @@
         if (initialHash && sectionToLinks.has(initialHash)) {
             setActive(initialHash);
         }
-
+        
         return () => observer.disconnect();
     };
+
+    // Expose theme functions globally
+    window.toggleTheme = toggleTheme;
+    window.updateThemeIcon = updateThemeIcon;
+    window.syncTheme = syncTheme;
 
     const App = {
         STORAGE_KEYS,
         defaultUser,
         defaultExpenses,
+        toggleTheme,
+        updateThemeIcon,
+        syncTheme,
         defaultTips,
-        defaultSplitFriends,
-        defaultSplitExpenses,
         qs,
         qsa,
         clone,
@@ -491,13 +736,14 @@
         initShellNavigation,
         initPageShell,
         initModal,
+        initSmoothScrolling,
         getSession,
         setSession,
         clearSession,
         isAuthenticated,
         requireAuth,
         bindLogoutButton,
-        getCurrentUserId, // NEW: Added this function
+        getCurrentUserId
     };
 
     const updatePieChart = (canvasId, data, options = {}) => {
@@ -543,6 +789,21 @@
     App.updatePieChart = updatePieChart;
 
     window.App = App;
+
+    // Initialize theme when the DOM is fully loaded
+    document.addEventListener('DOMContentLoaded', () => {
+        // Initialize theme
+        initTheme();
+        
+        // Add direct click handler to the theme toggle button
+        const themeToggle = document.querySelector('#themeToggle');
+        if (themeToggle) {
+            themeToggle.addEventListener('click', (e) => {
+                e.preventDefault();
+                toggleTheme();
+            });
+        }
+    });
     
     console.log('✅ App module loaded with Firebase support');
 })(window);

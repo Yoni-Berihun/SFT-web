@@ -1,11 +1,14 @@
 // js/signup.js
 document.addEventListener("DOMContentLoaded", () => {
+    // Prevent redirects when navigating between auth pages
+    window.__onAuthPage = true;
+    
     // Initialize page shell (theme, navigation)
     if (window.App && window.App.initPageShell) {
         window.App.initPageShell();
     }
 
-    // Get form elements
+    // Get form elements with null checks
     const firstNameInput = document.getElementById("firstName");
     const lastNameInput = document.getElementById("lastName");
     const emailInput = document.getElementById("signupEmail");
@@ -17,14 +20,80 @@ document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("signupForm");
     const message = document.getElementById("signupMessage");
 
-    // Check if user is already logged in
-    if (window.Auth) {
-        Auth.onAuthStateChanged((user) => {
-            if (user && !user.isLocal) {
-                window.location.href = "dashboard.html";
-            }
-        });
+    // Ensure all required elements exist
+    if (!firstNameInput || !emailInput || !passwordInput || !confirmPasswordInput || !budgetInput || !form) {
+        console.error("Signup form elements not found!");
+        if (message) {
+            message.textContent = "Form initialization error. Please refresh the page.";
+            message.classList.add("show");
+        }
+        return;
     }
+
+    // Ensure all inputs are enabled
+    firstNameInput.disabled = false;
+    if (lastNameInput) lastNameInput.disabled = false;
+    emailInput.disabled = false;
+    passwordInput.disabled = false;
+    confirmPasswordInput.disabled = false;
+    budgetInput.disabled = false;
+    if (currencySelect) currencySelect.disabled = false;
+    if (termsCheckbox) termsCheckbox.disabled = false;
+
+    // Simple check: Only redirect if user is already authenticated
+    // This runs once after a delay to allow Firebase to initialize
+    let authCheckDone = false;
+    let isNavigatingAway = false;
+    let redirectTimeout = null;
+    
+    // Prevent redirects when user is navigating away
+    window.addEventListener('beforeunload', () => {
+        isNavigatingAway = true;
+        if (redirectTimeout) {
+            clearTimeout(redirectTimeout);
+            redirectTimeout = null;
+        }
+    });
+    
+    // Also prevent redirects when clicking links
+    document.addEventListener('click', (e) => {
+        const link = e.target.closest('a');
+        if (link && (link.href.includes('signup.html') || link.href.includes('login.html'))) {
+            isNavigatingAway = true;
+            if (redirectTimeout) {
+                clearTimeout(redirectTimeout);
+                redirectTimeout = null;
+            }
+        }
+    }, true);
+    
+    const checkAuthStatus = () => {
+        if (authCheckDone || isNavigatingAway) return;
+        authCheckDone = true;
+        
+        // Wait a bit for Firebase to initialize, then check once
+        redirectTimeout = setTimeout(() => {
+            // Don't redirect if user is navigating away or already left
+            if (isNavigatingAway || !document.hasFocus()) {
+                redirectTimeout = null;
+                return;
+            }
+            
+            // Only check if there's a real Firebase authenticated user
+            if (window.firebaseAuth && window.firebaseAuth.currentUser) {
+                const user = window.firebaseAuth.currentUser;
+                if (user && user.uid && user.email) {
+                    // User is authenticated, redirect to dashboard
+                    isNavigatingAway = true; // Prevent any other redirects
+                    window.location.href = "dashboard.html";
+                }
+            }
+            redirectTimeout = null;
+        }, 2000); // Increased delay to ensure everything is loaded
+    };
+    
+    // Run check after page loads
+    checkAuthStatus();
 
     // Show message function
     const showMessage = (text, type = "error") => {
@@ -103,27 +172,50 @@ document.addEventListener("DOMContentLoaded", () => {
         return true;
     };
 
+    // Prevent duplicate event listeners
+    let isSubmitting = false;
+
     // Form submission handler
-    form?.addEventListener("submit", async (event) => {
+    form.addEventListener("submit", async (event) => {
         event.preventDefault();
-        
+        event.stopPropagation();
+
+        // Prevent double submission
+        if (isSubmitting) {
+            console.log("Form submission already in progress");
+            return;
+        }
+
         if (!validateForm()) {
             return;
         }
 
         // Get form values
         const firstName = firstNameInput.value.trim();
-        const lastName = lastNameInput.value.trim();
+        const lastName = lastNameInput ? lastNameInput.value.trim() : "";
         const email = emailInput.value.trim();
         const password = passwordInput.value;
         const budget = parseFloat(budgetInput.value);
-        const currency = currencySelect.value;
+        const currency = currencySelect ? currencySelect.value : "Birr";
+
+        // Ensure inputs are enabled
+        firstNameInput.disabled = false;
+        if (lastNameInput) lastNameInput.disabled = false;
+        emailInput.disabled = false;
+        passwordInput.disabled = false;
+        confirmPasswordInput.disabled = false;
+        budgetInput.disabled = false;
 
         // Show loading state
         const submitButton = form.querySelector('button[type="submit"]');
-        const originalText = submitButton.textContent;
-        submitButton.textContent = "Creating account...";
-        submitButton.disabled = true;
+        const originalText = submitButton ? submitButton.textContent : "Create Account";
+        
+        if (submitButton) {
+            submitButton.textContent = "Creating account...";
+            submitButton.disabled = true;
+        }
+
+        isSubmitting = true;
 
         try {
             // Prepare user data
@@ -138,7 +230,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Create account with Firebase
             if (!window.Auth) {
-                throw new Error("Authentication service not available");
+                throw new Error("Authentication service not available. Please refresh the page.");
             }
 
             const result = await Auth.signUp(email, password, userData);
@@ -174,23 +266,46 @@ document.addEventListener("DOMContentLoaded", () => {
                     window.App.showToast("Welcome to EduFinance!");
                 }
                 
-                // Redirect to dashboard after delay
+                // Ensure Firebase auth state is persisted before redirecting
+                // Wait a bit longer to ensure Firebase has saved the auth state
                 setTimeout(() => {
-                    window.location.href = "dashboard.html";
+                    // Double-check that user is still authenticated
+                    if (window.firebaseAuth && window.firebaseAuth.currentUser) {
+                        window.location.href = "dashboard.html";
+                    } else {
+                        // If auth state lost, try to restore from session
+                        const session = App.getSession();
+                        if (session?.isAuthenticated) {
+                            window.location.href = "dashboard.html";
+                        } else {
+                            showMessage("Authentication error. Please try logging in.");
+                            isSubmitting = false;
+                            if (submitButton) {
+                                submitButton.textContent = originalText;
+                                submitButton.disabled = false;
+                            }
+                        }
+                    }
                 }, 1500);
                 
             } else {
                 // Show error from Firebase
                 showMessage(result.error || "Registration failed. Please try again.");
-                submitButton.textContent = originalText;
-                submitButton.disabled = false;
+                isSubmitting = false;
+                if (submitButton) {
+                    submitButton.textContent = originalText;
+                    submitButton.disabled = false;
+                }
             }
             
         } catch (error) {
             console.error("Signup error:", error);
-            showMessage("An unexpected error occurred. Please try again.");
-            submitButton.textContent = originalText;
-            submitButton.disabled = false;
+            showMessage(error.message || "An unexpected error occurred. Please try again.");
+            isSubmitting = false;
+            if (submitButton) {
+                submitButton.textContent = originalText;
+                submitButton.disabled = false;
+            }
         }
     });
 

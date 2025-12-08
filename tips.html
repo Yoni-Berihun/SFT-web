@@ -2,14 +2,25 @@
 <html lang="en">
     <head>
         <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
         <title>EduFinance — Financial Tips</title>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
         <link rel="stylesheet" href="css/global.css" />
         <link rel="stylesheet" href="css/tips.css" />
+        
+        <!-- Firebase SDKs (load synchronously, no defer) -->
+        <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+        
+        <!-- Firebase Config (load synchronously, must be before auth.js) -->
+        <script src="js/firebase-config.js"></script>
+        
+        <!-- App scripts (can use defer) -->
         <script defer src="js/common.js"></script>
+        <script defer src="js/auth.js"></script>
         <script defer src="js/tips.js"></script>
     </head>
     <body data-page="tips">
@@ -37,7 +48,24 @@
                     <a class="nav-link" data-nav-link="about" href="about.html">About</a>
                 </nav>
                 <div class="shell-actions">
-                    <button id="themeToggle" class="icon-button" aria-label="Toggle theme" type="button">🌙</button>
+                    <button id="themeToggle" class="icon-button" aria-label="Toggle theme" type="button">
+                        <!-- Moon icon (shown in light mode) -->
+                        <svg id="moonIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                        <!-- Sun icon (shown in dark mode) -->
+                        <svg id="sunIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                    </button>
                     <button id="logout" class="btn btn-secondary" type="button">Log out</button>
                 </div>
             </div>
@@ -56,7 +84,6 @@
                             <li>Share progress with friends for accountability.</li>
                         </ul>
                         <div class="page-hero__actions">
-                            <button class="btn btn-primary" id="tipsCompleteNext" type="button">Complete next challenge</button>
                             <button class="btn btn-secondary" id="tipsResetProgress" type="button">Reset progress</button>
                         </div>
                     </div>
@@ -104,7 +131,6 @@
                         <p class="label">Next best action</p>
                         <h3>Automate “micro investments”</h3>
                         <p>Every time you log a luxury spend above ETB 300, match 10% into savings. Use the Expenses rules tab to remind yourself.</p>
-                        <button class="btn btn-tertiary" type="button">Add to my playbook</button>
                     </article>
                 </section>
 
@@ -132,15 +158,6 @@
                             <li>Update your wishlist so spending stays intentional.</li>
                         </ul>
                     </article>
-                    <article class="page-card">
-                        <p class="label">Mindful spending</p>
-                        <h3>Pause before you pay</h3>
-                        <p>Introduce a 24-hour rule for anything above ETB 500. Log the item inside EduFinance, tag it “parked”, and review tomorrow.</p>
-                        <div class="tips-advice__quote">
-                            “Future-you deserves a vote on present-you’s purchases.”
-                        </div>
-                        <button class="btn btn-primary" type="button">Set reminder</button>
-                    </article>
                 </section>
 
                 <section class="page-card tips-quotes" aria-label="Motivational quote">
@@ -154,10 +171,7 @@
             <div class="container footer-content">
                 <p>© 2025 EduFinance Team · Hawassa University</p>
                 <div class="footer-links" aria-label="Utility links">
-                    <a href="about.html">About</a>
-                    <a href="mailto:yonatan@example.com">Contact</a>
-                    <a href="https://github.com/Yoni-Berihun" target="_blank" rel="noreferrer">GitHub</a>
-                </div>
+            </div>
             </div>
         </footer>
 

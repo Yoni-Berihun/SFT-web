@@ -10,7 +10,18 @@
         <link rel="stylesheet" href="css/global.css" />
         <link rel="stylesheet" href="css/split.css" />
         <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" integrity="sha384-6FpEvGpK9x3TlKVUw6JO33dTUmL8/IpEW+uFfLgLxR72k3gI7mQ9mJd3Hhj3qHxN" crossorigin="anonymous"></script>
+        
+        <!-- Firebase SDKs (load synchronously, no defer) -->
+        <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+        
+        <!-- Firebase Config (load synchronously, must be before auth.js) -->
+        <script src="js/firebase-config.js"></script>
+        
+        <!-- App scripts (can use defer) -->
         <script defer src="js/common.js"></script>
+        <script defer src="js/auth.js"></script>
         <script defer src="js/split.js"></script>
     </head>
     <body data-page="split">
@@ -209,11 +220,6 @@
         <footer class="site-footer">
             <div class="container footer-content">
                 <p>© 2025 EduFinance Team · Hawassa University</p>
-                <div class="footer-links" aria-label="Utility links">
-                    <a href="about.html">About</a>
-                    <a href="mailto:yonatan@example.com">Contact</a>
-                    <a href="https://github.com/Yoni-Berihun" target="_blank" rel="noreferrer">GitHub</a>
-                </div>
             </div>
         </footer>
 

@@ -1,8 +1,15 @@
 .hero {
     padding: 140px 0 96px;
-    background: radial-gradient(circle at top left, rgba(39, 174, 96, 0.12), transparent 55%),
-        radial-gradient(circle at top right, rgba(243, 156, 18, 0.14), transparent 60%),
-        var(--color-bg);
+    background: #8b6f47;
+    color: white;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+[data-theme="dark"] .hero {
+    background: #5d4037;
+    color: white;
 }
 
 .hero__grid {
@@ -12,15 +19,25 @@
     align-items: center;
 }
 
+.hero__content .eyebrow {
+    color: rgba(255, 255, 255, 0.9);
+    background: rgba(6, 182, 212, 0.2);
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    display: inline-block;
+    margin-bottom: var(--space-3);
+}
+
 .hero__content h1 {
     font-size: clamp(2.5rem, 4vw, 3.5rem);
     line-height: 1.1;
     margin: 0 0 var(--space-3);
+    color: white;
 }
 
 .hero__subtitle {
     margin: 0 0 var(--space-4);
-    color: var(--color-text-muted);
+    color: rgba(255, 255, 255, 0.95);
     font-size: 1.1rem;
     max-width: 540px;
 }
@@ -43,7 +60,7 @@
     margin: 0;
     display: grid;
     gap: var(--space-2);
-    color: var(--color-text);
+    color: rgba(255, 255, 255, 0.9);
 }
 
 .hero__list li {
@@ -55,7 +72,7 @@
 
 .hero__list li::before {
     content: "•";
-    color: var(--color-secondary);
+    color: #06b6d4;
     font-size: 1.3rem;
 }
 
@@ -69,7 +86,7 @@
     position: absolute;
     inset: -20px;
     border-radius: var(--radius);
-    background: linear-gradient(135deg, rgba(39, 174, 96, 0.15), rgba(243, 156, 18, 0.15));
+    background: linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(139, 111, 71, 0.15));
     filter: blur(40px);
     z-index: 0;
 }
@@ -99,15 +116,15 @@
 }
 
 .btn-secondary--contrast {
-    border-color: var(--color-secondary);
-    color: var(--color-secondary);
-    background: rgba(39, 174, 96, 0.12);
+    border-color: #06b6d4;
+    color: #06b6d4;
+    background: rgba(6, 182, 212, 0.12);
     font-weight: 600;
 }
 
 .btn-secondary--contrast:hover,
 .btn-secondary--contrast:focus-visible {
-    background: var(--color-secondary);
+    background: #06b6d4;
     color: #fff;
 }
 
@@ -169,5 +186,29 @@
     .hero__preview::after {
         inset: -5px;
     }
+}
+
+/* Smooth scrolling for anchor links */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Section spacing for merged page */
+section[id] {
+    scroll-margin-top: 80px;
+}
+
+/* Ensure proper spacing between merged sections */
+#features {
+    padding-top: 6rem;
+}
+
+#abouts {
+    padding-top: 0;
+}
+
+#stats {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
 }
 

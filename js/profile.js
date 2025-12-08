@@ -1,4 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
+    // Mark that we're not on an auth page
+    window.__onAuthPage = false;
+    
     if (!App.initPageShell({ auth: true })) {
         return;
     }

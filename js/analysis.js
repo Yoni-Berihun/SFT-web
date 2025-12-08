@@ -1,4 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
+    // Mark that we're not on an auth page
+    window.__onAuthPage = false;
+    
     if (!App.initPageShell({ auth: true })) {
         return;
     }
@@ -134,29 +137,82 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     const renderDailyChart = (source, useSourceRange = false) => {
-        if (!selectors.dailyChartCanvas || typeof Chart === "undefined") return;
-        const { start, end } = useSourceRange ? getRangeFromSource(source) : getRange();
-        const days = [];
-        for (let cursor = new Date(start); cursor <= end; cursor.setDate(cursor.getDate() + 1)) {
-            days.push(new Date(cursor));
+        // Ensure chart canvas exists and is visible
+        if (!selectors.dailyChartCanvas || typeof Chart === "undefined") {
+            console.warn('Chart.js not loaded or canvas element not found');
+            return;
         }
-        const labels = days.map((date) => date.toLocaleDateString(undefined, { month: "short", day: "numeric" }));
-        const dailyData = days.map((date) => {
-            const dateKey = toDateKey(date);
-            return source
-                .filter((expense) => toDateKey(expense.date) === dateKey)
-                .reduce((sum, expense) => sum + expense.amount, 0);
-        });
-        let running = 0;
-        const cumulativeData = dailyData.map((value) => {
-            running += value;
-            return Number(running.toFixed(2));
-        });
-
-        const ctx = selectors.dailyChartCanvas.getContext("2d");
         
-        if (dailyChartInstance) dailyChartInstance.destroy();
-        dailyChartInstance = new Chart(ctx, {
+        // Show loading state
+        selectors.dailyChartCanvas.style.display = 'none';
+        const loadingText = document.createElement('div');
+        loadingText.textContent = 'Loading chart data...';
+        loadingText.style.textAlign = 'center';
+        loadingText.style.padding = '20px';
+        loadingText.style.color = isDark() ? '#bdc3c7' : '#7f8c8d';
+        
+        const chartContainer = selectors.dailyChartCanvas.parentElement;
+        if (chartContainer) {
+            // Remove any existing loading text
+            const existingLoading = chartContainer.querySelector('.chart-loading');
+            if (existingLoading) {
+                chartContainer.removeChild(existingLoading);
+            }
+            loadingText.className = 'chart-loading';
+            chartContainer.appendChild(loadingText);
+        }
+        
+        try {
+            // Process data
+            const { start, end } = useSourceRange ? getRangeFromSource(source) : getRange();
+            const days = [];
+            for (let cursor = new Date(start); cursor <= end; cursor.setDate(cursor.getDate() + 1)) {
+                days.push(new Date(cursor));
+            }
+            
+            const labels = days.map((date) => date.toLocaleDateString(undefined, { month: "short", day: "numeric" }));
+            const dailyData = days.map((date) => {
+                const dateKey = toDateKey(date);
+                return source
+                    .filter((expense) => toDateKey(expense.date) === dateKey)
+                    .reduce((sum, expense) => sum + expense.amount, 0);
+            });
+            
+            // If no data, show message
+            if (dailyData.every(val => val === 0)) {
+                if (chartContainer) {
+                    loadingText.textContent = 'No data available for the selected range';
+                }
+                return;
+            }
+            
+            // Calculate running total
+            let running = 0;
+            const cumulativeData = dailyData.map((value) => {
+                running += value;
+                return Number(running.toFixed(2));
+            });
+
+            // Remove loading text if it exists
+            if (chartContainer) {
+                const existingLoading = chartContainer.querySelector('.chart-loading');
+                if (existingLoading) {
+                    chartContainer.removeChild(existingLoading);
+                }
+            }
+            
+            // Show canvas
+            selectors.dailyChartCanvas.style.display = 'block';
+            
+            const ctx = selectors.dailyChartCanvas.getContext("2d");
+            
+            // Destroy previous instance if exists
+            if (dailyChartInstance) {
+                dailyChartInstance.destroy();
+            }
+            
+            // Create new chart instance
+            dailyChartInstance = new Chart(ctx, {
             type: "bar",
             data: {
                 labels,
@@ -497,7 +553,145 @@ document.addEventListener("DOMContentLoaded", () => {
     selectors.endInput?.addEventListener("change", renderAnalysis);
     selectors.resetButton?.addEventListener("click", resetFilters);
     selectors.exportCsvButton?.addEventListener("click", exportCsv);
-    selectors.exportPdfButton?.addEventListener("click", () => window.print());
+        const exportPdf = async () => {
+        const button = selectors.exportPdfButton;
+        if (!button) return;
+        
+        // Save original button state
+        const originalHTML = button.innerHTML;
+        const originalDisabled = button.disabled;
+        
+        try {
+            // Update button state
+            button.disabled = true;
+            button.innerHTML = 'Preparing PDF...';
+            
+            // Load jsPDF library
+            await new Promise((resolve, reject) => {
+                if (window.jspdf) return resolve();
+                
+                const script = document.createElement('script');
+                script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+                script.onload = () => {
+                    // The library might expose itself differently
+                    if (!window.jspdf) window.jspdf = window.jspdf || window.jspdf.jsPDF;
+                    resolve();
+                };
+                script.onerror = reject;
+                document.head.appendChild(script);
+            });
+            
+            // Get the element to export
+            const element = document.querySelector('.page-shell');
+            if (!element) {
+                throw new Error('Could not find content to export');
+            }
+            
+            // Create a simple text-based PDF as fallback
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF();
+            
+            // Add title
+            pdf.setFontSize(20);
+            pdf.text('EduFinance Analysis Report', 14, 20);
+            
+            // Add date
+            pdf.setFontSize(12);
+            const date = new Date().toLocaleDateString();
+            pdf.text(`Generated on: ${date}`, 14, 30);
+            
+            // Add a line
+            pdf.setDrawColor(200, 200, 200);
+            pdf.line(14, 35, 200, 35);
+            
+            // Add summary data
+            pdf.setFontSize(14);
+            pdf.text('Expense Summary', 14, 45);
+            
+            // Get expense data
+            const expenses = filterExpenses();
+            const total = expenses.reduce((sum, exp) => sum + exp.amount, 0);
+            
+            // Add summary text
+            pdf.setFontSize(12);
+            pdf.text(`Total Expenses: ${App.formatCurrency(total, user.currency)}`, 20, 55);
+            pdf.text(`Number of Transactions: ${expenses.length}`, 20, 65);
+            
+            // Add transactions table
+            if (expenses.length > 0) {
+                pdf.text('Recent Transactions:', 14, 85);
+                
+                // Table headers
+                pdf.setFont(undefined, 'bold');
+                pdf.text('Date', 20, 95);
+                pdf.text('Category', 60, 95);
+                pdf.text('Amount', 120, 95);
+                
+                // Table rows
+                pdf.setFont(undefined, 'normal');
+                let y = 105;
+                const itemsPerPage = 20;
+                
+                expenses.slice(0, 50).forEach((expense, index) => {
+                    // Add new page if needed
+                    if (index > 0 && index % itemsPerPage === 0) {
+                        pdf.addPage();
+                        y = 20;
+                        
+                        // Add headers on new page
+                        pdf.setFont(undefined, 'bold');
+                        pdf.text('Date', 20, y);
+                        pdf.text('Category', 60, y);
+                        pdf.text('Amount', 120, y);
+                        
+                        y += 10;
+                        pdf.setFont(undefined, 'normal');
+                    }
+                    
+                    pdf.text(expense.date, 20, y);
+                    pdf.text(expense.category, 60, y);
+                    pdf.text(App.formatCurrency(expense.amount, user.currency), 120, y);
+                    
+                    y += 8;
+                    
+                    // Add a small space after every 5 items
+                    if (index > 0 && (index + 1) % 5 === 0) {
+                        y += 5;
+                    }
+                });
+            }
+            
+            // Add footer
+            const pageCount = pdf.internal.getNumberOfPages();
+            for (let i = 1; i <= pageCount; i++) {
+                pdf.setPage(i);
+                pdf.setFontSize(10);
+                pdf.text(
+                    `Page ${i} of ${pageCount}`, 
+                    pdf.internal.pageSize.getWidth() - 30,
+                    pdf.internal.pageSize.getHeight() - 10
+                );
+            }
+            
+            // Save the PDF
+            pdf.save(`EduFinance-Analysis-${new Date().toISOString().split('T')[0]}.pdf`);
+            
+            App.showToast('PDF exported successfully');
+            
+        } catch (error) {
+            console.error('Error generating PDF:', error);
+            App.showToast('Failed to generate PDF. Please try again.');
+        } finally {
+            // Restore button state
+            if (button) {
+                button.disabled = originalDisabled;
+                button.innerHTML = originalHTML;
+            }
+        }
+    };
+    
+    // Add click handler
+    selectors.exportPdfButton?.addEventListener('click', exportPdf);
     selectors.shareButton?.addEventListener("click", (event) => {
         event.stopPropagation();
         toggleShareMenu();

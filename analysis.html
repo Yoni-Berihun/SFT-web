@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
         <title>EduFinance — Analysis</title>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -10,8 +10,67 @@
         <link rel="stylesheet" href="css/global.css" />
         <link rel="stylesheet" href="css/analysis.css" />
         <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" integrity="sha384-6FpEvGpK9x3TlKVUw6JO33dTUmL8/IpEW+uFfLgLxR72k3gI7mQ9mJd3Hhj3qHxN" crossorigin="anonymous"></script>
+        
+        <!-- Firebase SDKs (load synchronously, no defer) -->
+        <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+        
+        <!-- Firebase Config (load synchronously, must be before auth.js) -->
+        <script src="js/firebase-config.js"></script>
+        
+        <!-- App scripts (can use defer) -->
         <script defer src="js/common.js"></script>
+        <script defer src="js/auth.js"></script>
         <script defer src="js/analysis.js"></script>
+        <script>
+            // Debug theme initialization
+            document.addEventListener('DOMContentLoaded', () => {
+                console.log('DOM fully loaded');
+                if (window.App) {
+                    console.log('App object found, initializing theme...');
+                    // Force theme initialization
+                    const html = document.documentElement;
+                    const savedTheme = localStorage.getItem('edufinance-theme');
+                    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                    const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+                    
+                    console.log('Initial theme:', { savedTheme, prefersDark, theme });
+                    
+                    // Set initial theme
+                    html.setAttribute('data-theme', theme);
+                    if (theme === 'dark') {
+                        html.classList.add('dark');
+                    } else {
+                        html.classList.remove('dark');
+                    }
+                    
+                    // Update theme icon
+                    if (window.App.updateThemeIcon) {
+                        window.App.updateThemeIcon(theme === 'dark');
+                    }
+                    
+                    // Add click handler directly as a fallback
+                    const themeToggle = document.getElementById('themeToggle');
+                    if (themeToggle) {
+                        console.log('Adding direct click handler to theme toggle');
+                        themeToggle.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            console.log('Theme toggle clicked (direct handler)');
+                            if (window.App.toggleTheme) {
+                                window.App.toggleTheme();
+                            } else {
+                                console.error('App.toggleTheme not found!');
+                            }
+                        });
+                    } else {
+                        console.error('Theme toggle button not found!');
+                    }
+                } else {
+                    console.error('App object not found!');
+                }
+            });
+        </script>
     </head>
     <body data-page="analysis">
         <a class="skip-link" href="#main-content">Skip to main content</a>
@@ -38,7 +97,25 @@
                     <a class="nav-link" data-nav-link="about" href="about.html">About</a>
                 </nav>
                 <div class="shell-actions">
-                    <button id="themeToggle" class="icon-button" aria-label="Toggle theme" type="button">🌙</button>
+                    <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme" type="button" title="Toggle theme">
+                        <svg class="sun-and-moon" aria-hidden="true" width="24" height="24" viewBox="0 0 24 24">
+                            <mask class="moon" id="moon-mask">
+                                <rect x="0" y="0" width="100%" height="100%" fill="white" />
+                                <circle cx="24" cy="10" r="6" fill="black" />
+                            </mask>
+                            <circle class="sun" cx="12" cy="12" r="6" mask="url(#moon-mask)" fill="currentColor" />
+                            <g class="sun-beams" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                                <line x1="12" y1="1" x2="12" y2="3" />
+                                <line x1="12" y1="21" x2="12" y2="23" />
+                                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                                <line x1="1" y1="12" x2="3" y2="12" />
+                                <line x1="21" y1="12" x2="23" y2="12" />
+                                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                            </g>
+                        </svg>
+                    </button>
                     <button id="logout" class="btn btn-secondary" type="button">Log out</button>
                 </div>
             </div>
@@ -98,7 +175,6 @@
                         </div>
                         <button class="btn btn-secondary" id="analysisExportPdf" type="button">Export PDF</button>
                         <button class="btn btn-ghost" id="analysisExportCsv" type="button">Export CSV</button>
-                        <a class="btn btn-ghost" href="expenses.html">Edit data</a>
                     </div>
                 </section>
 
@@ -182,30 +258,6 @@
                     </article>
                 </section>
 
-                <section class="analysis-insights" aria-label="Insight shortcuts">
-                    <article class="page-card insight-panel">
-                        <header>
-                            <p class="label">Action board</p>
-                            <h3>What the charts are saying</h3>
-                        </header>
-                        <ul class="insight-panel__list">
-                            <li>Spikes in the bar chart show ideal moments to reschedule repeat buys.</li>
-                            <li>The projection chart reveals whether you are pacing ahead or behind plan.</li>
-                            <li>Category pie helps cap lifestyle spending before it overtakes essentials.</li>
-                        </ul>
-                    </article>
-                    <article class="page-card insight-panel">
-                        <header>
-                            <p class="label">Workflow</p>
-                            <h3>How to use these filters</h3>
-                        </header>
-                        <ul class="insight-panel__list insight-panel__list--badges">
-                            <li><span class="insight-badge">1</span> Pick a preset range, then tighten it with exact dates.</li>
-                            <li><span class="insight-badge">2</span> Compare categories individually to surface hidden leaks.</li>
-                            <li><span class="insight-badge">3</span> Share/export once the graphs tell a compelling story.</li>
-                        </ul>
-                    </article>
-                </section>
 
                 <section class="page-card analysis-log" aria-labelledby="analysis-log-title">
                     <header class="analysis-table__header">
@@ -223,11 +275,6 @@
         <footer class="site-footer">
             <div class="container footer-content">
                 <p>© 2025 EduFinance Team · Hawassa University</p>
-                <div class="footer-links" aria-label="Utility links">
-                    <a href="about.html">About</a>
-                    <a href="mailto:yonatan@example.com">Contact</a>
-                    <a href="https://github.com/Yoni-Berihun" target="_blank" rel="noreferrer">GitHub</a>
-                </div>
             </div>
         </footer>
 

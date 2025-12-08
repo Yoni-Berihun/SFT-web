@@ -1,4 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
+    // Mark that we're not on an auth page
+    window.__onAuthPage = false;
+    
     if (!App.initPageShell({ auth: true })) {
         return;
     }
@@ -20,9 +23,16 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     const quotes = [
-        { text: "Consistency beats intensity. Track small wins daily.", author: "EduFinance playbook" },
+        { text: "Consistency beats intensity. Track small wins daily.", author: "udungu mvumva" },
         { text: "A budget is a permission slip for joyful spending.", author: "Yonatan Berihun" },
-        { text: "Saving early buys freedom later.", author: "Hawassa mentors" },
+        { text: "Saving early buys freedom later.", author: "Salahdin Surur" },
+        { text: "Small, regular contributions compound into surprising balances.", author: "Abdulkerim khedr" },
+        { text: "Paying yourself first is the simplest habit that builds wealth.", author: "Biniyam Fisseha" },
+        { text: "Clear goals make choices easier — define what money should do for you.", author: "Tsion Tesfaye" },
+        { text: "Know your why: every savings plan needs a purpose.", author: "Fenet Bushura" },
+        { text: "Track one thing this week — spending, saving, or subscription use.", author: "Amanuel wondmagegnehu" },
+        { text: "Automate the boring stuff: transfers and bills free your attention.", author: "Elham Seid" },
+        { text: "Review your finances regularly; small fixes prevent big surprises.", author: "Afomiya" },
     ];
 
     let quoteIndex = 0;
@@ -61,7 +71,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!els.list) return;
         els.list.innerHTML = "";
         App.defaultTips.forEach((tip) => {
-            const isComplete = tipsState.progress[tip.id];
             const card = document.createElement("article");
             card.innerHTML = `
                 <span class="big-number" aria-hidden="true">${tip.icon}</span>
@@ -70,9 +79,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 <ul>${tip.checklist.map((item) => `<li>${item}</li>`).join("")}</ul>
                 <div class="tips-card__actions">
                     <button class="btn btn-tertiary" data-tip-view="${tip.id}">View details</button>
-                    <button class="btn ${isComplete ? "btn-secondary" : "btn-primary"}" data-tip-complete="${tip.id}">
-                        ${isComplete ? "Mark incomplete" : "Mark complete"}
-                    </button>
                 </div>
             `;
             els.list.appendChild(card);

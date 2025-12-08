@@ -2,15 +2,29 @@
 <html lang="en">
     <head>
         <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
         <title>EduFinance — Dashboard</title>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
         <link rel="stylesheet" href="css/global.css" />
+        <link rel="stylesheet" href="css/theme.css" />
         <link rel="stylesheet" href="css/dashboard.css" />
         <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" integrity="sha384-6FpEvGpK9x3TlKVUw6JO33dTUmL8/IpEW+uFfLgLxR72k3gI7mQ9mJd3Hhj3qHxN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+        
+        <!-- Firebase SDKs (load synchronously, no defer) -->
+        <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+        
+        <!-- Firebase Config (load synchronously, must be before auth.js) -->
+        <script src="js/firebase-config.js"></script>
+        
+        <!-- App scripts (can use defer) -->
         <script defer src="js/common.js"></script>
+        <script defer src="js/auth.js"></script>
         <script defer src="js/dashboard.js"></script>
     </head>
     <body data-page="dashboard">
@@ -38,15 +52,36 @@
                     <a class="nav-link" data-nav-link="about" href="about.html">About</a>
                 </nav>
                 <div class="shell-actions">
-                    <button id="themeToggle" class="icon-button" aria-label="Toggle theme" type="button">🌙</button>
-                    <a id="login" class="btn btn-ghost" href="login.html">Login</a>
-                    <button id="logout" class="btn btn-secondary" type="button">Log out</button>
+                    <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme" type="button" title="Toggle theme">
+                        <svg class="sun-and-moon" aria-hidden="true" width="24" height="24" viewBox="0 0 24 24">
+                            <!-- Sun -->
+                            <g class="sun">
+                                <circle cx="12" cy="12" r="4" fill="currentColor" />
+                                <g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="12" y1="3" x2="12" y2="1" />
+                                    <line x1="12" y1="23" x2="12" y2="21" />
+                                    <line x1="5.64" y1="5.64" x2="4.22" y2="4.22" />
+                                    <line x1="19.78" y1="19.78" x2="18.36" y2="18.36" />
+                                    <line x1="1" y1="12" x2="3" y2="12" />
+                                    <line x1="21" y1="12" x2="23" y2="12" />
+                                    <line x1="5.64" y1="18.36" x2="4.22" y2="19.78" />
+                                    <line x1="19.78" y1="4.22" x2="18.36" y2="5.64" />
+                                </g>
+                            </g>
+                            <!-- Moon -->
+                            <g class="moon">
+                                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="currentColor" />
+                            </g>
+                        </svg>
+                    </button>
+                <button id="logout" class="btn btn-secondary" type="button">Log out</button>
                 </div>
             </div>
         </header>
 
         <main id="main-content">
-            <section id="overview" class="section">
+            <div class="container page-shell">
+                <section id="overview" class="page-hero" aria-labelledby="overview-title">
                 <header class="section-header">
                     <div class="greeting-row">
                         <div>
@@ -56,7 +91,6 @@
                         <div class="date-range-toggle" role="tablist" aria-label="Dashboard date range">
                             <button type="button" class="chip chip-active" data-range="week" role="tab" aria-selected="true">This Week</button>
                             <button type="button" class="chip" data-range="month" role="tab" aria-selected="false">This Month</button>
-                            <button type="button" class="chip" data-range="custom" role="tab" aria-selected="false">Custom</button>
                         </div>
                     </div>
                     <div class="date-range-custom" hidden>
@@ -68,7 +102,12 @@
                             To
                             <input type="date" id="customTo" />
                         </label>
+                        <label class="input-group">
+                            Select Date
+                            <input type="date" id="selectedDate" />
+                        </label>
                         <button type="button" class="btn btn-secondary" id="applyCustomRange">Apply</button>
+                        <button type="button" class="btn btn-primary" id="applyDate">Apply Date</button>
                     </div>
                 </header>
                 <div class="dashboard-hero">
@@ -110,15 +149,20 @@
                             </p>
                         </div>
                         <div class="dashboard-actions">
-                            <button class="btn btn-secondary" id="openModal" type="button">Add expense</button>
                             <button class="btn btn-ghost" id="exportCsv" type="button">Export CSV</button>
                             <button class="btn btn-ghost" id="exportPdf" type="button">Export PDF</button>
+                            <button class="btn btn-ghost" id="printButton" type="button">Print</button>
                         </div>
                     </article>
                     <article class="card metric-card">
-                        <h3>Upcoming reminders</h3>
-                        <p class="helper-text">Keep these cleared to stay on track this week.</p>
-                        <ul class="list upcoming-list">
+                        <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                            <div>
+                                <h3>Upcoming reminders</h3>
+                                <p class="helper-text">Keep these cleared to stay on track this week.</p>
+                            </div>
+                            <button type="button" class="btn btn-primary btn-sm" id="addReminderBtn" style="min-width: auto; padding: 0.5rem 1rem;">+ Add</button>
+                        </div>
+                        <ul class="list upcoming-list" id="remindersList">
                             <li>Pay library fine — Birr 45 (due Friday)</li>
                             <li>Class trip contribution — Birr 150 (next week)</li>
                             <li>Monthly savings transfer — Birr 300 (1st of month)</li>
@@ -145,6 +189,7 @@
                                 <option value="Supplies">Supplies</option>
                             </select>
                         </label>
+                        <button type="button" class="btn btn-primary" id="addExpenseButton">+ Add Expense</button>
                     </div>
                 </header>
                 <div class="expenses-insights">
@@ -241,101 +286,12 @@
                 <div id="tipsList" class="tips-grid"></div>
             </section>
 
-            <section id="profile" class="section section-split">
-                <div class="card card-tight">
-                    <h2>Profile snapshot</h2>
-                    <div class="profile-card">
-                        <div class="avatar" data-initial="S"></div>
-                        <div>
-                            <p class="label">Name</p>
-                            <p data-key="profileName">Student</p>
-                            <p class="label">Email</p>
-                            <p data-key="profileEmail">student@edufinance.com</p>
-                        </div>
-                    </div>
-                    <div class="form-grid">
-                        <label class="input-group">
-                            Budget
-                            <input id="profileBudget" type="number" min="0" step="0.01" />
-                        </label>
-                        <label class="input-group">
-                            Currency
-                            <select id="profileCurrency">
-                                <option value="Birr">Birr</option>
-                                <option value="USD">USD</option>
-                            </select>
-                        </label>
-                        <label class="switch">
-                            <input id="profileNotifications" type="checkbox" /> Email notifications
-                        </label>
-                        <button class="btn btn-secondary" id="profileSave" type="button">Save profile</button>
-                    </div>
-                </div>
-                <div class="card about-card">
-                    <h3>Data management</h3>
-                    <p>Need to start fresh? You can clear demo data and begin experimenting again.</p>
-                    <button class="btn btn-danger" id="clearData" type="button">Clear demo data</button>
-                </div>
-            </section>
-
-            <section id="split" class="section">
-                <header class="section-header">
-                    <div>
-                        <p class="eyebrow">Split expenses</p>
-                        <h2>Track balances with friends</h2>
-                    </div>
-                </header>
-                <div class="grid grid-2">
-                    <article class="card">
-                        <h3>Balances</h3>
-                        <ul id="balanceList" class="list"></ul>
-                    </article>
-                    <article class="card">
-                        <h3>Recent shared costs</h3>
-                        <ul id="splitExpenses" class="list"></ul>
-                    </article>
-                </div>
-            </section>
-
-            <section class="section section-split">
-                <article class="card goals-card">
-                    <div class="card-header goals-header">
-                        <div>
-                            <h2>Weekly goals</h2>
-                            <small class="helper-text" id="goalsSummary">0 of 0 complete</small>
-                        </div>
-                        <button
-                            class="icon-button icon-button--ghost"
-                            type="button"
-                            id="addGoal"
-                            aria-label="Add weekly plan"
-                        >
-                            +
-                        </button>
-                    </div>
-                    <ul class="goals-list" id="goalsList"></ul>
-                    <button class="btn btn-secondary" type="button" id="resetGoals">Reset goals</button>
-                </article>
-
-                <article class="card activity-card">
-                    <div class="card-header">
-                        <h2>Activity timeline</h2>
-                        <small class="helper-text">Recent changes</small>
-                    </div>
-                    <ol class="activity-feed" id="activityFeed"></ol>
-                </article>
-            </section>
-            
+            </div>
         </main>
 
         <footer class="site-footer">
             <div class="container footer-content">
                 <p>© 2025 EduFinance Team · Hawassa University</p>
-                <div class="footer-links" aria-label="Utility links">
-                    <a href="about.html">About</a>
-                    <a href="mailto:yonatan@example.com">Contact</a>
-                    <a href="https://github.com/Yoni-Berihun" target="_blank" rel="noreferrer">GitHub</a>
-                </div>
             </div>
         </footer>
 
@@ -376,8 +332,27 @@
             </div>
         </div>
 
-        <button id="fab" class="floating-action" aria-label="Add expense" type="button">+</button>
 
         <div id="toast" class="toast" role="status" aria-live="polite" hidden>Saved</div>
+
+        <!-- Reminder Modal -->
+        <div id="reminderModal" class="modal-overlay" hidden>
+            <div class="modal" role="dialog" aria-modal="true" aria-labelledby="reminderModalTitle">
+                <header class="modal-header">
+                    <h2 id="reminderModalTitle">Add Reminder</h2>
+                    <button id="reminderModalClose" class="icon-button" aria-label="Close">✕</button>
+                </header>
+                <form id="reminderForm" class="form-grid">
+                    <label class="input-group">
+                        Reminder Text
+                        <input id="reminderText" type="text" placeholder="e.g., Pay library fine — Birr 45 (due Friday)" required />
+                    </label>
+                    <div class="form-row form-right">
+                        <button type="button" class="btn btn-tertiary" id="reminderCancel">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Add Reminder</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </body>
 </html>

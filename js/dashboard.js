@@ -1,15 +1,85 @@
 document.addEventListener("DOMContentLoaded", () => {
+    // Mark that we're not on an auth page
+    window.__onAuthPage = false;
+    
+    // Initialize theme first using ThemeManager
+    if (window.ThemeManager && typeof window.ThemeManager.init === 'function') {
+        window.ThemeManager.init();
+    } else if (typeof initTheme === 'function') {
+        // Fallback to direct initTheme if ThemeManager is not available
+        initTheme();
+    }
+    
+    // Wait for Firebase to be ready before checking auth
+    // This ensures Firebase auth state is restored before we check
+    const checkAuthAndInit = () => {
+        // Wait for Firebase to initialize
+        if (window.firebaseAuth) {
+            // Firebase is available, check auth
     if (!App.initPageShell({ auth: true })) {
+                // Auth check failed, will redirect to login
         return;
+    }
+            // Auth check passed, initialize dashboard
+            initDashboard();
+        } else if (window.firebaseReady === false) {
+            // Firebase failed to load, check localStorage as fallback
+            const session = App.getSession();
+            if (!session?.isAuthenticated) {
+                window.location.href = "login.html";
+                return;
+            }
+            // Has localStorage session, allow access
+            initDashboard();
+        } else {
+            // Firebase still loading, wait a bit more
+            setTimeout(checkAuthAndInit, 200);
+        }
+    };
+    
+    // Start checking after a short delay to allow scripts to load
+    setTimeout(checkAuthAndInit, 300);
+});
+
+function initDashboard() {
+    
+    // Direct logout functionality
+    const logoutButton = document.getElementById('logout');
+    if (logoutButton) {
+        logoutButton.addEventListener('click', async () => {
+            try {
+                // Clear session storage
+                if (window.localStorage) {
+                    window.localStorage.removeItem('edufinance-session');
+                    window.localStorage.removeItem('edufinance-user');
+                }
+                
+                // Show logout message
+                const toast = document.createElement('div');
+                toast.className = 'toast';
+                toast.textContent = 'Logged out successfully';
+                document.body.appendChild(toast);
+                
+                // Trigger animation
+                setTimeout(() => toast.classList.add('show'), 10);
+                
+                // Redirect to login page
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 500);
+                
+            } catch (error) {
+                console.error('Error during logout:', error);
+                window.location.href = 'login.html';
+            }
+        });
     }
 
     // Initialize modal with close handlers
-    const modal = App.initModal();
+    const modal = App.initModal ? App.initModal() : null;
 
     let user = App.loadState(App.STORAGE_KEYS.user, App.defaultUser);
     let expenses = App.loadState(App.STORAGE_KEYS.expenses, App.defaultExpenses);
-    let splitFriends = App.loadState(App.STORAGE_KEYS.friends, App.defaultSplitFriends);
-    let splitExpenses = App.loadState(App.STORAGE_KEYS.split, App.defaultSplitExpenses);
     let editingId = null;
     let filteredCategory = "all";
     let currentRange = "week";
@@ -33,17 +103,30 @@ document.addEventListener("DOMContentLoaded", () => {
         } else if (currentRange === "month") {
             start = new Date(end);
             start.setMonth(start.getMonth() - 1);
-        } else if (currentRange === "custom" && customFrom && customTo) {
-            start = customFrom;
-            end = customTo;
+        } else if (currentRange === "custom") {
+            if (customFrom && customTo) {
+                start = new Date(customFrom);
+                end = new Date(customTo);
+            } else if (selectedDate) {
+                // Use selected date if custom range is set but from/to not specified
+                const date = new Date(selectedDate);
+                start = new Date(date.setHours(0, 0, 0, 0));
+                end = new Date(date.setHours(23, 59, 59, 999));
+            } else {
+                // Fallback to all data
+                return expenses.slice();
+            }
         } else {
             // Fallback to all data
             return expenses.slice();
         }
 
         return expenses.filter((expense) => {
-            const date = new Date(expense.date);
-            return date >= start && date <= end;
+            const expenseDate = new Date(expense.date);
+            expenseDate.setHours(0, 0, 0, 0);
+            start.setHours(0, 0, 0, 0);
+            end.setHours(23, 59, 59, 999);
+            return expenseDate >= start && expenseDate <= end;
         });
     };
 
@@ -420,67 +503,190 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     };
 
-    const populateProfile = () => {
-        const nameEl = App.qs('[data-key="profileName"]');
-        const emailEl = App.qs('[data-key="profileEmail"]');
-        const avatar = App.qs(".avatar");
-        const budgetInput = App.qs("#profileBudget");
-        const currencySelect = App.qs("#profileCurrency");
-        const notificationToggle = App.qs("#profileNotifications");
+    // Reminders functionality
+    const REMINDERS_KEY = "edufinance-reminders";
+    let reminders = App.loadState(REMINDERS_KEY, [
+        "Pay library fine — Birr 45 (due Friday)",
+        "Class trip contribution — Birr 150 (next week)",
+        "Monthly savings transfer — Birr 300 (1st of month)"
+    ]);
 
-        if (nameEl) nameEl.textContent = user.name;
-        if (emailEl) emailEl.textContent = user.email;
-        if (avatar) avatar.dataset.initial = user.name.charAt(0).toUpperCase();
-        if (budgetInput) budgetInput.value = user.budget;
-        if (currencySelect) currencySelect.value = user.currency;
-        if (notificationToggle) notificationToggle.checked = user.notifications;
+    const renderReminders = () => {
+        const remindersList = App.qs("#remindersList");
+        if (!remindersList) return;
+        
+        remindersList.innerHTML = "";
+        if (reminders.length === 0) {
+            remindersList.innerHTML = "<li class='no-data'>No reminders yet. Click '+ Add' to create one.</li>";
+            return;
+        }
+        
+        reminders.forEach((reminder, index) => {
+            const li = document.createElement("li");
+            li.style.display = "flex";
+            li.style.justifyContent = "space-between";
+            li.style.alignItems = "center";
+            li.innerHTML = `
+                <span>${reminder}</span>
+                <button type="button" class="btn-icon btn-icon-delete" data-reminder-index="${index}" aria-label="Delete reminder" style="margin-left: 0.5rem;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 6h18"></path>
+                        <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                        <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                    </svg>
+                </button>
+            `;
+            remindersList.appendChild(li);
+        });
+        
+        // Add delete handlers
+        remindersList.querySelectorAll("[data-reminder-index]").forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                const index = parseInt(e.target.closest("[data-reminder-index]").dataset.reminderIndex);
+                reminders.splice(index, 1);
+                App.saveState(REMINDERS_KEY, reminders);
+                renderReminders();
+                App.showToast("Reminder deleted");
+            });
+        });
     };
 
-    const populateSplit = () => {
-        const balanceList = App.qs("#balanceList");
-        const expenseList = App.qs("#splitExpenses");
-        if (!balanceList || !expenseList) return;
-
-        const balances = {};
-        splitFriends.forEach((friend) => {
-            balances[friend.id] = 0;
-        });
-
-        splitExpenses.forEach((expense) => {
-            if (expense.settled) return;
-            const share = expense.totalAmount / expense.splitBetween.length;
-            expense.splitBetween.forEach((participant) => {
-                if (participant === "me") return;
-                balances[participant] += share;
-            });
-            if (expense.paidBy !== "me" && expense.paidBy !== undefined) {
-                balances[expense.paidBy] -= expense.totalAmount;
+    const initReminderModal = () => {
+        const reminderModal = App.qs("#reminderModal");
+        const reminderForm = App.qs("#reminderForm");
+        const reminderText = App.qs("#reminderText");
+        const addReminderBtn = App.qs("#addReminderBtn");
+        const reminderModalClose = App.qs("#reminderModalClose");
+        const reminderCancel = App.qs("#reminderCancel");
+        
+        if (!reminderModal || !reminderForm) return;
+        
+        const openReminderModal = () => {
+            reminderModal.hidden = false;
+            if (reminderText) {
+                reminderText.value = "";
+                reminderText.focus();
             }
+        };
+        
+        const closeReminderModal = () => {
+            reminderModal.hidden = true;
+            if (reminderForm) reminderForm.reset();
+        };
+        
+        addReminderBtn?.addEventListener("click", openReminderModal);
+        reminderModalClose?.addEventListener("click", closeReminderModal);
+        reminderCancel?.addEventListener("click", closeReminderModal);
+        
+        reminderModal?.addEventListener("click", (e) => {
+            if (e.target === reminderModal) closeReminderModal();
         });
-
-        balanceList.innerHTML = "";
-        Object.entries(balances).forEach(([friendId, amount]) => {
-            const friend = splitFriends.find((f) => f.id === friendId);
-            if (!friend) return;
-            if (Math.abs(amount) < 0.01) return;
-            const item = document.createElement("li");
-            const prefix = amount > 0 ? "owes you" : "you owe";
-            item.textContent = `${friend.avatar} ${friend.name} ${prefix} ${App.formatCurrency(Math.abs(amount), user.currency)}`;
-            balanceList.appendChild(item);
+        
+        reminderForm?.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const text = reminderText?.value.trim();
+            if (!text) {
+                App.showToast("Please enter a reminder", "error");
+                return;
+            }
+            
+            reminders.push(text);
+            App.saveState(REMINDERS_KEY, reminders);
+            renderReminders();
+            closeReminderModal();
+            App.showToast("Reminder added");
         });
+    };
 
-        if (!balanceList.children.length) {
-            const clear = document.createElement("li");
-            clear.textContent = "All balances settled";
-            balanceList.appendChild(clear);
+    // Calendar functionality
+    let selectedDate = App.loadState("edufinance-selected-date", null);
+
+    const initCalendar = () => {
+        const selectedDateInput = App.qs("#selectedDate");
+        const applyDateBtn = App.qs("#applyDate");
+        
+        if (selectedDateInput && selectedDate) {
+            selectedDateInput.value = selectedDate;
         }
+        
+        applyDateBtn?.addEventListener("click", () => {
+            const date = selectedDateInput?.value;
+            if (!date) {
+                App.showToast("Please select a date", "error");
+                return;
+            }
+            
+            selectedDate = date;
+            App.saveState("edufinance-selected-date", selectedDate);
+            
+            // Update dashboard to show selected date
+            const dateDisplay = App.qs('[data-key="currentRangeLabel"]');
+            if (dateDisplay) {
+                const formattedDate = new Date(date).toLocaleDateString('en-US', { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                });
+                dateDisplay.textContent = formattedDate;
+                currentRange = "custom";
+                customFrom = new Date(date);
+                customTo = new Date(date);
+            }
+            
+            App.showToast(`Date selected: ${new Date(date).toLocaleDateString()}`);
+            updateAll();
+        });
+    };
 
-        expenseList.innerHTML = "";
-        splitExpenses.slice(0, 5).forEach((expense) => {
-            const item = document.createElement("li");
-            const paidBy = expense.paidBy === "me" ? "You" : splitFriends.find((f) => f.id === expense.paidBy)?.name || "Friend";
-            item.textContent = `${expense.description} — ${App.formatCurrency(expense.totalAmount, user.currency)} (paid by ${paidBy})`;
-            expenseList.appendChild(item);
+    // Date range controls
+    const initDateRangeControls = () => {
+        const chips = App.qsa(".date-range-toggle .chip");
+        const customRange = App.qs(".date-range-custom");
+        const applyCustomBtn = App.qs("#applyCustomRange");
+        const customFromInput = App.qs("#customFrom");
+        const customToInput = App.qs("#customTo");
+
+        chips.forEach((chip) => {
+            chip.addEventListener("click", () => {
+                chips.forEach((c) => {
+                    c.classList.remove("chip-active", "aria-selected");
+                    c.setAttribute("aria-selected", "false");
+                });
+                chip.classList.add("chip-active", "aria-selected");
+                chip.setAttribute("aria-selected", "true");
+                
+                const range = chip.dataset.range;
+                currentRange = range;
+                
+                if (customRange) {
+                    customRange.hidden = range !== "custom";
+                }
+                
+                updateAll();
+            });
+        });
+
+        applyCustomBtn?.addEventListener("click", () => {
+            const from = customFromInput?.value;
+            const to = customToInput?.value;
+            
+            if (!from || !to) {
+                App.showToast("Please select both dates", "error");
+                return;
+            }
+            
+            customFrom = new Date(from);
+            customTo = new Date(to);
+            currentRange = "custom";
+            
+            if (customFrom > customTo) {
+                App.showToast("Start date must be before end date", "error");
+                return;
+            }
+            
+            updateAll();
+            App.showToast("Date range applied");
         });
     };
 
@@ -488,8 +694,6 @@ document.addEventListener("DOMContentLoaded", () => {
         updateHero();
         populateExpensesTable();
         populateAnalysis();
-        populateProfile();
-        populateSplit();
     };
 
     const openModal = (expense) => {
@@ -497,6 +701,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const amountInput = App.qs("#expenseAmount");
         const categoryInput = App.qs("#expenseCategory");
         const notesInput = App.qs("#expenseNotes");
+        const modalTitle = App.qs("#modalTitle");
+        const submitButton = App.qs("#expenseForm button[type='submit']");
 
         if (expense) {
             editingId = expense.id;
@@ -504,12 +710,16 @@ document.addEventListener("DOMContentLoaded", () => {
             if (amountInput) amountInput.value = expense.amount;
             if (categoryInput) categoryInput.value = expense.category;
             if (notesInput) notesInput.value = expense.notes;
+            if (modalTitle) modalTitle.textContent = "Edit Expense";
+            if (submitButton) submitButton.textContent = "Update Expense";
         } else {
             editingId = null;
             if (dateInput) dateInput.value = new Date().toISOString().split("T")[0];
             if (amountInput) amountInput.value = "";
             if (categoryInput) categoryInput.value = "Food";
             if (notesInput) notesInput.value = "";
+            if (modalTitle) modalTitle.textContent = "Add Expense";
+            if (submitButton) submitButton.textContent = "Save Expense";
         }
         if (dateInput) dateInput.focus();
         modal.open();
@@ -576,27 +786,181 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     const exportCsv = () => {
-        const header = ["Date", "Category", "Amount", "Notes"];
-        const lines = expenses.map((expense) => {
-            const safeNotes = (expense.notes || "").replace(/"/g, '""');
-            return [expense.date, expense.category, expense.amount, safeNotes]
-                .map((value) => `"${value}"`)
-                .join(",");
-        });
-        const csv = [header.join(","), ...lines].join("\n");
-        const blob = new Blob([csv], { type: "text/csv" });
-        const url = URL.createObjectURL(blob);
-        const anchor = document.createElement("a");
-        anchor.href = url;
-        anchor.download = "expenses.csv";
-        anchor.click();
-        URL.revokeObjectURL(url);
-        App.showToast("CSV exported");
+        try {
+            const header = ["Date", "Category", "Amount", "Notes"];
+            const lines = expenses.map((expense) => {
+                const safeNotes = (expense.notes || "").replace(/"/g, '""');
+                return [expense.date, expense.category, expense.amount, safeNotes]
+                    .map((value) => `"${value}"`)
+                    .join(",");
+            });
+            const csv = [header.join(","), ...lines].join("\n");
+            const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.setAttribute("href", url);
+            link.setAttribute("download", `expenses-${new Date().toISOString().split('T')[0]}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            App.showToast("CSV exported successfully!");
+        } catch (error) {
+            console.error("Error exporting CSV:", error);
+            App.showToast("Error exporting CSV. Please try again.", "error");
+        }
     };
 
-    const exportPdf = () => {
-        window.print();
-        App.showToast("Use browser print dialog to save as PDF");
+    const handlePrint = () => {
+        try {
+            // Store the current display style of elements we want to hide during print
+            const elementsToHide = document.querySelectorAll('.site-header, .site-footer, .page-sidebar');
+            const originalDisplays = [];
+            
+            // Hide elements that shouldn't be printed
+            elementsToHide.forEach(el => {
+                originalDisplays.push(el.style.display);
+                el.style.display = 'none';
+            });
+            
+            // Add print-specific styles
+            const style = document.createElement('style');
+            style.textContent = `
+                @media print {
+                    @page { margin: 1cm; }
+                    body { font-size: 12pt; }
+                    .no-print { display: none !important; }
+                    .card { box-shadow: none; border: 1px solid #ddd; }
+                    .section { break-inside: avoid; }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            // Trigger print
+            setTimeout(() => {
+                window.print();
+                
+                // Clean up after printing
+                setTimeout(() => {
+                    // Restore original display styles
+                    elementsToHide.forEach((el, index) => {
+                        el.style.display = originalDisplays[index];
+                    });
+                    
+                    // Remove the print styles
+                    if (style.parentNode === document.head) {
+                        document.head.removeChild(style);
+                    }
+                    
+                    App.showToast("Print dialog opened");
+                }, 500);
+            }, 100);
+        } catch (error) {
+            console.error("Error preparing print:", error);
+            window.print(); // Fallback to basic print if our fancy version fails
+        }
+    };
+
+    const exportPdf = async () => {
+        try {
+            // Use the jsPDF instance from the global scope
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const rangeExpenses = getExpensesInRange();
+            const stats = App.calculateStats(rangeExpenses);
+            const currentDate = new Date().toLocaleDateString();
+            
+            // Add title and date
+            doc.setFontSize(20);
+            doc.setTextColor(33, 37, 41);
+            doc.text('Expense Report', 14, 22);
+            
+            // Add date range and generated date
+            doc.setFontSize(10);
+            doc.setTextColor(100);
+            doc.text(`Generated on: ${currentDate}`, 14, 30);
+            doc.text(`Date Range: ${getRangeLabel()}`, 14, 37);
+            
+            // Add summary stats
+            doc.setFontSize(14);
+            doc.setTextColor(0, 0, 0);
+            doc.text('Summary', 14, 50);
+            
+            doc.setFontSize(11);
+            doc.text(`Total Spent: ${App.formatCurrency(stats.total, user.currency)}`, 20, 60);
+            doc.text(`Average Daily: ${App.formatCurrency(stats.averageDaily, user.currency)}`, 20, 70);
+            doc.text(`Transactions: ${rangeExpenses.length}`, 20, 80);
+            
+            // Add a simple table of expenses if there are any
+            if (rangeExpenses.length > 0) {
+                doc.setFontSize(14);
+                doc.text('Recent Transactions', 14, 100);
+                
+                // Prepare data for the table
+                const tableColumn = ["Date", "Category", "Amount", "Notes"];
+                const tableRows = [];
+                
+                rangeExpenses.slice(0, 20).forEach(expense => {
+                    const expenseData = [
+                        new Date(expense.date).toLocaleDateString(),
+                        expense.category,
+                        App.formatCurrency(expense.amount, user.currency),
+                        expense.notes || ''
+                    ];
+                    tableRows.push(expenseData);
+                });
+                
+                // Add the table using autoTable
+                doc.autoTable({
+                    head: [tableColumn],
+                    body: tableRows,
+                    startY: 110,
+                    theme: 'grid',
+                    headStyles: { 
+                        fillColor: [41, 128, 185],
+                        textColor: 255,
+                        fontStyle: 'bold'
+                    },
+                    alternateRowStyles: { 
+                        fillColor: [245, 245, 245] 
+                    },
+                    margin: { top: 10 },
+                    styles: {
+                        fontSize: 9,
+                        cellPadding: 3,
+                        overflow: 'linebreak',
+                        lineWidth: 0.1
+                    },
+                    columnStyles: {
+                        0: { cellWidth: 25 }, // Date
+                        1: { cellWidth: 40 }, // Category
+                        2: { cellWidth: 30 }, // Amount
+                        3: { cellWidth: 'auto' } // Notes
+                    }
+                });
+            }
+            
+            // Add page numbers
+            const pageCount = doc.internal.getNumberOfPages();
+            for (let i = 1; i <= pageCount; i++) {
+                doc.setPage(i);
+                doc.setFontSize(10);
+                doc.setTextColor(150);
+                doc.text(
+                    `Page ${i} of ${pageCount}`,
+                    doc.internal.pageSize.getWidth() - 30,
+                    doc.internal.pageSize.getHeight() - 10
+                );
+            }
+            
+            // Save the PDF
+            doc.save(`expense-report-${new Date().toISOString().split('T')[0]}.pdf`);
+            App.showToast("PDF exported successfully!");
+            
+        } catch (error) {
+            console.error("Error generating PDF:", error);
+            App.showToast("Error generating PDF. Please try again.", "error");
+        }
     };
 
     const shareAnalysis = () => {
@@ -613,195 +977,46 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
-    const handleProfileSave = () => {
-        const budgetInput = App.qs("#profileBudget");
-        const currencySelect = App.qs("#profileCurrency");
-        const notificationToggle = App.qs("#profileNotifications");
-
-        user = {
-            ...user,
-            budget: parseFloat(budgetInput.value || "0") || App.defaultUser.budget,
-            currency: currencySelect.value,
-            notifications: notificationToggle.checked,
-        };
-
-        App.saveState(App.STORAGE_KEYS.user, user);
-        updateAll();
-        App.showToast("Profile updated");
-    };
-
-    const clearDemoData = () => {
-        user = App.clone(App.defaultUser);
-        expenses = App.clone(App.defaultExpenses);
-        splitFriends = App.clone(App.defaultSplitFriends);
-        splitExpenses = App.clone(App.defaultSplitExpenses);
-        App.saveState(App.STORAGE_KEYS.user, user);
-        App.saveState(App.STORAGE_KEYS.expenses, expenses);
-        App.saveState(App.STORAGE_KEYS.friends, splitFriends);
-        App.saveState(App.STORAGE_KEYS.split, splitExpenses);
-        window.dispatchEvent(new Event("expensesUpdated"));
-        updateAll();
-        App.showToast("Demo data restored");
-    };
-
-    const initDateRangeControls = () => {
-        const chips = Array.from(document.querySelectorAll(".date-range-toggle .chip"));
-        const customRow = App.qs(".date-range-custom");
-        const fromInput = App.qs("#customFrom");
-        const toInput = App.qs("#customTo");
-        const applyBtn = App.qs("#applyCustomRange");
-
-        chips.forEach((chip) => {
-            chip.addEventListener("click", () => {
-                const range = chip.getAttribute("data-range");
-                currentRange = range;
-                chips.forEach((c) => {
-                    c.classList.toggle("chip-active", c === chip);
-                    c.setAttribute("aria-selected", c === chip ? "true" : "false");
-                });
-                if (range === "custom") {
-                    customRow.hidden = false;
-                } else {
-                    customRow.hidden = true;
-                    customFrom = null;
-                    customTo = null;
-                    updateAll();
-                }
-            });
-        });
-
-        applyBtn?.addEventListener("click", () => {
-            if (fromInput.value && toInput.value) {
-                customFrom = new Date(fromInput.value);
-                customTo = new Date(toInput.value);
-                currentRange = "custom";
-                updateAll();
-            } else {
-                App.showToast("Select both start and end dates");
-            }
-        });
-    };
 
     const initEvents = () => {
-        App.qs("#openModal")?.addEventListener("click", () => openModal());
-        App.qs("#fab")?.addEventListener("click", () => openModal());
-        App.qs("#expenseForm")?.addEventListener("submit", handleExpenseSubmit);
+        // Expense-related event listeners
         App.qs("#expenseRows")?.addEventListener("click", handleExpenseAction);
+        App.qs("#addExpenseButton")?.addEventListener("click", () => openModal());
         App.qs("#exportCsv")?.addEventListener("click", exportCsv);
         App.qs("#exportPdf")?.addEventListener("click", exportPdf);
+        App.qs("#printButton")?.addEventListener("click", handlePrint);
         App.qs("#analysisShare")?.addEventListener("click", shareAnalysis);
-        App.qs("#profileSave")?.addEventListener("click", handleProfileSave);
-        App.qs("#clearData")?.addEventListener("click", clearDemoData);
+        
+        // Expense form submission
+        const expenseForm = App.qs("#expenseForm");
+        if (expenseForm) {
+            expenseForm.addEventListener("submit", handleExpenseSubmit);
+        }
+        
+        // Modal close handlers
+        App.qs("#modalClose")?.addEventListener("click", closeModal);
+        App.qs("#modalCancel")?.addEventListener("click", closeModal);
+        App.qs("#modalOverlay")?.addEventListener("click", (e) => {
+            if (e.target.id === "modalOverlay") closeModal();
+        });
+        
+        // Category filter
         App.qs("#categoryFilter")?.addEventListener("change", (event) => {
             filteredCategory = event.target.value;
             populateExpensesTable();
         });
 
+        // Initialize other components
         initDateRangeControls();
         bindExpenseChips();
-    };
-
-    const GOALS_KEY = "edufinance-goals";
-    const DEFAULT_GOALS = [
-        { id: "goal-log", label: "Log every expense the day it happens", completed: false },
-        { id: "goal-budget", label: "Stay under 80% of budget", completed: false },
-        { id: "goal-savings", label: "Add at least one savings entry", completed: false },
-    ];
-
-    let goalsState = App.loadState(GOALS_KEY, DEFAULT_GOALS);
-
-    const renderGoals = () => {
-        const list = App.qs("#goalsList");
-        const summary = App.qs("#goalsSummary");
-        if (!list || !summary) return;
-
-        list.innerHTML = "";
-        goalsState.forEach((goal) => {
-            const li = document.createElement("li");
-            li.innerHTML = `
-                <label>
-                    <input type="checkbox" data-goal-id="${goal.id}" ${goal.completed ? "checked" : ""} />
-                    ${goal.label}
-                </label>
-            `;
-            list.appendChild(li);
-        });
-
-        const completed = goalsState.filter((goal) => goal.completed).length;
-        summary.textContent = `${completed} of ${goalsState.length} complete`;
-
-        list.querySelectorAll("input[type='checkbox']").forEach((checkbox) => {
-            checkbox.addEventListener("change", () => {
-                const id = checkbox.dataset.goalId;
-                goalsState = goalsState.map((goal) =>
-                    goal.id === id ? { ...goal, completed: checkbox.checked } : goal
-                );
-                App.saveState(GOALS_KEY, goalsState);
-                renderGoals();
-            });
-        });
-    };
-
-    const attachGoalButtons = () => {
-        App.qs("#addGoal")?.addEventListener("click", () => {
-            const label = prompt("Add a weekly focus:");
-            if (!label || !label.trim()) return;
-            const newGoal = {
-                id: `goal-${Date.now()}`,
-                label: label.trim(),
-                completed: false,
-            };
-            goalsState = [...goalsState, newGoal];
-            App.saveState(GOALS_KEY, goalsState);
-            addActivity?.(`Added weekly goal: ${label.trim()}`);
-            renderGoals();
-        });
-
-        App.qs("#resetGoals")?.addEventListener("click", () => {
-            goalsState = DEFAULT_GOALS.map((goal) => ({ ...goal }));
-            App.saveState(GOALS_KEY, goalsState);
-            addActivity?.("Reset weekly goals");
-            renderGoals();
-        });
-    };
-
-    let activityLog = App.loadState("edufinance-activity", []);
-
-    const addActivity = (message) => {
-        const entry = {
-            id: Date.now(),
-            message,
-            timestamp: new Date().toISOString(),
-        };
-        activityLog = [entry, ...activityLog].slice(0, 10);
-        App.saveState("edufinance-activity", activityLog);
-        renderActivityFeed();
-    };
-
-    const renderActivityFeed = () => {
-        const feed = App.qs("#activityFeed");
-        if (!feed) return;
-        feed.innerHTML = "";
-        if (!activityLog.length) {
-            feed.innerHTML = "<li>No activity yet</li>";
-            return;
-        }
-        activityLog.forEach((item) => {
-            const li = document.createElement("li");
-            const date = new Date(item.timestamp).toLocaleString();
-            li.innerHTML = `<span>${item.message}</span><small>${date}</small>`;
-            feed.appendChild(li);
-        });
+        initCalendar();
+        initReminderModal();
     };
 
     populateTips();
-    populateProfile();
-    populateSplit();
     populateAnalysis();
     updateAll();
-    renderGoals();
-    attachGoalButtons();
-    renderActivityFeed();
+    renderReminders();
     initEvents();
 
     // Listen for expense updates to refresh charts
@@ -815,4 +1030,4 @@ document.addEventListener("DOMContentLoaded", () => {
         populateAnalysis();
         updateExpenseInsights(getExpensesInRange());
     });
-});
+}

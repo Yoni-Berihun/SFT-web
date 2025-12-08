@@ -1,4 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
+    // Mark that we're not on an auth page
+    window.__onAuthPage = false;
+    
     if (!App.initPageShell({ auth: true })) {
         return;
     }
@@ -17,6 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
         resetFilters: document.getElementById("resetFilters"),
         refresh: document.getElementById("refreshExpenses"),
         exportCsv: document.getElementById("exportExpensesCsv"),
+        exportPdf: document.getElementById("exportExpensesPdf"),
         addButton: document.getElementById("addExpenseButton"),
         modalOverlay: document.getElementById("modalOverlay"),
         modalForm: document.getElementById("expensesModalForm"),
@@ -206,7 +210,89 @@ document.addEventListener("DOMContentLoaded", () => {
         App.showToast("Expenses refreshed");
     });
 
+    const exportPdf = () => {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        const filtered = applyFilters();
+        
+        if (!filtered.length) {
+            App.showToast("No expenses to export");
+            return;
+        }
+
+        // Add title
+        doc.setFontSize(20);
+        doc.text('Expense Report', 14, 22);
+        
+        // Add date
+        doc.setFontSize(10);
+        doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 32);
+        
+        // Add summary
+        const total = filtered.reduce((sum, exp) => sum + exp.amount, 0);
+        const avg = filtered.length ? total / filtered.length : 0;
+        
+        doc.setFontSize(12);
+        doc.text(`Total Expenses: ${formatAmount(total)}`, 14, 45);
+        doc.text(`Number of Entries: ${filtered.length}`, 14, 52);
+        doc.text(`Average per Entry: ${formatAmount(avg)}`, 14, 59);
+        
+        // Prepare table data
+        const headers = [['Date', 'Category', 'Amount', 'Notes']];
+        const data = filtered.map(expense => [
+            expense.date,
+            expense.category,
+            formatAmount(expense.amount),
+            expense.notes || ''
+        ]);
+        
+        // Add table
+        doc.autoTable({
+            head: headers,
+            body: data,
+            startY: 70,
+            headStyles: {
+                fillColor: [41, 128, 185],
+                textColor: 255,
+                fontStyle: 'bold'
+            },
+            alternateRowStyles: {
+                fillColor: [245, 245, 245]
+            },
+            margin: { top: 10 },
+            styles: {
+                fontSize: 9,
+                cellPadding: 3,
+                overflow: 'linebreak',
+                lineWidth: 0.1
+            },
+            columnStyles: {
+                0: { cellWidth: 30 },
+                1: { cellWidth: 40 },
+                2: { cellWidth: 30 },
+                3: { cellWidth: 90 }
+            }
+        });
+        
+        // Add page numbers
+        const pageCount = doc.internal.getNumberOfPages();
+        for (let i = 1; i <= pageCount; i++) {
+            doc.setPage(i);
+            doc.setFontSize(10);
+            doc.text(
+                `Page ${i} of ${pageCount}`,
+                doc.internal.pageSize.width - 30,
+                doc.internal.pageSize.height - 10
+            );
+        }
+        
+        // Save the PDF
+        doc.save(`expenses_${new Date().toISOString().split('T')[0]}.pdf`);
+        App.showToast("PDF exported successfully!");
+    };
+
     elements.exportCsv?.addEventListener("click", exportCsv);
+    elements.exportPdf?.addEventListener("click", exportPdf);
     elements.tableBody?.addEventListener("click", handleTableClick);
 
     bindFilterInputs();

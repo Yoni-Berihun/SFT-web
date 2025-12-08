@@ -184,3 +184,38 @@
         font-size: 1.6rem;
     }
 }
+
+/* Ensure form inputs are always interactive */
+.signup-card form input,
+.signup-card form select,
+.signup-card form button,
+.signup-card form label {
+    pointer-events: auto !important;
+    user-select: auto !important;
+}
+
+.signup-card form input:not([disabled]),
+.signup-card form select:not([disabled]) {
+    cursor: text;
+}
+
+.signup-card form button:not([disabled]) {
+    cursor: pointer;
+}
+
+/* Prevent any overlay from blocking form */
+.signup-wrapper {
+    position: relative;
+    z-index: 1;
+}
+
+.signup-card {
+    position: relative;
+    z-index: 2;
+}
+
+/* Loading state for buttons */
+.signup-card button[disabled] {
+    opacity: 0.7;
+    cursor: not-allowed;
+}

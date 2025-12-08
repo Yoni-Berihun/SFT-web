@@ -5,15 +5,41 @@ const Auth = {
     // Track if Firebase is ready
     _firebaseReady: false,
     _readyCallbacks: [],
+    _initCalled: false,
     
     // Initialize Firebase auth
     init() {
+        if (this._initCalled) {
+            console.log('Auth.init() already called, skipping');
+            return;
+        }
+        this._initCalled = true;
+        
         console.log('Initializing Firebase Auth...');
         
-        // Check periodically if Firebase is ready
+        // Check if Firebase is already ready
+        if (window.firebaseReady && window.firebaseAuth) {
+            console.log('✅ Firebase Auth is already ready');
+            this._firebaseReady = true;
+            this._readyCallbacks.forEach(callback => callback());
+            this._readyCallbacks = [];
+            return;
+        }
+        
+        // Listen for Firebase ready event
+        window.addEventListener('firebaseReady', () => {
+            if (window.firebaseAuth) {
+                console.log('✅ Firebase Auth ready event received');
+                this._firebaseReady = true;
+                this._readyCallbacks.forEach(callback => callback());
+                this._readyCallbacks = [];
+            }
+        });
+        
+        // Also check periodically as fallback
         const checkInterval = setInterval(() => {
-            if (window.firebaseAuth && typeof firebase !== 'undefined') {
-                console.log('✅ Firebase Auth is now ready');
+            if (window.firebaseReady && window.firebaseAuth) {
+                console.log('✅ Firebase Auth is now ready (polling)');
                 this._firebaseReady = true;
                 clearInterval(checkInterval);
                 
@@ -35,11 +61,38 @@ const Auth = {
     // Wait for Firebase to be ready
     waitForFirebase() {
         return new Promise((resolve) => {
-            if (this._firebaseReady) {
+            if (this._firebaseReady && window.firebaseAuth) {
                 resolve();
-            } else {
-                this._readyCallbacks.push(resolve);
+                return;
             }
+            
+            // Check immediately
+            if (window.firebaseReady && window.firebaseAuth) {
+                this._firebaseReady = true;
+                resolve();
+                return;
+            }
+            
+            // Wait for ready event or timeout
+            const timeout = setTimeout(() => {
+                console.warn('Firebase wait timeout, proceeding anyway');
+                resolve();
+            }, 3000);
+            
+            const checkReady = () => {
+                if (window.firebaseReady && window.firebaseAuth) {
+                    clearTimeout(timeout);
+                    this._firebaseReady = true;
+                    resolve();
+                } else {
+                    this._readyCallbacks.push(() => {
+                        clearTimeout(timeout);
+                        resolve();
+                    });
+                }
+            };
+            
+            checkReady();
         });
     },
     
@@ -231,32 +284,29 @@ const Auth = {
 
     // Check auth state changes
     onAuthStateChanged(callback) {
-        if (this._firebaseReady && window.firebaseAuth) {
-            console.log('✅ Setting up Firebase auth state listener');
-            return firebaseAuth.onAuthStateChanged(callback);
-        }
-        
-        // If Firebase not ready yet, wait for it
-        console.log('⏳ Firebase Auth not ready yet, queuing listener');
-        this._readyCallbacks.push(() => {
+        // Wait for Firebase to be ready first
+        this.waitForFirebase().then(() => {
             if (window.firebaseAuth) {
-                console.log('✅ Setting up queued Firebase auth state listener');
-                return firebaseAuth.onAuthStateChanged(callback);
+                console.log('✅ Setting up Firebase auth state listener');
+                return firebaseAuth.onAuthStateChanged((user) => {
+                    // Only call callback with real Firebase users
+                    if (user && user.uid && user.email) {
+                        callback(user);
+                    } else {
+                        callback(null);
+                    }
+                });
+            } else {
+                // No Firebase available - don't call callback with fake user
+                // This prevents redirect loops
+                console.warn('Firebase auth not available');
+                callback(null);
             }
-        });
-        
-        // Fallback for offline/demo
-        console.warn('Firebase auth not available, using localStorage fallback');
-        const session = window.App?.getSession?.();
-        if (session?.isAuthenticated) {
-            callback({ 
-                uid: 'local-user', 
-                email: session.email,
-                isLocal: true 
-            });
-        } else {
+        }).catch(() => {
+            // Firebase initialization failed - don't trigger redirects
+            console.warn('Firebase auth initialization failed');
             callback(null);
-        }
+        });
         
         return () => {}; // Return empty unsubscribe function
     },
@@ -324,7 +374,14 @@ const Auth = {
 };
 
 // Initialize auth when module loads
-Auth.init();
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        Auth.init();
+    });
+} else {
+    // DOM already loaded
+    Auth.init();
+}
 
 window.Auth = Auth;
 console.log('✅ Authentication module loaded with async support');
