@@ -15,7 +15,6 @@ document.addEventListener("DOMContentLoaded", () => {
         phoneInput: document.getElementById("profilePhone"),
         budgetInput: document.getElementById("profileBudget"),
         currencySelect: document.getElementById("profileCurrency"),
-        notificationsToggle: document.getElementById("profileNotifications"),
         avatarPreview: document.getElementById("profileAvatarPreview"),
         avatarInput: document.getElementById("profileAvatarInput"),
         removeAvatar: document.getElementById("removeAvatar"),
@@ -39,8 +38,6 @@ document.addEventListener("DOMContentLoaded", () => {
         transactionSearch: document.getElementById("transactionSearch"),
         transactionFilter: document.getElementById("transactionFilter"),
         documentsGrid: document.getElementById("profileDocuments"),
-        budgetsGrid: document.getElementById("profileBudgets"),
-        notificationsList: document.getElementById("profileNotifications"),
         obligationsList: document.getElementById("profileObligations"),
         shareButton: document.getElementById("profileShareSummary"),
         shareMenu: document.getElementById("profileShareMenu"),
@@ -268,37 +265,6 @@ document.addEventListener("DOMContentLoaded", () => {
             .join("");
     };
 
-    const renderBudgets = () => {
-        if (!refs.budgetsGrid) return;
-        refs.budgetsGrid.innerHTML = budgets
-            .map((item) => {
-                const percent = Math.min(100, Math.round((item.spent / item.limit) * 100));
-                return `
-                <article class="budget-card">
-                    <p class="label">${item.category}</p>
-                    <h4>${App.formatCurrency(item.spent, user.currency)} / ${App.formatCurrency(item.limit, user.currency)}</h4>
-                    <div class="budget-progress"><span style="width:${percent}%"></span></div>
-                    <p class="helper-text">${percent}% of budget used</p>
-                </article>`;
-            })
-            .join("");
-    };
-
-    const renderNotifications = () => {
-        if (!refs.notificationsList) return;
-        refs.notificationsList.innerHTML = notifications
-            .map(
-                (note) => `
-                <li class="profile-notification">
-                    <span class="profile-notification__icon">${note.icon}</span>
-                    <div>
-                        <strong>${note.title}</strong>
-                        <p class="helper-text">${note.detail}</p>
-                    </div>
-                </li>`
-            )
-            .join("");
-    };
 
     const exportProfileJson = () => {
         if (!refs.exportContent) return;
@@ -414,7 +380,5 @@ document.addEventListener("DOMContentLoaded", () => {
     renderObligations();
     renderTransactions();
     renderDocuments();
-    renderBudgets();
-    renderNotifications();
 });
 

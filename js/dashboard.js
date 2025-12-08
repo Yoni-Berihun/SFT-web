@@ -643,7 +643,6 @@ function initDashboard() {
     const initDateRangeControls = () => {
         const chips = App.qsa(".date-range-toggle .chip");
         const customRange = App.qs(".date-range-custom");
-        const applyCustomBtn = App.qs("#applyCustomRange");
         const customFromInput = App.qs("#customFrom");
         const customToInput = App.qs("#customTo");
 
@@ -665,28 +664,6 @@ function initDashboard() {
                 
                 updateAll();
             });
-        });
-
-        applyCustomBtn?.addEventListener("click", () => {
-            const from = customFromInput?.value;
-            const to = customToInput?.value;
-            
-            if (!from || !to) {
-                App.showToast("Please select both dates", "error");
-                return;
-            }
-            
-            customFrom = new Date(from);
-            customTo = new Date(to);
-            currentRange = "custom";
-            
-            if (customFrom > customTo) {
-                App.showToast("Start date must be before end date", "error");
-                return;
-            }
-            
-            updateAll();
-            App.showToast("Date range applied");
         });
     };
 
@@ -981,7 +958,6 @@ function initDashboard() {
     const initEvents = () => {
         // Expense-related event listeners
         App.qs("#expenseRows")?.addEventListener("click", handleExpenseAction);
-        App.qs("#addExpenseButton")?.addEventListener("click", () => openModal());
         App.qs("#exportCsv")?.addEventListener("click", exportCsv);
         App.qs("#exportPdf")?.addEventListener("click", exportPdf);
         App.qs("#printButton")?.addEventListener("click", handlePrint);

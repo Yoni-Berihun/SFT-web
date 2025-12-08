@@ -17,7 +17,6 @@ document.addEventListener("DOMContentLoaded", () => {
         categoryFilter: document.getElementById("filterCategory"),
         searchFilter: document.getElementById("searchExpenses"),
         dateFilter: document.getElementById("filterDate"),
-        resetFilters: document.getElementById("resetFilters"),
         refresh: document.getElementById("refreshExpenses"),
         exportCsv: document.getElementById("exportExpensesCsv"),
         exportPdf: document.getElementById("exportExpensesPdf"),
@@ -188,13 +187,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
         elements.dateFilter?.addEventListener("change", (event) => {
             filters.date = event.target.value;
-            renderTable();
-        });
-        elements.resetFilters?.addEventListener("click", () => {
-            filters = { category: "all", search: "", date: "" };
-            if (elements.categoryFilter) elements.categoryFilter.value = "all";
-            if (elements.searchFilter) elements.searchFilter.value = "";
-            if (elements.dateFilter) elements.dateFilter.value = "";
             renderTable();
         });
     };

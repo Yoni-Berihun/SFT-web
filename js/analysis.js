@@ -547,13 +547,7 @@ document.addEventListener("DOMContentLoaded", () => {
         closeShareMenu();
     };
 
-    selectors.rangeSelect?.addEventListener("change", renderAnalysis);
-    selectors.categorySelect?.addEventListener("change", renderAnalysis);
-    selectors.startInput?.addEventListener("change", renderAnalysis);
-    selectors.endInput?.addEventListener("change", renderAnalysis);
-    selectors.resetButton?.addEventListener("click", resetFilters);
-    selectors.exportCsvButton?.addEventListener("click", exportCsv);
-        const exportPdf = async () => {
+    const exportPdf = async () => {
         const button = selectors.exportPdfButton;
         if (!button) return;
         
@@ -689,8 +683,14 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
     };
-    
-    // Add click handler
+
+    // Set up all event listeners
+    selectors.rangeSelect?.addEventListener("change", renderAnalysis);
+    selectors.categorySelect?.addEventListener("change", renderAnalysis);
+    selectors.startInput?.addEventListener("change", renderAnalysis);
+    selectors.endInput?.addEventListener("change", renderAnalysis);
+    selectors.resetButton?.addEventListener("click", resetFilters);
+    selectors.exportCsvButton?.addEventListener("click", exportCsv);
     selectors.exportPdfButton?.addEventListener('click', exportPdf);
     selectors.shareButton?.addEventListener("click", (event) => {
         event.stopPropagation();
