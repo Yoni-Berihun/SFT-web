@@ -713,6 +713,11 @@ html {
     font-weight: 500;
 }
 
+/* Fix for stat-label visibility in light mode */
+[data-theme="light"] .stat-label {
+    color: #000;
+}
+
 /* Responsive Adjustments */
 /* ======================
    Responsive Styles

@@ -168,8 +168,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const { hash } = window.location;
         let activeKey = 'home';
         
-        if (hash === '#features') activeKey = 'features';
-        else if (hash === '#abouts') activeKey = 'abouts';
+        if (hash === '#abouts') activeKey = 'abouts';
         else if (hash === '#home' || hash === '') activeKey = 'home';
         
         navLinks.forEach((link) => {
@@ -180,7 +179,7 @@ document.addEventListener("DOMContentLoaded", () => {
     
     // Update active nav on scroll
     const updateActiveNavOnScroll = () => {
-        const sections = ['home', 'features', 'abouts'];
+        const sections = ['home', 'abouts'];
         const scrollPosition = window.pageYOffset + 100; // Offset for header
         
         for (let i = sections.length - 1; i >= 0; i--) {
