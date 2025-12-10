@@ -9,6 +9,10 @@
     box-shadow: var(--shadow-card);
 }
 
+body[data-page="expenses"] .page-shell > * + * {
+    margin-top: var(--space-6);
+}
+
 .page-hero__content {
     display: grid;
     gap: var(--space-3);
@@ -487,6 +491,15 @@
 .table-actions {
     display: inline-flex;
     gap: var(--space-2);
+}
+
+.table-header--simple {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    margin-bottom: var(--space-3);
+    flex-wrap: wrap;
 }
 
 .action-chip {

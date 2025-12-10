@@ -103,40 +103,6 @@
                     </div>
                 </section>
 
-                <section class="page-card expenses-toolbar" aria-label="Expense filters">
-                    <div class="toolbar-header">
-                        <div>
-                            <p class="label">Filters</p>
-                            <p class="helper-text">Combine filters to drill into a specific story.</p>
-                        </div>
-                    </div>
-                    <div class="filter-group">
-                        <label>
-                            Category
-                            <select id="filterCategory">
-                                <option value="all">All categories</option>
-                                <option value="Food">Food</option>
-                                <option value="Transport">Transport</option>
-                                <option value="Books">Books</option>
-                                <option value="Entertainment">Entertainment</option>
-                                <option value="Supplies">Supplies</option>
-                                <option value="Cosmetics">Cosmetics</option>
-                                <option value="Coffee">Coffee</option>
-                                <option value="Gym">Gym</option>
-                                <option value="Other">Other</option>
-                            </select>
-                        </label>
-                        <label>
-                            Search notes
-                            <input type="search" id="searchExpenses" placeholder="e.g., textbooks" />
-                        </label>
-                        <label>
-                            Date
-                            <input type="date" id="filterDate" />
-                        </label>
-                    </div>
-                </section>
-
                 <section class="page-grid expenses-highlights" aria-label="Expense highlights">
                     <article class="page-card highlight-card highlight-card--accent">
                         <header>
@@ -161,35 +127,7 @@
                             <li>Books · ETB 490</li>
                         </ul>
                     </article>
-                    <article class="page-card highlight-card">
-                        <header>
-                            <p class="label">Saved via discounts</p>
-                            <span class="trend trend--up">▲ 15%</span>
-                        </header>
-                        <p class="highlight-card__value">ETB 620</p>
-                        <p class="helper-text">Campus cafeteria loyalty & bundle deals.</p>
-                    </article>
                 </section>
-
-                <section class="page-card detail-focus" aria-label="Detailed expense view">
-                    <div>
-                        <p class="label">Deep dive</p>
-                        <h2>See every Birr in context</h2>
-                        <p class="helper-text">
-                            Swipe through filters, expand notes, and jump directly into the expense log to understand exactly where your money goes each day.
-                        </p>
-                    </div>
-                    <ul class="detail-focus__list">
-                        <li>Powerful filters & search keep the table relevant.</li>
-                        <li>Real-time metrics adjust as you edit or delete entries.</li>
-                        <li>Scroll-safe table preserves headers and actions.</li>
-                    </ul>
-                    <div class="detail-focus__actions">
-                        <button class="btn btn-primary" type="button" onclick="document.querySelector('#addExpenseButton')?.click();">Add a detailed entry</button>
-                        <button class="btn btn-ghost" type="button" onclick="document.querySelector('#expensesTableBody')?.scrollIntoView({ behavior: 'smooth' });">Jump to log</button>
-                    </div>
-                </section>
-
 
                 <section class="page-grid insights-grid" aria-label="Smart insights">
                     <article class="page-card insight-card">
@@ -336,127 +274,24 @@
                     </article>
                 </section>
 
-                <div class="expenses-layout">
-                    <section class="page-card expenses-table" aria-labelledby="expenses-table-title">
-                        <div class="card-header card-header--log">
-                            <div>
-                                <p class="label">Expense log</p>
-                                <h2 id="expenses-table-title">Expense log</h2>
-                                <p class="helper-text">Latest additions appear first.</p>
+                <section class="page-card expenses-table" aria-labelledby="expenses-table-title">
+                    <header class="table-header--simple">
+                        <p class="label">Transaction log</p>
+                        <h2 id="expenses-table-title">All expenses</h2>
+                    </header>
+                    <div class="table-wrapper">
+                        <div class="table table--structured">
+                            <div class="table-head">
+                                <span>Date</span>
+                                <span>Category</span>
+                                <span class="align-right">Amount</span>
+                                <span>Notes</span>
+                                <span class="align-right">Actions</span>
                             </div>
-                            <div class="log-actions">
-                                <button class="btn btn-ghost" id="refreshExpenses" type="button">Refresh</button>
-                                <button class="btn btn-tertiary" type="button" onclick="document.querySelector('#expensesTableBody')?.scrollIntoView({behavior: 'smooth'});">Jump to entries</button>
-                            </div>
+                            <div id="expensesTableBody" class="table-body"></div>
                         </div>
-                        <div class="log-summary" aria-label="Expense log summary">
-                            <article>
-                                <p class="label">Spent this week</p>
-                                <strong>ETB 6,540</strong>
-                                <p class="helper-text">Across 18 recorded expenses.</p>
-                            </article>
-                            <article>
-                                <p class="label">Top category</p>
-                                <strong>Food & coffee</strong>
-                                <p class="helper-text">42% of the current list.</p>
-                            </article>
-                            <article>
-                                <p class="label">Biggest day</p>
-                                <strong>Wednesday</strong>
-                                <p class="helper-text">ETB 1,420 · 6 entries.</p>
-                            </article>
-                        </div>
-                        <div class="table-legend" aria-label="Column legend">
-                            <article class="table-legend__item">
-                                <div class="table-legend__icon" aria-hidden="true">📅</div>
-                                <div>
-                                    <p>Date</p>
-                                    <span>Calendar day of the purchase</span>
-                                </div>
-                            </article>
-                            <article class="table-legend__item">
-                                <div class="table-legend__icon" aria-hidden="true">📝</div>
-                                <div>
-                                    <p>Notes</p>
-                                    <span>Add emojis or tags for faster scanning</span>
-                                </div>
-                            </article>
-                        </div>
-                        <div class="table-wrapper">
-                            <div class="table table--structured">
-                                <div class="table-head">
-                                    <span>Date</span>
-                                    <span>Category</span>
-                                    <span class="align-right">Amount</span>
-                                    <span>Notes</span>
-                                    <span class="align-right">Actions</span>
-                                </div>
-                                <div id="expensesTableBody" class="table-body"></div>
-                            </div>
-                        </div>
-                        <p class="helper-text table-note">Tip: Hover a row to reveal quick actions. Edit details regularly to keep insights accurate.</p>
-                    </section>
-                    <aside class="insights-stack" aria-label="Quick tips">
-                        <article class="page-card">
-                            <p class="label">Spend rhythm</p>
-                            <h3>Weekday vs weekend</h3>
-                            <div class="split-bars">
-                                <div>
-                                    <span>Weekdays</span>
-                                    <strong>72%</strong>
-                                </div>
-                                <div class="progress-track">
-                                    <span style="width: 72%"></span>
-                                </div>
-                                <div>
-                                    <span>Weekends</span>
-                                    <strong>28%</strong>
-                                </div>
-                                <div class="progress-track">
-                                    <span style="width: 28%"></span>
-                                </div>
-                            </div>
-                            <p class="helper-text">Plan outings on Friday to keep Saturday light.</p>
-                        </article>
-                        <article class="page-card">
-                            <p class="label">Cash alerts</p>
-                            <h3>Stay proactive</h3>
-                            <ul class="mini-list">
-                                <li>Enable push alerts for any expense above ETB 800.</li>
-                                <li>Schedule a Friday review to archive receipts.</li>
-                                <li>Add emojis to notes for quick scanning 📌.</li>
-                            </ul>
-                        </article>
-                        <article class="page-card focus-card">
-                            <p class="label">Focus budget</p>
-                            <h3>Cosmetics vs coffee</h3>
-                            <div class="focus-bars">
-                                <div>
-                                    <span>Cosmetics</span>
-                                    <strong>ETB 420</strong>
-                                </div>
-                                <div class="progress-track">
-                                    <span style="width: 48%"></span>
-                                </div>
-                                <div>
-                                    <span>Coffee</span>
-                                    <strong>ETB 380</strong>
-                                </div>
-                                <div class="progress-track">
-                                    <span style="width: 44%"></span>
-                                </div>
-                                <div>
-                                    <span>Gym</span>
-                                    <strong>ETB 260</strong>
-                                </div>
-                                <div class="progress-track">
-                                    <span style="width: 30%"></span>
-                                </div>
-                            </div>
-                            <p class="helper-text">Lock-in recurring payments to avoid spikes.</p>
-                        </article>
-                    </aside>
-                </div>
+                    </div>
+                </section>
             </div>
         </main>
 
