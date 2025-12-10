@@ -212,3 +212,7 @@ section[id] {
     padding-bottom: 4rem;
 }
 
+[data-theme="light"] #stats .stat-label {
+    color: #000;
+}
+

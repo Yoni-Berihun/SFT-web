@@ -80,32 +80,6 @@
     gap: 16px;
 }
 
-.terms-row {
-    padding: 12px 0;
-    font-size: 0.9rem;
-    color: var(--muted);
-}
-
-.terms-row label {
-    display: inline-flex;
-    align-items: flex-start;
-    gap: 8px;
-    line-height: 1.4;
-}
-
-.terms-row input[type="checkbox"] {
-    margin-top: 3px;
-}
-
-.terms-row a {
-    color: var(--secondary);
-    text-decoration: none;
-}
-
-.terms-row a:hover {
-    text-decoration: underline;
-}
-
 .auth-switch {
     text-align: center;
     margin-top: 24px;

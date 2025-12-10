@@ -16,7 +16,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const confirmPasswordInput = document.getElementById("confirmPassword");
     const budgetInput = document.getElementById("monthlyBudget");
     const currencySelect = document.getElementById("currency");
-    const termsCheckbox = document.getElementById("acceptTerms");
     const form = document.getElementById("signupForm");
     const message = document.getElementById("signupMessage");
 
@@ -38,7 +37,6 @@ document.addEventListener("DOMContentLoaded", () => {
     confirmPasswordInput.disabled = false;
     budgetInput.disabled = false;
     if (currencySelect) currencySelect.disabled = false;
-    if (termsCheckbox) termsCheckbox.disabled = false;
 
     // Simple check: Only redirect if user is already authenticated
     // This runs once after a delay to allow Firebase to initialize
@@ -163,12 +161,6 @@ document.addEventListener("DOMContentLoaded", () => {
             return false;
         }
         
-        // Check terms
-        if (!termsCheckbox.checked) {
-            showMessage("You must accept the terms and conditions");
-            return false;
-        }
-        
         return true;
     };
 
@@ -237,7 +229,8 @@ document.addEventListener("DOMContentLoaded", () => {
             
             if (result.success) {
                 // Success! Account created
-                showMessage("Account created successfully! Redirecting to dashboard...", "success");
+                const successText = "Account created successfully. Login and start using the website.";
+                showMessage(successText, "success");
                 
                 // Save session
                 const sessionPayload = {
@@ -264,6 +257,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 // Show toast notification
                 if (window.App && window.App.showToast) {
                     window.App.showToast("Welcome to EduFinance!");
+                }
+                
+                if (submitButton) {
+                    submitButton.textContent = successText;
                 }
                 
                 // Ensure Firebase auth state is persisted before redirecting
@@ -335,24 +332,4 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // Currency change handler
-    currencySelect?.addEventListener("change", () => {
-        const currency = currencySelect.value;
-        
-        // Update placeholder based on currency
-        if (currency === "USD") {
-            budgetInput.placeholder = "e.g., 1000";
-        } else if (currency === "Birr") {
-            budgetInput.placeholder = "e.g., 5000";
-        } else if (currency === "EUR") {
-            budgetInput.placeholder = "e.g., 800";
-        } else if (currency === "GBP") {
-            budgetInput.placeholder = "e.g., 700";
-        }
-    });
-
-    // Set initial placeholder
-    if (currencySelect) {
-        currencySelect.dispatchEvent(new Event("change"));
-    }
 });
