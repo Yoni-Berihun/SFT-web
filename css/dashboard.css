@@ -111,6 +111,23 @@
     flex-wrap: wrap;
 }
 
+[data-theme="light"] .dashboard-actions .btn.btn-ghost,
+[data-theme="light"] .dashboard-actions .btn.btn-ghost:hover,
+[data-theme="light"] .dashboard-actions .btn.btn-ghost:focus-visible {
+    color: #111;
+}
+
+[data-theme="dark"] .dashboard-actions .btn.btn-ghost,
+[data-theme="dark"] .dashboard-actions .btn.btn-ghost:hover,
+[data-theme="dark"] .dashboard-actions .btn.btn-ghost:focus-visible {
+    color: #fff;
+}
+
+.dashboard-actions .btn.btn-ghost:hover,
+.dashboard-actions .btn.btn-ghost:focus-visible {
+    box-shadow: none;
+}
+
 .badges-row {
     display: flex;
     gap: 10px;
