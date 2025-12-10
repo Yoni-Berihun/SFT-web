@@ -28,11 +28,11 @@ document.addEventListener("DOMContentLoaded", () => {
         { text: "Saving early buys freedom later.", author: "Salahdin Surur" },
         { text: "Small, regular contributions compound into surprising balances.", author: "Abdulkerim khedr" },
         { text: "Paying yourself first is the simplest habit that builds wealth.", author: "Biniyam Fisseha" },
-        { text: "Clear goals make choices easier — define what money should do for you.", author: "Tsion Tesfaye" },
+        { text: "Build wealth quietly, let your freedom make the noise", author: "Tsion Tesfaye" },
         { text: "Know your why: every savings plan needs a purpose.", author: "Fenet Bushura" },
         { text: "Track one thing this week — spending, saving, or subscription use.", author: "Amanuel wondmagegnehu" },
         { text: "Automate the boring stuff: transfers and bills free your attention.", author: "Elham Seid" },
-        { text: "Review your finances regularly; small fixes prevent big surprises.", author: "Afomiya" },
+        { text: "Spend wisely… or just keep refreshing your balance sadly", author: "Afomiya Million" },
     ];
 
     let quoteIndex = 0;

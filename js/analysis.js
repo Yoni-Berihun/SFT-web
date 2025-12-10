@@ -2,12 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Mark that we're not on an auth page
     window.__onAuthPage = false;
     
-    if (!App.initPageShell({ auth: true })) {
-        return;
-    }
-
-    // Initialize modal with close handlers
-    const modal = App.initModal();
+    const shellReady = App.initPageShell({ auth: true });
 
     const selectors = {
         total: document.getElementById("analysisTotal"),
@@ -22,6 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
         shareButton: document.getElementById("analysisShare"),
         exportCsvButton: document.getElementById("analysisExportCsv"),
         exportPdfButton: document.getElementById("analysisExportPdf"),
+        printButton: document.getElementById("analysisPrint"),
         refreshButton: document.getElementById("analysisRefresh"),
         dailyChart: document.getElementById("analysisDailyChart"),
         dailyChartCanvas: document.getElementById("analysisDailyChartCanvas"),
@@ -31,6 +27,17 @@ document.addEventListener("DOMContentLoaded", () => {
         shareMenu: document.getElementById("analysisShareMenu"),
         categoryList: document.getElementById("analysisCategoryList"),
     };
+
+    if (!shellReady) {
+        console.warn("Analysis shell failed to init; running in fallback mode");
+        App.showToast?.("Limited mode: some synced actions may be unavailable");
+    }
+
+    // Initialize modal with close handlers (fallback to no-op if unavailable)
+    const modal = (App.initModal?.() ?? {
+        open: () => {},
+        close: () => {},
+    });
 
     // Normalize any date-like value to a stable yyyy-mm-dd key (avoids timezone issues).
     const toDateKey = (value) => {
@@ -684,6 +691,15 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
+    const printReport = () => {
+        if (typeof window.print === "function") {
+            App.showToast("Opening print dialog");
+            window.print();
+        } else {
+            App.showToast("Print coming soon");
+        }
+    };
+
     // Set up all event listeners
     selectors.rangeSelect?.addEventListener("change", renderAnalysis);
     selectors.categorySelect?.addEventListener("change", renderAnalysis);
@@ -692,6 +708,7 @@ document.addEventListener("DOMContentLoaded", () => {
     selectors.resetButton?.addEventListener("click", resetFilters);
     selectors.exportCsvButton?.addEventListener("click", exportCsv);
     selectors.exportPdfButton?.addEventListener('click', exportPdf);
+    selectors.printButton?.addEventListener("click", printReport);
     selectors.shareButton?.addEventListener("click", (event) => {
         event.stopPropagation();
         toggleShareMenu();
