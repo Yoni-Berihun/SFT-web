@@ -26,16 +26,10 @@
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     border-radius: var(--radius-lg);
     padding: var(--space-5);
-    position: relative;
-    overflow: hidden;
-    background:
-        radial-gradient(circle at top left, rgba(46, 204, 113, 0.15), transparent 60%),
-        radial-gradient(circle at bottom right, rgba(52, 152, 219, 0.15), transparent 60%),
-        linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(243, 250, 255, 0.95));
-    border: 1px solid rgba(15, 23, 42, 0.06);
-    box-shadow: 0 18px 45px rgba(15, 23, 42, 0.15);
-    z-index: 1;
-    transition: background 0.3s ease, border-color 0.3s ease;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-card);
+    transition: border-color 0.3s ease;
 }
 
 [data-theme="dark"] .split-hero {
@@ -54,27 +48,6 @@
     gap: var(--space-3);
 }
 
-.split-hero__pulse {
-    display: flex;
-    gap: var(--space-2);
-}
-
-.split-hero__pulse span {
-    width: 12px;
-    height: 12px;
-    border-radius: 999px;
-    background: linear-gradient(120deg, #00c9a7, #6c63ff);
-    animation: splitPulseGlow 1.8s infinite ease-in-out;
-}
-
-.split-hero__pulse span:nth-child(2) {
-    animation-delay: 0.2s;
-}
-
-.split-hero__pulse span:nth-child(3) {
-    animation-delay: 0.4s;
-}
-
 .split-hero__stats {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
@@ -85,64 +58,12 @@
 
 .split-hero__stats article {
     border-radius: var(--radius);
-    background: rgba(255, 255, 255, 0.6);
+    background: var(--color-surface);
     padding: var(--space-3);
-    border: 1px solid rgba(15, 23, 42, 0.06);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-card);
 }
 
-.split-hero__animation {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-}
-
-.split-orb {
-    position: absolute;
-    filter: blur(20px);
-    opacity: 0.7;
-    border-radius: 50%;
-    animation: splitOrbFloat 12s ease-in-out infinite alternate;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.85) 30%, rgba(255, 255, 255, 0));
-}
-
-.split-orb--one {
-    width: 220px;
-    height: 220px;
-    top: -40px;
-    right: -60px;
-    background: radial-gradient(circle, rgba(108, 99, 255, 0.8), rgba(255, 255, 255, 0));
-}
-
-.split-orb--two {
-    width: 160px;
-    height: 160px;
-    bottom: 10px;
-    left: 45%;
-    background: radial-gradient(circle, rgba(0, 201, 167, 0.75), rgba(255, 255, 255, 0));
-    animation-delay: 1s;
-}
-
-.split-orb--three {
-    width: 120px;
-    height: 120px;
-    bottom: -20px;
-    right: 20px;
-    background: radial-gradient(circle, rgba(246, 114, 128, 0.7), rgba(255, 255, 255, 0));
-    animation-delay: 2s;
-}
-
-.split-wave {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 60%;
-}
-
-.split-wave path {
-    fill: rgba(255, 255, 255, 0.4);
-    animation: waveDrift 16s linear infinite;
-}
 
 .split-spotlight {
     display: grid;
@@ -624,36 +545,6 @@
     }
     100% {
         transform: scale(1);
-    }
-}
-
-@keyframes splitPulseGlow {
-    0%,
-    100% {
-        transform: scale(0.9);
-        opacity: 0.6;
-    }
-    50% {
-        transform: scale(1.2);
-        opacity: 1;
-    }
-}
-
-@keyframes splitOrbFloat {
-    0% {
-        transform: translateY(0) scale(1);
-    }
-    100% {
-        transform: translateY(-30px) scale(1.1);
-    }
-}
-
-@keyframes waveDrift {
-    0% {
-        transform: translateX(0);
-    }
-    100% {
-        transform: translateX(-50px);
     }
 }
 

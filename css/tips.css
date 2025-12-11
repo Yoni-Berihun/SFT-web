@@ -194,6 +194,19 @@
     flex-wrap: wrap;
 }
 
+
+#tipsResetProgress {
+    background: #059669;
+    border-color: #047857;
+    color: #fff;
+    box-shadow: 0 12px 24px rgba(4, 120, 87, 0.35);
+}
+
+#tipsResetProgress:hover,
+#tipsResetProgress:focus-visible {
+    background: #10b981;
+    border-color: #059669;
+}
 .tips-progress .progress {
     margin: var(--space-3) 0;
     height: 16px;

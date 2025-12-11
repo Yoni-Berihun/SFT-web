@@ -1,4 +1,9 @@
-document.addEventListener("DOMContentLoaded", () => {
+let analysisPageInitialized = false;
+
+const startAnalysisPage = () => {
+    if (analysisPageInitialized) return;
+    analysisPageInitialized = true;
+
     // Mark that we're not on an auth page
     window.__onAuthPage = false;
     
@@ -839,5 +844,20 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     renderAnalysis();
-});
+};
+
+const bootstrapAnalysisPage = () => {
+    if (!window.App) {
+        setTimeout(bootstrapAnalysisPage, 30);
+        return;
+    }
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", startAnalysisPage, { once: true });
+    } else {
+        startAnalysisPage();
+    }
+};
+
+bootstrapAnalysisPage();
 
