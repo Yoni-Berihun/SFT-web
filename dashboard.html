@@ -153,20 +153,6 @@
                             <button class="btn btn-ghost" id="printButton" type="button">Print</button>
                         </div>
                     </article>
-                    <article class="card metric-card">
-                        <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                            <div>
-                                <h3>Upcoming reminders</h3>
-                                <p class="helper-text">Keep these cleared to stay on track this week.</p>
-                            </div>
-                            <button type="button" class="btn btn-primary btn-sm" id="addReminderBtn" style="min-width: auto; padding: 0.5rem 1rem;">+ Add</button>
-                        </div>
-                        <ul class="list upcoming-list" id="remindersList">
-                            <li>Pay library fine — Birr 45 (due Friday)</li>
-                            <li>Class trip contribution — Birr 150 (next week)</li>
-                            <li>Monthly savings transfer — Birr 300 (1st of month)</li>
-                        </ul>
-                    </article>
                 </div>
             </section>
 
@@ -247,6 +233,25 @@
                     </div>
                 </header>
                 <div id="tipsList" class="tips-grid"></div>
+            </section>
+
+            <section id="reminders" class="section reminders-section" aria-labelledby="reminders-title">
+                <header class="section-header">
+                    <div>
+                        <p class="eyebrow">Stay organized</p>
+                        <h2 id="reminders-title">Upcoming reminders</h2>
+                        <p class="section-subtitle">Keep important payments visible after reviewing your spending insights.</p>
+                    </div>
+                    <button type="button" class="btn btn-primary btn-sm" id="addReminderBtn">+ Add reminder</button>
+                </header>
+                <article class="card reminder-card">
+                    <p class="helper-text">Clear these items to stay on track for the current range.</p>
+                    <ul class="list upcoming-list" id="remindersList">
+                        <li>Pay library fine — Birr 45 (due Friday)</li>
+                        <li>Class trip contribution — Birr 150 (next week)</li>
+                        <li>Monthly savings transfer — Birr 300 (1st of month)</li>
+                    </ul>
+                </article>
             </section>
 
             </div>

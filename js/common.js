@@ -585,6 +585,24 @@
                 link.classList.toggle("is-active", link.dataset.navLink === pageKey);
             });
         }
+
+        const brandLink = qs(".brand");
+        if (brandLink) {
+            brandLink.addEventListener("click", (event) => {
+                const authed = isAuthenticated();
+                const targetPage = authed ? "dashboard.html" : "index.html";
+                let currentPage = window.location.pathname.split("/").pop() || "";
+                if (!currentPage) {
+                    currentPage = "index.html";
+                }
+                if (authed || currentPage !== targetPage) {
+                    event.preventDefault();
+                }
+                if (currentPage !== targetPage) {
+                    window.location.href = targetPage;
+                }
+            });
+        }
     };
 
     // Updated logout to work with Firebase
@@ -639,9 +657,11 @@
         return { open: () => { if (overlay) overlay.hidden = false; }, close: closeModal };
     };
 
-    const initPageShell = ({ auth = false } = {}) => {
+    const initPageShell = ({ auth = false, shellNavigation = true } = {}) => {
         initTheme();
-        initShellNavigation();
+        if (shellNavigation) {
+            initShellNavigation();
+        }
         initSmoothScrolling();
         bindLogoutButton();
         if (auth && !requireAuth()) {

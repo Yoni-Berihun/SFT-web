@@ -17,6 +17,13 @@
     background: linear-gradient(120deg, rgba(255, 255, 255, 0.22), transparent 45%);
     mix-blend-mode: soft-light;
     pointer-events: none;
+    z-index: 0;
+}
+
+/* Ensure all interactive elements are above the decorative overlay */
+.page-hero--analysis > * {
+    position: relative;
+    z-index: 1;
 }
 
 .page-hero--analysis .page-hero__title {
@@ -39,6 +46,70 @@
 .share-control {
     position: relative;
     display: inline-flex;
+    z-index: 10;
+}
+
+.page-hero__actions {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+/* Ensure all buttons are clickable */
+#analysisExportPdf,
+#analysisExportCsv,
+#analysisPrint,
+#analysisShare,
+#analysisReset,
+#analysisRefresh {
+    pointer-events: auto !important;
+    cursor: pointer !important;
+    position: relative;
+    z-index: 10;
+}
+
+#analysisExportPdf {
+    background: var(--color-secondary);
+    border-color: #0f9d74;
+    color: #f8fafc;
+    box-shadow: 0 16px 34px rgba(15, 118, 110, 0.28);
+}
+
+#analysisExportPdf:hover,
+#analysisExportPdf:focus-visible {
+    background: #10b981;
+    border-color: #0f9d74;
+}
+
+/* Make PDF button green in dark mode */
+[data-theme="dark"] #analysisExportPdf {
+    background: #059669 !important;
+    border-color: #047857 !important;
+    color: #f3f4f6 !important;
+    box-shadow: 0 10px 20px rgba(4, 120, 87, 0.35) !important;
+}
+
+[data-theme="dark"] #analysisExportPdf:hover,
+[data-theme="dark"] #analysisExportPdf:focus-visible {
+    background: #10b981 !important;
+    border-color: #059669 !important;
+}
+
+/* Export CSV and Print buttons - same size */
+#analysisExportCsv,
+#analysisPrint {
+    min-width: 150px;
+    width: 150px;
+    justify-content: center;
+    padding: 10px 22px;
+    box-sizing: border-box;
+}
+
+#analysisPrint {
+    padding-inline: var(--space-4);
 }
 
 .page-hero__actions .btn--csv {
@@ -55,17 +126,20 @@
     box-shadow: none;
 }
 
+/* Fix dark mode CSV button - remove white hover glow */
 [data-theme="dark"] .page-hero__actions .btn--csv {
-    background: #ffffff;
-    color: #000000;
-    border-color: #e0e0e0;
+    background: transparent !important;
+    color: #f3f4f6 !important;
+    border-color: #1f2937 !important;
+    box-shadow: none !important;
 }
 
 [data-theme="dark"] .page-hero__actions .btn--csv:hover,
 [data-theme="dark"] .page-hero__actions .btn--csv:focus-visible {
-    background: #f0f0f0;
-    color: #000000;
-    box-shadow: none;
+    background: rgba(31, 41, 55, 0.8) !important;
+    color: #f3f4f6 !important;
+    border-color: #374151 !important;
+    box-shadow: none !important;
 }
 
 .share-menu {
@@ -361,6 +435,47 @@ html[data-theme="dark"] .chart-surface {
     }
 }
 
+/* Ensure all form controls and buttons are interactive */
+.analysis-controls input,
+.analysis-controls select,
+.analysis-controls button,
+.page-hero__actions button,
+.analysis-controls label {
+    pointer-events: auto !important;
+    cursor: pointer !important;
+    position: relative;
+    z-index: 10;
+}
+
+.analysis-controls input:not([disabled]),
+.analysis-controls select:not([disabled]) {
+    cursor: text;
+}
+
+.analysis-controls button:not([disabled]),
+.page-hero__actions button:not([disabled]) {
+    cursor: pointer;
+}
+
+@media (max-width: 1024px) {
+    .page-hero--analysis {
+        padding: var(--space-4);
+    }
+
+    .page-hero__actions {
+        flex-wrap: wrap;
+        gap: var(--space-2);
+    }
+
+    #analysisExportCsv,
+    #analysisPrint {
+        min-width: 140px;
+        width: 140px;
+        font-size: 0.9rem;
+        padding: 8px 16px;
+    }
+}
+
 @media (max-width: 640px) {
     .analysis-controls {
         flex-direction: column;
@@ -371,6 +486,54 @@ html[data-theme="dark"] .chart-surface {
         flex-direction: column;
         align-items: flex-start;
     }
-    /* share menu keeps compact horizontal layout on mobile as well */
+
+    .page-hero__actions {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .page-hero__actions button {
+        width: 100%;
+        min-width: 100%;
+    }
+
+    #analysisExportCsv,
+    #analysisPrint {
+        width: 100%;
+        min-width: 100%;
+    }
+
+    .share-control {
+        width: 100%;
+    }
+
+    .share-menu {
+        left: 0;
+        right: 0;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .analysis-charts {
+        grid-template-columns: 1fr;
+    }
+
+    .chart-card--wide {
+        grid-column: span 1;
+    }
+}
+
+@media (max-width: 480px) {
+    .page-hero--analysis {
+        padding: var(--space-3);
+    }
+
+    .analysis-controls__group {
+        grid-template-columns: 1fr;
+    }
+
+    .analysis-summary {
+        grid-template-columns: 1fr;
+    }
 }
 

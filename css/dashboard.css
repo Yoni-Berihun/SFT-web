@@ -1,6 +1,6 @@
 .dashboard-hero {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: 32px;
     align-items: stretch;
 }
@@ -144,6 +144,21 @@
     display: flex;
     justify-content: flex-end;
     margin-top: 0.75rem;
+}
+
+.reminders-section .section-header {
+    align-items: center;
+}
+
+.reminder-card {
+    max-width: 720px;
+    margin: 0 auto;
+    display: grid;
+    gap: var(--space-3);
+}
+
+.reminders-section .btn-sm {
+    white-space: nowrap;
 }
 
 .tips-grid {

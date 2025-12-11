@@ -15,6 +15,18 @@
     border: 1px solid rgba(15, 23, 42, 0.05);
 }
 
+[data-theme="dark"] .profile-hero {
+    background: linear-gradient(135deg, rgba(26, 32, 44, 0.95), rgba(17, 24, 39, 0.95));
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .profile-hero__meta dt,
+[data-theme="dark"] .profile-hero__meta dd,
+[data-theme="dark"] .profile-hero__identity p,
+[data-theme="dark"] .profile-contact span {
+    color: var(--color-text);
+}
+
 .profile-hero__grid {
     display: grid;
     gap: var(--space-10);
@@ -324,6 +336,11 @@
     backdrop-filter: blur(5px);
 }
 
+[data-theme="dark"] .profile-basic__list {
+    background: rgba(15, 23, 42, 0.6);
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
 .profile-basic__list > div {
     display: flex;
     justify-content: space-between;
@@ -338,6 +355,10 @@
     transform: translateX(4px);
 }
 
+[data-theme="dark"] .profile-basic__list > div:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
 .profile-basic__list dt {
     font-weight: 500;
     color: var(--color-text);
@@ -345,6 +366,10 @@
     display: flex;
     align-items: center;
     gap: var(--space-2);
+}
+
+[data-theme="dark"] .profile-basic__list dt {
+    color: var(--color-text-muted);
 }
 
 .profile-basic__list dt::before {
@@ -363,6 +388,11 @@
     border-radius: 1rem;
     font-size: 0.9rem;
     min-width: max-content;
+}
+
+[data-theme="dark"] .profile-basic__list dd {
+    color: var(--color-text);
+    background: rgba(255, 255, 255, 0.08);
 }
 
 .profile-obligations {

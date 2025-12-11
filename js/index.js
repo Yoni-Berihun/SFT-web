@@ -1,16 +1,18 @@
 document.addEventListener("DOMContentLoaded", () => {
     // Initialize theme and navigation
     if (window.App && window.App.initPageShell) {
-        window.App.initPageShell();
+        window.App.initPageShell({ shellNavigation: false });
     }
 
     // Get all necessary elements
     const navDrawer = document.querySelector("[data-nav-drawer]");
     const navToggle = document.querySelector("[data-nav-toggle]");
     const navLinks = Array.from(document.querySelectorAll("[data-nav-link]"));
+    const allNavLinks = Array.from(document.querySelectorAll(".primary-nav .nav-link"));
     const aboutOverlay = document.getElementById('about-overlay');
     const aboutTrigger = document.getElementById('about-trigger');
     const closeAbout = document.getElementById('close-about');
+    const brandLink = document.querySelector('.brand');
 
     // Navigation toggle functionality
     const toggleNav = (show) => {
@@ -91,8 +93,25 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    if (brandLink && window.App?.isAuthenticated) {
+        brandLink.addEventListener('click', (event) => {
+            const authed = window.App.isAuthenticated();
+            const targetPage = authed ? 'dashboard.html' : 'index.html';
+            let currentPage = window.location.pathname.split('/').pop() || '';
+            if (!currentPage) {
+                currentPage = 'index.html';
+            }
+            if (authed || currentPage !== targetPage) {
+                event.preventDefault();
+            }
+            if (currentPage !== targetPage) {
+                window.location.href = targetPage;
+            }
+        });
+    }
+
     // Close navigation when clicking a nav link
-    navLinks.forEach(link => {
+    allNavLinks.forEach(link => {
         link.addEventListener('click', () => {
             if (link !== aboutTrigger) { // Don't close for about trigger
                 toggleNav(false);

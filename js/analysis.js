@@ -556,7 +556,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const exportPdf = async () => {
         const button = selectors.exportPdfButton;
-        if (!button) return;
+        if (!button) {
+            console.error("Export PDF button not found");
+            App.showToast("Export PDF button not found");
+            return;
+        }
         
         // Save original button state
         const originalHTML = button.innerHTML;
@@ -567,30 +571,40 @@ document.addEventListener("DOMContentLoaded", () => {
             button.disabled = true;
             button.innerHTML = 'Preparing PDF...';
             
-            // Load jsPDF library
-            await new Promise((resolve, reject) => {
-                if (window.jspdf) return resolve();
-                
-                const script = document.createElement('script');
-                script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
-                script.onload = () => {
-                    // The library might expose itself differently
-                    if (!window.jspdf) window.jspdf = window.jspdf || window.jspdf.jsPDF;
-                    resolve();
-                };
-                script.onerror = reject;
-                document.head.appendChild(script);
-            });
-            
-            // Get the element to export
-            const element = document.querySelector('.page-shell');
-            if (!element) {
-                throw new Error('Could not find content to export');
+            // Check if jsPDF is already loaded
+            let jsPDFLib = null;
+            if (window.jspdf && window.jspdf.jsPDF) {
+                jsPDFLib = window.jspdf.jsPDF;
+            } else if (window.jspdf) {
+                jsPDFLib = window.jspdf;
+            } else {
+                // Try to load jsPDF library
+                await new Promise((resolve, reject) => {
+                    const script = document.createElement('script');
+                    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+                    script.onload = () => {
+                        // The library might expose itself differently
+                        if (window.jspdf && window.jspdf.jsPDF) {
+                            jsPDFLib = window.jspdf.jsPDF;
+                        } else if (window.jspdf) {
+                            jsPDFLib = window.jspdf;
+                        } else {
+                            reject(new Error('jsPDF library not loaded correctly'));
+                            return;
+                        }
+                        resolve();
+                    };
+                    script.onerror = () => reject(new Error('Failed to load jsPDF library'));
+                    document.head.appendChild(script);
+                });
             }
             
-            // Create a simple text-based PDF as fallback
-            const { jsPDF } = window.jspdf;
-            const pdf = new jsPDF();
+            if (!jsPDFLib) {
+                throw new Error('jsPDF library not available');
+            }
+            
+            // Create a simple text-based PDF
+            const pdf = new jsPDFLib();
             
             // Add title
             pdf.setFontSize(20);
@@ -700,36 +714,120 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
-    // Set up all event listeners
-    selectors.rangeSelect?.addEventListener("change", renderAnalysis);
-    selectors.categorySelect?.addEventListener("change", renderAnalysis);
-    selectors.startInput?.addEventListener("change", renderAnalysis);
-    selectors.endInput?.addEventListener("change", renderAnalysis);
-    selectors.resetButton?.addEventListener("click", resetFilters);
-    selectors.exportCsvButton?.addEventListener("click", exportCsv);
-    selectors.exportPdfButton?.addEventListener('click', exportPdf);
-    selectors.printButton?.addEventListener("click", printReport);
-    selectors.shareButton?.addEventListener("click", (event) => {
-        event.stopPropagation();
-        toggleShareMenu();
-    });
-    selectors.shareMenu?.addEventListener("click", (event) => {
-        const target = event.target.closest("[data-share]");
-        const action = target?.dataset?.share;
-        if (!action) return;
-        event.stopPropagation();
-        shareSummary(action);
-    });
-    document.addEventListener("click", (event) => {
-        if (!selectors.shareMenu || selectors.shareMenu.hidden) return;
-        if (event.target.closest(".share-control")) return;
-        closeShareMenu();
-    });
-    selectors.refreshButton?.addEventListener("click", () => {
-        expenses = App.loadState(App.STORAGE_KEYS.expenses, App.defaultExpenses);
-        renderAnalysis();
-        App.showToast("Analysis refreshed");
-    });
+    // Set up all event listeners with error handling
+    const setupEventListeners = () => {
+        try {
+            if (selectors.rangeSelect) {
+                selectors.rangeSelect.addEventListener("change", renderAnalysis);
+            } else {
+                console.warn("analysisRange select not found");
+            }
+
+            if (selectors.categorySelect) {
+                selectors.categorySelect.addEventListener("change", renderAnalysis);
+            } else {
+                console.warn("analysisCategory select not found");
+            }
+
+            if (selectors.startInput) {
+                selectors.startInput.addEventListener("change", renderAnalysis);
+            } else {
+                console.warn("analysisStart input not found");
+            }
+
+            if (selectors.endInput) {
+                selectors.endInput.addEventListener("change", renderAnalysis);
+            } else {
+                console.warn("analysisEnd input not found");
+            }
+
+            if (selectors.resetButton) {
+                selectors.resetButton.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    resetFilters();
+                });
+            } else {
+                console.warn("analysisReset button not found");
+            }
+
+            if (selectors.exportCsvButton) {
+                selectors.exportCsvButton.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    exportCsv();
+                });
+            } else {
+                console.error("analysisExportCsv button not found");
+            }
+
+            if (selectors.exportPdfButton) {
+                selectors.exportPdfButton.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    exportPdf();
+                });
+            } else {
+                console.error("analysisExportPdf button not found");
+            }
+
+            if (selectors.printButton) {
+                selectors.printButton.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    printReport();
+                });
+            } else {
+                console.error("analysisPrint button not found");
+            }
+
+            if (selectors.shareButton) {
+                selectors.shareButton.addEventListener("click", (event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    toggleShareMenu();
+                });
+            } else {
+                console.warn("analysisShare button not found");
+            }
+
+            if (selectors.shareMenu) {
+                selectors.shareMenu.addEventListener("click", (event) => {
+                    const target = event.target.closest("[data-share]");
+                    const action = target?.dataset?.share;
+                    if (!action) return;
+                    event.preventDefault();
+                    event.stopPropagation();
+                    shareSummary(action);
+                });
+            } else {
+                console.warn("analysisShareMenu not found");
+            }
+
+            document.addEventListener("click", (event) => {
+                if (!selectors.shareMenu || selectors.shareMenu.hidden) return;
+                if (event.target.closest(".share-control")) return;
+                closeShareMenu();
+            });
+
+            if (selectors.refreshButton) {
+                selectors.refreshButton.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    expenses = App.loadState(App.STORAGE_KEYS.expenses, App.defaultExpenses);
+                    renderAnalysis();
+                    App.showToast("Analysis refreshed");
+                });
+            } else {
+                console.warn("analysisRefresh button not found");
+            }
+        } catch (error) {
+            console.error("Error setting up event listeners:", error);
+            App.showToast?.("Some features may not work properly");
+        }
+    };
+
+    setupEventListeners();
 
     window.addEventListener("themechange", () => {
         renderAnalysis();

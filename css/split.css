@@ -160,6 +160,8 @@
     display: grid;
     gap: var(--space-3);
     overflow: hidden;
+[data-theme="dark"] .split-spotlight__card {
+    color: #000;
 }
 
 .split-spotlight__card--accent {
@@ -324,17 +326,56 @@
     background: rgba(15, 23, 42, 0.04);
 }
 
+[data-theme="dark"] .split-form__pills button,
+[data-theme="dark"] .split-form__pills--ghost button {
+    color: #000;
+}
+
+[data-theme="dark"] .split-hero__stats article strong,
+[data-theme="dark"] .split-hero__stats article p,
+[data-theme="dark"] .split-hero__stats article .label,
+[data-theme="dark"] .split-hero__content h1,
+[data-theme="dark"] .split-hero__content .helper-text {
+    color: #000;
+}
+
+[data-theme="dark"] .split-spotlight__card,
+[data-theme="dark"] .split-spotlight__card .label,
+[data-theme="dark"] .split-spotlight__card h3,
+[data-theme="dark"] .split-spotlight__card .helper-text {
+    color: #000;
+}
+
 .split-form__note-glow {
     position: absolute;
     inset: 10%;
     border-radius: inherit;
     background: radial-gradient(circle, rgba(0, 201, 167, 0.2), transparent 60%);
-    animation: pulseGlow 4s ease-in-out infinite;
+    animation: none;
+    opacity: 0.45;
 }
 
 .split-form__note .helper-text {
     position: relative;
     z-index: 1;
+}
+
+[data-theme="dark"] .split-form__quick,
+[data-theme="dark"] .split-form__quick .label,
+[data-theme="dark"] .split-form__quick .helper-text {
+    color: #000;
+}
+
+[data-theme="dark"] .split-form__pills button {
+    background: rgba(255, 255, 255, 0.95);
+    color: #000;
+    border-color: rgba(15, 23, 42, 0.15);
+}
+
+[data-theme="dark"] .split-form__pills--ghost button {
+    background: rgba(255, 255, 255, 0.9);
+    color: #000;
+    border-color: rgba(15, 23, 42, 0.15);
 }
 
 .split-participants {
@@ -397,6 +438,21 @@
     gap: var(--space-2);
     flex-wrap: wrap;
     align-items: center;
+}
+
+[data-theme="dark"] .split-hero__content,
+[data-theme="dark"] .split-hero__stats article {
+    color: #000;
+}
+
+[data-theme="dark"] .split-spotlight__card {
+    color: #000;
+}
+
+[data-theme="dark"] .split-spotlight__card .label,
+[data-theme="dark"] .split-spotlight__card h3,
+[data-theme="dark"] .split-spotlight__card .helper-text {
+    color: #000;
 }
 
 .split-result-card {

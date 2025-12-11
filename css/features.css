@@ -602,13 +602,16 @@ html {
     border-radius: 16px;
     padding: 2.5rem;
     border: 1px solid var(--border-color);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: transform 200ms ease, box-shadow 200ms ease;
     display: flex;
     flex-direction: column;
+    will-change: transform;
 }
 
-.feature-card:hover {
-    transform: translateY(-8px);
+.feature-card:hover,
+.feature-card:focus-visible,
+.feature-card:focus-within {
+    transform: translateY(-6px) scale(1.01);
     box-shadow: var(--shadow-lg);
 }
 
