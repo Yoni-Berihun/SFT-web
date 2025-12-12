@@ -98,9 +98,12 @@
     border-color: #059669 !important;
 }
 
-/* Export CSV and Print buttons - same size */
-#analysisExportCsv,
-#analysisPrint {
+/* Export CSV button - make it look exactly like PDF button with green background */
+#analysisExportCsv {
+    background: var(--color-secondary);
+    border-color: #0f9d74;
+    color: #f8fafc;
+    box-shadow: 0 16px 34px rgba(15, 118, 110, 0.28);
     min-width: 150px;
     width: 150px;
     justify-content: center;
@@ -108,38 +111,34 @@
     box-sizing: border-box;
 }
 
+#analysisExportCsv:hover,
+#analysisExportCsv:focus-visible {
+    background: #10b981;
+    border-color: #0f9d74;
+}
+
+/* Make CSV button green in dark mode - same as PDF */
+[data-theme="dark"] #analysisExportCsv {
+    background: #059669 !important;
+    border-color: #047857 !important;
+    color: #f3f4f6 !important;
+    box-shadow: 0 10px 20px rgba(4, 120, 87, 0.35) !important;
+}
+
+[data-theme="dark"] #analysisExportCsv:hover,
+[data-theme="dark"] #analysisExportCsv:focus-visible {
+    background: #10b981 !important;
+    border-color: #059669 !important;
+}
+
+/* Export Print button - same size */
 #analysisPrint {
+    min-width: 150px;
+    width: 150px;
+    justify-content: center;
+    padding: 10px 22px;
     padding-inline: var(--space-4);
-}
-
-.page-hero__actions .btn--csv {
-    background: transparent;
-    border-color: var(--color-primary);
-    color: var(--color-primary);
-    box-shadow: none;
-}
-
-.page-hero__actions .btn--csv:hover,
-.page-hero__actions .btn--csv:focus-visible {
-    background: var(--color-primary);
-    color: #fff;
-    box-shadow: none;
-}
-
-/* Fix dark mode CSV button - remove white hover glow */
-[data-theme="dark"] .page-hero__actions .btn--csv {
-    background: transparent !important;
-    color: #f3f4f6 !important;
-    border-color: #1f2937 !important;
-    box-shadow: none !important;
-}
-
-[data-theme="dark"] .page-hero__actions .btn--csv:hover,
-[data-theme="dark"] .page-hero__actions .btn--csv:focus-visible {
-    background: rgba(31, 41, 55, 0.8) !important;
-    color: #f3f4f6 !important;
-    border-color: #374151 !important;
-    box-shadow: none !important;
+    box-sizing: border-box;
 }
 
 .share-menu {

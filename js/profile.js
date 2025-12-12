@@ -15,9 +15,13 @@ document.addEventListener("DOMContentLoaded", () => {
         phoneInput: document.getElementById("profilePhone"),
         budgetInput: document.getElementById("profileBudget"),
         currencySelect: document.getElementById("profileCurrency"),
+        studentIdInput: document.getElementById("profileStudentIdInput"),
+        majorInput: document.getElementById("profileMajorInput"),
+        semesterInput: document.getElementById("profileSemesterInput"),
         avatarPreview: document.getElementById("profileAvatarPreview"),
-        avatarInput: document.getElementById("profileAvatarInput"),
-        removeAvatar: document.getElementById("removeAvatar"),
+        basicAvatarPreview: document.getElementById("profileBasicAvatarPreview"),
+        basicAvatarInput: document.getElementById("profileBasicAvatarInput"),
+        profilePictureHelper: document.getElementById("profilePictureHelper"),
         resetButton: document.getElementById("profileReset"),
         exportJsonButton: document.getElementById("profileExportJson"),
         exportPdfButton: document.getElementById("profileExportPdf"),
@@ -39,11 +43,10 @@ document.addEventListener("DOMContentLoaded", () => {
         transactionFilter: document.getElementById("transactionFilter"),
         documentsGrid: document.getElementById("profileDocuments"),
         obligationsList: document.getElementById("profileObligations"),
-        shareButton: document.getElementById("profileShareSummary"),
-        shareMenu: document.getElementById("profileShareMenu"),
         uploadReceipt: document.getElementById("uploadReceipt"),
         exportContent: document.getElementById("profileExportContent"),
         modalCancel: document.getElementById("modalCancel"),
+        changePasswordBtn: document.getElementById("changePasswordBtn"),
     };
 
     const loadUser = () => ({
@@ -54,10 +57,10 @@ document.addEventListener("DOMContentLoaded", () => {
     let user = loadUser();
 
     const academicProfile = {
-        studentId: "HU-2023-001",
+        studentId: "NACSR/0000/00",
         program: "BSc Computer Science · Year 3",
-        major: "Software Engineering",
-        semester: "Semester 2",
+        major: "Information System",
+        semester: "1",
     };
 
     const overviewSnapshot = {
@@ -108,6 +111,9 @@ document.addEventListener("DOMContentLoaded", () => {
         refs.phoneInput.value = user.phone || "";
         refs.budgetInput.value = user.budget;
         refs.currencySelect.value = user.currency;
+        if (refs.studentIdInput) refs.studentIdInput.value = academicProfile.studentId;
+        if (refs.majorInput) refs.majorInput.value = academicProfile.major;
+        if (refs.semesterInput) refs.semesterInput.value = academicProfile.semester;
         refs.notificationsToggle.checked = Boolean(user.notifications);
         refs.nameHeading.textContent = user.name;
         refs.emailLabel.textContent = user.email;
@@ -115,13 +121,43 @@ document.addEventListener("DOMContentLoaded", () => {
         refs.programLabel.textContent = academicProfile.program;
         refs.studentId.textContent = academicProfile.studentId;
         refs.majorLabel.textContent = academicProfile.major;
-        refs.semesterLabel.textContent = academicProfile.semester;
-        refs.avatarPreview.textContent = user.name.charAt(0).toUpperCase();
+        refs.semesterLabel.textContent = `Semester ${academicProfile.semester}`;
+        
+        // Update hero avatar
+        const avatarInitial = user.name.charAt(0).toUpperCase();
         if (user.avatarBase64) {
             refs.avatarPreview.style.backgroundImage = `url(${user.avatarBase64})`;
             refs.avatarPreview.style.backgroundSize = "cover";
+            refs.avatarPreview.style.backgroundPosition = "center";
+            refs.avatarPreview.style.backgroundRepeat = "no-repeat";
+            refs.avatarPreview.textContent = "";
+            refs.avatarPreview.style.color = "transparent";
         } else {
             refs.avatarPreview.style.backgroundImage = "none";
+            refs.avatarPreview.style.backgroundPosition = "center";
+            refs.avatarPreview.style.backgroundRepeat = "no-repeat";
+            refs.avatarPreview.textContent = avatarInitial;
+            refs.avatarPreview.style.color = "white";
+        }
+        
+        // Update basic profile avatar preview
+        if (refs.basicAvatarPreview) {
+            const initialSpan = refs.basicAvatarPreview.querySelector('.avatar-initial');
+            if (user.avatarBase64) {
+                refs.basicAvatarPreview.style.backgroundImage = `url(${user.avatarBase64})`;
+                refs.basicAvatarPreview.style.backgroundSize = "cover";
+                refs.basicAvatarPreview.style.backgroundPosition = "center";
+                refs.basicAvatarPreview.style.backgroundRepeat = "no-repeat";
+                if (initialSpan) initialSpan.style.display = 'none';
+            } else {
+                refs.basicAvatarPreview.style.backgroundImage = "none";
+                refs.basicAvatarPreview.style.backgroundPosition = "center";
+                refs.basicAvatarPreview.style.backgroundRepeat = "no-repeat";
+                if (initialSpan) {
+                    initialSpan.textContent = avatarInitial;
+                    initialSpan.style.display = 'flex';
+                }
+            }
         }
     };
 
@@ -143,6 +179,10 @@ document.addEventListener("DOMContentLoaded", () => {
             currency: refs.currencySelect.value,
             notifications: refs.notificationsToggle.checked,
         };
+        // Update academic profile if fields exist
+        if (refs.studentIdInput) academicProfile.studentId = refs.studentIdInput.value.trim() || academicProfile.studentId;
+        if (refs.majorInput) academicProfile.major = refs.majorInput.value.trim() || academicProfile.major;
+        if (refs.semesterInput) academicProfile.semester = refs.semesterInput.value.trim() || academicProfile.semester;
         persistUser();
     };
 
@@ -156,10 +196,46 @@ document.addEventListener("DOMContentLoaded", () => {
     const handleAvatarUpload = (event) => {
         const file = event.target.files?.[0];
         if (!file) return;
+        
+        // Validate file type
+        if (!file.type.startsWith('image/')) {
+            App.showToast("Please select an image file");
+            return;
+        }
+        
+        // Validate file size (max 5MB)
+        if (file.size > 5 * 1024 * 1024) {
+            App.showToast("Image size must be less than 5MB");
+            return;
+        }
+        
         const reader = new FileReader();
         reader.onload = (e) => {
+            // Automatically save the image when selected
             user.avatarBase64 = e.target.result;
             persistUser();
+            // Force immediate update of avatars
+            if (refs.avatarPreview) {
+                refs.avatarPreview.style.backgroundImage = `url(${user.avatarBase64})`;
+                refs.avatarPreview.style.backgroundSize = "cover";
+                refs.avatarPreview.style.backgroundPosition = "center";
+                refs.avatarPreview.style.backgroundRepeat = "no-repeat";
+                refs.avatarPreview.textContent = "";
+                refs.avatarPreview.style.color = "transparent";
+            }
+            if (refs.basicAvatarPreview) {
+                refs.basicAvatarPreview.style.backgroundImage = `url(${user.avatarBase64})`;
+                refs.basicAvatarPreview.style.backgroundSize = "cover";
+                refs.basicAvatarPreview.style.backgroundPosition = "center";
+                refs.basicAvatarPreview.style.backgroundRepeat = "no-repeat";
+                const initialSpan = refs.basicAvatarPreview.querySelector('.avatar-initial');
+                if (initialSpan) initialSpan.style.display = 'none';
+            }
+            renderProfile();
+            App.showToast("Profile picture uploaded successfully!");
+        };
+        reader.onerror = () => {
+            App.showToast("Error reading image file");
         };
         reader.readAsDataURL(file);
     };
@@ -292,52 +368,8 @@ document.addEventListener("DOMContentLoaded", () => {
         App.showToast("Summary exported");
     };
 
-    const shareSummary = (mode) => {
-        const summary = `EduFinance summary — Balance: ${App.formatCurrency(
-            overviewSnapshot.balance,
-            user.currency
-        )}, Dues: ${App.formatCurrency(overviewSnapshot.dues, user.currency)}, Upcoming: ${App.formatCurrency(
-            overviewSnapshot.upcoming,
-            user.currency
-        )}.`;
-
-        const encoded = encodeURIComponent(summary);
-
-        const closeMenu = () => {
-            if (!refs.shareMenu) return;
-            refs.shareMenu.hidden = true;
-            refs.shareButton?.setAttribute("aria-expanded", "false");
-        };
-
-        if (mode === "whatsapp") {
-            window.open(`https://wa.me/?text=${encoded}`, "_blank");
-        } else if (mode === "telegram") {
-            window.open(`https://t.me/share/url?text=${encoded}`, "_blank");
-        } else if (mode === "instagram") {
-            App.showToast("Instagram sharing works via system sheet");
-        } else if (mode === "email") {
-            window.open(`mailto:?subject=EduFinance summary&body=${encoded}`, "_blank");
-        } else if (mode === "sms") {
-            window.location.href = `sms:?&body=${encoded}`;
-        }
-        closeMenu();
-    };
-
     const scrollToForm = () => {
         refs.form?.scrollIntoView({ behavior: "smooth", block: "start" });
-    };
-
-    const toggleShareMenu = () => {
-        if (!refs.shareMenu || !refs.shareButton) return;
-        const willShow = refs.shareMenu.hidden;
-        refs.shareMenu.hidden = !willShow;
-        refs.shareButton.setAttribute("aria-expanded", String(willShow));
-    };
-
-    const handleShareMenuClick = (event) => {
-        const action = event.target.closest("[data-share]")?.dataset.share;
-        if (!action) return;
-        shareSummary(action);
     };
 
     const clearData = () => {
@@ -352,8 +384,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     refs.form?.addEventListener("submit", handleSubmit);
-    refs.avatarInput?.addEventListener("change", handleAvatarUpload);
-    refs.removeAvatar?.addEventListener("click", removeAvatar);
+    refs.basicAvatarInput?.addEventListener("change", handleAvatarUpload);
     refs.resetButton?.addEventListener("click", resetForm);
     refs.exportJsonButton?.addEventListener("click", exportProfileJson);
     refs.exportSummaryButton?.addEventListener("click", exportSummaryCsv);
@@ -365,14 +396,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("profileEditTrigger")?.addEventListener("click", scrollToForm);
     document.getElementById("profileEditSecondary")?.addEventListener("click", scrollToForm);
     refs.uploadReceipt?.addEventListener("click", () => App.showToast("Upload coming soon"));
-    refs.shareButton?.addEventListener("click", toggleShareMenu);
-    refs.shareMenu?.addEventListener("click", handleShareMenuClick);
-    document.addEventListener("click", (event) => {
-        if (!refs.shareMenu || refs.shareMenu.hidden) return;
-        if (event.target.closest(".share-control")) return;
-        refs.shareMenu.hidden = true;
-        refs.shareButton?.setAttribute("aria-expanded", "false");
-    });
+    refs.changePasswordBtn?.addEventListener("click", () => App.showToast("Password change feature coming soon"));
 
     renderProfile();
     renderOverview();

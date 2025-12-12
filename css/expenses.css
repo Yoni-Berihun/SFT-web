@@ -490,7 +490,11 @@ body[data-page="expenses"] .page-shell > * + * {
 
 .table-actions {
     display: inline-flex;
-    gap: var(--space-2);
+    gap: var(--space-3);
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: flex-end;
+    min-width: fit-content;
 }
 
 .table-header--simple {
@@ -505,14 +509,18 @@ body[data-page="expenses"] .page-shell > * + * {
 .action-chip {
     border: none;
     border-radius: var(--radius-pill);
-    padding: 8px 16px;
-    font-size: 0.85rem;
+    padding: 10px 20px;
+    font-size: 0.9rem;
     font-weight: 600;
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 6px;
     cursor: pointer;
     transition: transform var(--transition-base), box-shadow var(--transition-base);
+    white-space: nowrap;
+    min-width: fit-content;
+    flex-shrink: 0;
 }
 
 .action-chip:hover,
@@ -641,6 +649,35 @@ html[data-theme="dark"] body[data-page="expenses"] .table--structured .table-hea
     .detail-focus__actions {
         flex-direction: column;
         align-items: stretch;
+    }
+
+    /* Ensure Edit and Delete buttons are fully visible on mobile */
+    .table-actions {
+        gap: var(--space-2);
+        flex-wrap: wrap;
+        justify-content: flex-start;
+    }
+
+    .action-chip {
+        padding: 10px 18px;
+        font-size: 0.85rem;
+        min-width: auto;
+        width: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Further optimize for very small screens */
+    .table-actions {
+        gap: var(--space-2);
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .action-chip {
+        padding: 10px 16px;
+        font-size: 0.85rem;
+        flex: 0 0 auto;
     }
 }
 

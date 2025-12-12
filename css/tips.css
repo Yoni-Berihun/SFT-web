@@ -179,6 +179,78 @@
     color: #333;
 }
 
+/* Dark mode: Make text and icons white by default, black on hover */
+[data-theme="dark"] .tips-grid article {
+    color: #ffffff;
+}
+
+[data-theme="dark"] .tips-grid article h3 {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .tips-grid article p {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .tips-grid article li {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .tips-grid article .big-number {
+    color: #ffffff !important;
+    filter: brightness(0) invert(1);
+}
+
+[data-theme="dark"] .tips-grid article .big-number svg {
+    color: #ffffff !important;
+    fill: #ffffff !important;
+    stroke: #ffffff !important;
+}
+
+[data-theme="dark"] .tips-grid article button {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .tips-grid article button.btn-tertiary {
+    color: #ffffff !important;
+}
+
+/* Dark mode: Make text and icons black on hover */
+[data-theme="dark"] .tips-grid article:hover {
+    color: #000000 !important;
+}
+
+[data-theme="dark"] .tips-grid article:hover h3 {
+    color: #000000 !important;
+}
+
+[data-theme="dark"] .tips-grid article:hover p {
+    color: #000000 !important;
+}
+
+[data-theme="dark"] .tips-grid article:hover li {
+    color: #000000 !important;
+}
+
+[data-theme="dark"] .tips-grid article:hover .big-number {
+    color: #000000 !important;
+    filter: brightness(0);
+}
+
+[data-theme="dark"] .tips-grid article:hover .big-number svg {
+    color: #000000 !important;
+    fill: #000000 !important;
+    stroke: #000000 !important;
+}
+
+[data-theme="dark"] .tips-grid article:hover button {
+    color: #000000 !important;
+}
+
+[data-theme="dark"] .tips-grid article:hover button.btn-tertiary {
+    color: #000000 !important;
+}
+
 .tips-grid ul {
     margin: 0;
     padding-left: var(--space-4);

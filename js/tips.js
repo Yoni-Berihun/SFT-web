@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // Mark that we're not on an auth page
+    
     window.__onAuthPage = false;
     
     if (!App.initPageShell({ auth: true })) {
@@ -23,9 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     const quotes = [
-        { text: "Consistency beats intensity. Track small wins daily.", author: "udungu mvumva" },
         { text: "A budget is a permission slip for joyful spending.", author: "Yonatan Berihun" },
-        { text: "Saving early buys freedom later.", author: "Salahdin Surur" },
         { text: "Small, regular contributions compound into surprising balances.", author: "Abdulkerim khedr" },
         { text: "Paying yourself first is the simplest habit that builds wealth.", author: "Biniyam Fisseha" },
         { text: "Build wealth quietly, let your freedom make the noise", author: "Tsion Tesfaye" },

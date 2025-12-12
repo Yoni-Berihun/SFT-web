@@ -32,7 +32,7 @@
 .remember-row {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     font-size: 0.9rem;
     color: var(--muted);
 }
@@ -62,9 +62,95 @@
     display: block;
 }
 
+/* Mobile Responsive Styles */
 @media (max-width: 640px) {
+    .login-wrapper {
+        padding: 24px 16px;
+        min-height: calc(100vh - 80px);
+    }
+    
     .login-card {
-        padding: 28px 22px;
+        padding: 28px 20px;
+        width: 100%;
+        max-width: 100%;
+    }
+    
+    .login-card h1 {
+        font-size: 1.6rem;
+        margin-bottom: 8px;
+    }
+    
+    .login-card p {
+        font-size: 0.95rem;
+        margin-bottom: 24px;
+    }
+    
+    .login-card form {
+        gap: 16px;
+    }
+    
+    .input-group {
+        font-size: 0.95rem;
+    }
+    
+    .input-group input {
+        font-size: 16px; /* Prevents zoom on iOS */
+        padding: 12px;
+        min-height: 48px; /* Better touch target */
+    }
+    
+    .remember-row {
+        font-size: 0.9rem;
+        margin-top: 4px;
+    }
+    
+    .remember-row label {
+        font-size: 0.9rem;
+    }
+    
+    .btn {
+        width: 100%;
+        padding: 14px 24px;
+        font-size: 1rem;
+        min-height: 48px; /* Better touch target */
+    }
+    
+    .auth-switch {
+        font-size: 0.9rem;
+        margin-top: 20px;
+        padding-top: 16px;
+    }
+    
+    .login-message {
+        font-size: 0.85rem;
+        padding: 10px 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-wrapper {
+        padding: 20px 12px;
+    }
+    
+    .login-card {
+        padding: 24px 16px;
+    }
+    
+    .login-card h1 {
+        font-size: 1.5rem;
+    }
+    
+    .login-card p {
+        font-size: 0.9rem;
+    }
+    
+    .input-group input {
+        padding: 10px;
+    }
+    
+    .btn {
+        padding: 12px 20px;
+        font-size: 0.95rem;
     }
 }
 
@@ -89,15 +175,6 @@
     text-decoration: underline;
 }
 
-.remember-row a {
-    color: var(--secondary);
-    text-decoration: none;
-    font-size: 0.9rem;
-}
-
-.remember-row a:hover {
-    text-decoration: underline;
-}
 
 .login-card .note {
     margin-top: 24px;

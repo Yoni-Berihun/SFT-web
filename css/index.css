@@ -71,12 +71,24 @@ body[data-page="home"] .info-panel,
 body[data-page="home"] .showcase-card,
 body[data-page="home"] .comparison-card,
 body[data-page="home"] .team-card,
-body[data-page="home"] .contact-item,
-body[data-page="home"] .stat-box {
+body[data-page="home"] .contact-item {
     background: var(--home-surface) !important;
     border-color: var(--home-border) !important;
     box-shadow: none;
     color: var(--home-text);
+}
+
+body[data-page="home"] .stat-box {
+    background: #00BCD4 !important; /* Cyan blue background */
+    border-color: #00ACC1 !important; /* Slightly darker cyan blue border */
+    color: #ffffff !important; /* White text for visibility */
+    box-shadow: var(--abouts-shadow-lg);
+}
+
+[data-theme="dark"] body[data-page="home"] .stat-box {
+    background: #00BCD4 !important; /* Cyan blue background for dark mode */
+    border-color: #0097A7 !important; /* Darker cyan blue border for dark mode */
+    color: #ffffff !important; /* White text for visibility */
 }
 
 body[data-page="home"] .feature-card {

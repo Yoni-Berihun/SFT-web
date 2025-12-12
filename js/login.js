@@ -12,7 +12,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const emailInput = document.getElementById("loginEmail");
     const passwordInput = document.getElementById("loginPassword");
     const rememberInput = document.getElementById("rememberMe");
-    const forgotTrigger = document.querySelector('[data-forgot-trigger]');
     const form = document.getElementById("loginForm");
     const message = document.getElementById("loginMessage");
 
@@ -102,11 +101,6 @@ document.addEventListener("DOMContentLoaded", () => {
         message.classList.add("show");
         setTimeout(() => message.classList.remove("show"), 2800);
     };
-
-    forgotTrigger?.addEventListener("click", (event) => {
-        event.preventDefault();
-        showMessage("Coming Soon", "success");
-    });
 
     // Prevent duplicate event listeners
     let isSubmitting = false;

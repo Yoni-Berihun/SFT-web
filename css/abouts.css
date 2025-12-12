@@ -346,18 +346,18 @@ body[data-page="abouts"] main {
 }
 
 .stat-box {
-    background: #06b6d4; /* Cyan background */
+    background: #00BCD4; /* Cyan blue background */
     border-radius: 16px;
     padding: 2.5rem;
-    border: 1px solid #0891b2; /* Slightly darker cyan border */
+    border: 1px solid #00ACC1; /* Slightly darker cyan blue border */
     color: #ffffff; /* White text for better contrast */
     box-shadow: var(--abouts-shadow-lg);
 }
 
 [data-theme="dark"] .stat-box {
-    background: #0e7490; /* Darker cyan for dark mode */
+    background: #00BCD4; /* Cyan blue background for dark mode */
     color: #ffffff; /* White text for better contrast */
-    border: 1px solid #0c4a6e; /* Darker border for dark mode */
+    border: 1px solid #0097A7; /* Darker cyan blue border for dark mode */
 }
 
 .stat-number {

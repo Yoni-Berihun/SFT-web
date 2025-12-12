@@ -33,13 +33,25 @@
                 </nav>
                 <div class="shell-actions">
                     <button id="themeToggle" class="icon-button" aria-label="Toggle theme" type="button" data-theme-toggle>
-                        <!-- Sun icon (shown in dark mode) -->
-                        <svg id="sunIcon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: none;">
-                            <path d="M12 3V4M12 20V21M21 12H20M4 12H3M18.364 18.364L17.6569 17.6569M6.34315 6.34315L5.63604 5.63604M18.364 5.63609L17.6569 6.3432M6.3432 17.6569L5.63609 18.364M16 12C16 14.2091 14.2091 16 12 16C9.79086 16 8 14.2091 8 12C8 9.79086 9.79086 8 12 8C14.2091 8 16 9.79086 16 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                        <!-- Moon icon (shown in light mode) -->
-                        <svg id="moonIcon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <svg class="sun-and-moon" aria-hidden="true" width="24" height="24" viewBox="0 0 24 24">
+                            <!-- Sun -->
+                            <g class="sun">
+                                <circle cx="12" cy="12" r="4" fill="currentColor" />
+                                <g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="12" y1="3" x2="12" y2="1" />
+                                    <line x1="12" y1="23" x2="12" y2="21" />
+                                    <line x1="5.64" y1="5.64" x2="4.22" y2="4.22" />
+                                    <line x1="19.78" y1="19.78" x2="18.36" y2="18.36" />
+                                    <line x1="1" y1="12" x2="3" y2="12" />
+                                    <line x1="21" y1="12" x2="23" y2="12" />
+                                    <line x1="5.64" y1="18.36" x2="4.22" y2="19.78" />
+                                    <line x1="19.78" y1="4.22" x2="18.36" y2="5.64" />
+                                </g>
+                            </g>
+                            <!-- Moon -->
+                            <g class="moon">
+                                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="currentColor" />
+                            </g>
                         </svg>
                     </button>
                     <a href="login.html" class="btn btn-secondary">Login</a>
