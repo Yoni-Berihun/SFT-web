@@ -1,30 +1,91 @@
 // Wait for DOM to be fully loaded
 document.addEventListener('DOMContentLoaded', function() {
-    // Sample data - replace with actual data from your backend
+    // Dynamic data computed from local storage (expenses and user profile)
     const monthlyData = {
         labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
         income: [8500, 8200, 8800, 9000, 9200, 9500, 9800, 10000, 10200, 10500, 10800, 11000],
-        expenses: [7500, 7800, 8200, 8000, 8500, 8800, 9000, 9200, 8900, 9100, 9300, 9500]
+        expenses: new Array(12).fill(0),
     };
 
+    // Focused category mix for the UI: Food, Transport, Books, Lifestyle
     const expenseCategories = {
-        labels: ['Tuition', 'Food', 'Transport', 'Entertainment', 'Savings', 'Miscellaneous'],
-        data: [45, 20, 15, 10, 25, 5],
-        colors: ['#4285F4', '#FF6D00', '#9C27B0', '#00BFA5', '#FFD600', '#FF4081']
+        labels: ['Food', 'Transport', 'Books', 'Lifestyle'],
+        data: new Array(4).fill(0),
+        colors: ['#4285F4', '#FF6D00', '#9C27B0', '#00BFA5']
     };
 
     const savingsData = {
-        months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-        amounts: [2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500, 6000, 6500, 7000, 7500]
+        months: monthlyData.labels.slice(),
+        amounts: new Array(12).fill(0)
     };
 
-    const budgetData = {
-        spent: 28750,
-        total: 36000,
-        percentage: 80
+    let budgetData = {
+        spent: 0,
+        total: 0,
+        percentage: 0
     };
 
-    const financialHealthScore = 75; // Out of 100
+    let financialHealthScore = 75; // Out of 100 (kept as-is for now)
+
+    // Access stored data helper (supports environments where App may not be ready)
+    const getStored = (key, fallback) => {
+        if (window.App && typeof App.loadState === 'function') return App.loadState(key, fallback);
+        try {
+            const raw = localStorage.getItem(key);
+            return raw ? JSON.parse(raw) : fallback;
+        } catch (e) {
+            return fallback;
+        }
+    };
+
+    const getUser = () => getStored(window?.App?.STORAGE_KEYS?.user || 'edufinance-user', window?.App?.defaultUser || { budget: 0, currency: 'Birr' });
+    const getExpenses = () => getStored(window?.App?.STORAGE_KEYS?.expenses || 'edufinance-expenses', window?.App?.defaultExpenses || []);
+
+    // Aggregate expenses into monthly and category buckets
+    const computeAggregations = () => {
+        const expenses = getExpenses() || [];
+        // Reset
+        monthlyData.expenses.fill(0);
+        expenseCategories.data.fill(0);
+        savingsData.amounts.fill(0);
+        let totalSpent = 0;
+
+        const normalizeCategory = (cat) => {
+            const s = (cat || '').toLowerCase();
+            if (s.includes('food')) return 'Food';
+            if (s.includes('transport') || s.includes('bus') || s.includes('taxi')) return 'Transport';
+            if (s.includes('book')) return 'Books';
+            // Map common entertainment/supplies/etc to Lifestyle bucket
+            return 'Lifestyle';
+        };
+        const categoryIndex = (cat) => {
+            const mapped = normalizeCategory(cat);
+            const idx = expenseCategories.labels.indexOf(mapped);
+            return idx >= 0 ? idx : 0;
+        };
+
+        expenses.forEach((exp) => {
+            const date = new Date(exp.date);
+            if (!isNaN(date)) {
+                const month = date.getMonth();
+                monthlyData.expenses[month] += Number(exp.amount) || 0;
+                // For savingsData we'll just mirror monthly expenses as negative savings placeholder
+                savingsData.amounts[month] += 0; // keep existing placeholder behavior
+            }
+            const idx = categoryIndex(exp.category || 'Miscellaneous');
+            expenseCategories.data[idx] += Number(exp.amount) || 0;
+            totalSpent += Number(exp.amount) || 0;
+        });
+
+        // Budget calculations
+        const user = getUser() || {};
+        const budget = Number(user.budget) || 0;
+        budgetData.spent = Math.max(0, totalSpent);
+        budgetData.total = Math.max(0, budget);
+        budgetData.percentage = budget > 0 ? Math.round((budgetData.spent / budget) * 100) : 0;
+
+        // Ensure donut category data uses percentages or absolute values — keep absolute sums
+    };
 
     // Helper function to format currency
     const formatCurrency = (value) => {
@@ -38,8 +99,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 1. Income vs Expenses Bar Chart
     const incomeExpenseCtx = document.getElementById('incomeExpenseChart');
+    let incomeExpenseChartInstance = null;
     if (incomeExpenseCtx) {
-        new Chart(incomeExpenseCtx, {
+        incomeExpenseChartInstance = new Chart(incomeExpenseCtx, {
             type: 'bar',
             data: {
                 labels: monthlyData.labels,
@@ -127,10 +189,13 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Expense breakdown chart instance
+    let expenseBreakdownChartInstance = null;
+
     // 2. Expense Breakdown Donut Chart
     const expenseBreakdownCtx = document.getElementById('expenseBreakdownChart');
     if (expenseBreakdownCtx) {
-        new Chart(expenseBreakdownCtx, {
+        expenseBreakdownChartInstance = new Chart(expenseBreakdownCtx, {
             type: 'doughnut',
             data: {
                 labels: expenseCategories.labels,
@@ -178,8 +243,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 3. Savings Growth Line Chart
     const savingsGrowthCtx = document.getElementById('savingsGrowthChart');
+    let savingsGrowthChartInstance = null;
     if (savingsGrowthCtx) {
-        new Chart(savingsGrowthCtx, {
+        savingsGrowthChartInstance = new Chart(savingsGrowthCtx, {
             type: 'line',
             data: {
                 labels: savingsData.months,
@@ -265,13 +331,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 4. Budget Utilization Radial Chart
     const budgetUtilizationCtx = document.getElementById('budgetUtilizationChart');
+    let budgetUtilizationChartInstance = null;
     if (budgetUtilizationCtx) {
-        new Chart(budgetUtilizationCtx, {
+        budgetUtilizationChartInstance = new Chart(budgetUtilizationCtx, {
             type: 'doughnut',
             data: {
                 labels: ['Spent', 'Remaining'],
                 datasets: [{
-                    data: [budgetData.spent, budgetData.total - budgetData.spent],
+                    data: [budgetData.spent, Math.max(0, budgetData.total - budgetData.spent)],
                     backgroundColor: [
                         budgetData.percentage <= 70 ? '#4CAF50' : 
                         budgetData.percentage <= 90 ? '#FFC107' : '#F44336',
@@ -303,15 +370,23 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        // Add text in the center of the budget utilization chart
-        const centerText = document.createElement('div');
-        centerText.className = 'chart-center-text';
-        centerText.innerHTML = `
-            <div class="percentage">${budgetData.percentage}%</div>
-            <div class="label">Utilized</div>
-            <div class="amount">${formatCurrency(budgetData.spent)}</div>
-        `;
-        budgetUtilizationCtx.parentNode.appendChild(centerText);
+        // Add or update text in the center of the budget utilization chart
+        const ensureCenterText = () => {
+            const existing = budgetUtilizationCtx.parentNode.querySelector('.chart-center-text');
+            const html = `
+                <div class="percentage">${budgetData.percentage}%</div>
+                <div class="label">Utilized</div>
+                <div class="amount">${formatCurrency(budgetData.spent)}</div>
+            `;
+            if (existing) existing.innerHTML = html;
+            else {
+                const centerText = document.createElement('div');
+                centerText.className = 'chart-center-text';
+                centerText.innerHTML = html;
+                budgetUtilizationCtx.parentNode.appendChild(centerText);
+            }
+        };
+        ensureCenterText();
     }
 
     // 5. Financial Health Gauge Chart
@@ -486,6 +561,282 @@ document.addEventListener('DOMContentLoaded', function() {
             location.reload();
         }
     };
+
+    // Update charts when data changes
+    const updateAllCharts = () => {
+        computeAggregations();
+        // Update income/expense chart
+        if (incomeExpenseChartInstance) {
+            incomeExpenseChartInstance.data.datasets[1].data = monthlyData.expenses.slice();
+            incomeExpenseChartInstance.update();
+        }
+        // Update breakdown chart
+        if (expenseBreakdownChartInstance) {
+            expenseBreakdownChartInstance.data.labels = expenseCategories.labels.slice();
+            expenseBreakdownChartInstance.data.datasets[0].data = expenseCategories.data.slice();
+            expenseBreakdownChartInstance.update();
+        }
+        // Update savings chart
+        if (savingsGrowthChartInstance) {
+            savingsGrowthChartInstance.data.datasets[0].data = savingsData.amounts.slice();
+            savingsGrowthChartInstance.update();
+        }
+        // Update budget utilization
+        if (budgetUtilizationChartInstance) {
+            budgetUtilizationChartInstance.data.datasets[0].data = [budgetData.spent, Math.max(0, budgetData.total - budgetData.spent)];
+            // Update color based on percentage
+            budgetUtilizationChartInstance.data.datasets[0].backgroundColor[0] = budgetData.percentage <= 70 ? '#4CAF50' : (budgetData.percentage <= 90 ? '#FFC107' : '#F44336');
+            budgetUtilizationChartInstance.update();
+            // Update center text
+            const existing = budgetUtilizationCtx?.parentNode?.querySelector('.chart-center-text');
+            if (existing) {
+                existing.innerHTML = `\n                    <div class="percentage">${budgetData.percentage}%</div>\n                    <div class="label">Utilized</div>\n                    <div class="amount">${formatCurrency(budgetData.spent)}</div>\n                `;
+            }
+        }
+
+        // --- Update Category Mix legend (live percentages) ---
+        try {
+            const catTotal = expenseCategories.data.reduce((s, v) => s + v, 0) || 0;
+            const legendItems = Array.from(document.querySelectorAll('.chart-legend li'));
+            expenseCategories.labels.forEach((label, idx) => {
+                const value = expenseCategories.data[idx] || 0;
+                const pct = catTotal > 0 ? Math.round((value / catTotal) * 100) : 0;
+                // Update chart legend lines if they exist (format: "Food · 38%")
+                if (legendItems[idx]) {
+                    legendItems[idx].textContent = `${label} · ${pct}%`;
+                }
+            });
+            // Update the donut visual (conic-gradient) and center label
+            const donut = document.querySelector('.donut-chart');
+            if (donut) {
+                const colors = expenseCategories.colors || ['#4285F4', '#FF6D00', '#9C27B0', '#00BFA5'];
+                let acc = 0;
+                const stops = expenseCategories.data.map((v, i) => {
+                    const pct = catTotal > 0 ? (v / catTotal) * 100 : 0;
+                    const start = acc;
+                    acc += pct;
+                    const end = acc;
+                    return `${colors[i]} ${start}% ${end}%`;
+                });
+                // If total < 100, append a transparent remainder
+                if (acc < 100) stops.push(`rgba(0,0,0,0.06) ${acc}% 100%`);
+                donut.style.background = `conic-gradient(${stops.join(',')})`;
+
+                // Update center with top category
+                const center = donut.querySelector('.donut-chart__center');
+                if (center) {
+                    const maxIdx = expenseCategories.data.indexOf(Math.max(...expenseCategories.data));
+                    const topLabel = expenseCategories.labels[maxIdx] || '';
+                    const topPct = catTotal > 0 ? Math.round((expenseCategories.data[maxIdx] / catTotal) * 100) : 0;
+                    const strong = center.querySelector('strong');
+                    const span = center.querySelector('span');
+                    if (strong) strong.textContent = topLabel || '';
+                    if (span) span.textContent = `${topPct}%`;
+                }
+            }
+        } catch (err) {
+            console.warn('Failed to update category legend', err);
+        }
+
+        // --- Weekly Pulse (today + percent vs yesterday) ---
+        try {
+            const expenses = getExpenses() || [];
+            const toKey = (d) => d.toISOString().split('T')[0];
+            const today = new Date();
+            const todayKey = toKey(today);
+            const yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000);
+            const yesterdayKey = toKey(yesterday);
+            const sumByDate = (key) => expenses.filter(e => (e.date || '').startsWith(key)).reduce((s, x) => s + (Number(x.amount) || 0), 0);
+            const todaySum = sumByDate(todayKey);
+            const yesterdaySum = sumByDate(yesterdayKey);
+
+            const pulseStrong = document.querySelectorAll('.pulse-stats strong');
+            const pulseHelpers = document.querySelectorAll('.pulse-stats .helper-text');
+            if (pulseStrong && pulseStrong.length > 0) {
+                pulseStrong[0].textContent = formatCurrency(todaySum);
+            }
+            // percent change helper
+            if (pulseHelpers && pulseHelpers.length > 0) {
+                let text = '';
+                if (yesterdaySum === 0) {
+                    text = todaySum === 0 ? 'No change' : `↑ New today`;
+                } else {
+                    const diff = Math.round(((todaySum - yesterdaySum) / Math.max(1, yesterdaySum)) * 100);
+                    text = `${diff > 0 ? '↑' : diff < 0 ? '↓' : 'Flat'} ${Math.abs(diff)}% vs yesterday`;
+                }
+                pulseHelpers[0].textContent = text;
+            }
+
+            // Safe-to-spend update (second strong in pulse-stats)
+            const totalSpent = expenses.reduce((s, x) => s + (Number(x.amount) || 0), 0);
+            const user = getUser() || {};
+            const budget = Number(user.budget) || 0;
+            const remaining = Math.max(0, budget - totalSpent);
+            if (pulseStrong && pulseStrong.length > 1) {
+                pulseStrong[1].textContent = formatCurrency(remaining);
+            }
+
+            // Also update the highlight-card value (budget remaining)
+            const budgetValueEl = document.querySelector('.highlight-card--accent .highlight-card__value');
+            if (budgetValueEl) {
+                budgetValueEl.textContent = `${formatCurrency(remaining)}`;
+            }
+            // Update the pulse SVG area & line based on last 9 days of spending
+            try {
+                const days = 9;
+                const now = new Date();
+                const daily = new Array(days).fill(0);
+                expenses.forEach((e) => {
+                    const d = new Date(e.date);
+                    if (!isNaN(d)) {
+                        const diff = Math.floor((now - d) / (24 * 60 * 60 * 1000));
+                        if (diff >= 0 && diff < days) {
+                            daily[days - 1 - diff] += Number(e.amount) || 0;
+                        }
+                    }
+                });
+
+                // Map daily values to SVG coordinates
+                const maxVal = Math.max(...daily, 1);
+                const width = 400;
+                const height = 120; // max draw height
+                const step = width / (days - 1);
+                const points = daily.map((v, i) => {
+                    const x = Math.round(i * step);
+                    // invert so larger values go up (smaller y)
+                    const y = Math.round(height - (v / maxVal) * (height - 20)) + 40; // shift to fit view
+                    return { x, y };
+                });
+
+                const path = `M0,${points[0].y} ` + points.map(p => `L${p.x},${p.y}`).join(' ') + ` L400,160 L0,160 Z`;
+                const poly = points.map(p => `${p.x},${p.y}`).join(' ');
+                const pulseArea = document.querySelector('.pulse-area');
+                const pulseLine = document.querySelector('.pulse-line');
+                if (pulseArea) pulseArea.setAttribute('d', path);
+                if (pulseLine) pulseLine.setAttribute('points', poly);
+            } catch (err) {
+                console.warn('Failed to update pulse SVG', err);
+            }
+        } catch (err) {
+            console.warn('Failed to update weekly pulse or safe-to-spend', err);
+        }
+
+        // --- Upcoming reminders ---
+        try {
+            const reminders = [
+                { date: 'Nov 26', title: 'Lab materials', amount: 350, note: 'Supplies' },
+                { date: 'Nov 28', title: 'Library membership', amount: 150, note: 'Books' },
+                { date: 'Nov 30', title: 'Gym renewal', amount: 220, note: 'Gym' },
+                { date: 'Dec 01', title: 'Class trip deposit', amount: 600, note: 'Transport' },
+            ];
+            const expenses = getExpenses() || [];
+            const timeline = document.querySelector('.timeline');
+            if (timeline) {
+                timeline.innerHTML = reminders.map((r) => {
+                    // check if any expense mentions the reminder title
+                    const matched = expenses.find(e => (e.description || e.notes || '').toLowerCase().includes(r.title.toLowerCase()));
+                    const paidNote = matched ? `<p class="helper-text">Paid: ${formatCurrency(matched.amount)}</p>` : `<p class="helper-text">Expected ETB ${r.amount} · ${r.note}</p>`;
+                    return `
+                        <li>
+                            <span>${r.date}</span>
+                            <div>
+                                <strong>${r.title}</strong>
+                                ${paidNote}
+                            </div>
+                        </li>
+                    `;
+                }).join('');
+            }
+        } catch (err) {
+            console.warn('Failed to update reminders', err);
+        }
+
+        // --- Smart suggestions (Cosmetics, Coffee, Gym) ---
+        try {
+            const expenses = getExpenses() || [];
+            const now = new Date();
+            const toKey = (d) => d.toISOString().split('T')[0];
+            const withinDays = (d, days) => {
+                const date = new Date(d);
+                const diff = Math.floor((now - date) / (24 * 60 * 60 * 1000));
+                return diff >= 0 && diff < days;
+            };
+            const sumForCategoryRange = (catKeyword, daysStart, daysEnd) => {
+                // daysStart inclusive from now (0 means today), daysEnd exclusive
+                return expenses.reduce((s, e) => {
+                    try {
+                        const ed = new Date(e.date);
+                        const diffDays = Math.floor((now - ed) / (24 * 60 * 60 * 1000));
+                        if (diffDays >= daysStart && diffDays < daysEnd) {
+                            const desc = (e.category || e.notes || e.description || '').toLowerCase();
+                            if (desc.includes(catKeyword.toLowerCase())) return s + (Number(e.amount) || 0);
+                        }
+                    } catch (e) {}
+                    return s;
+                }, 0);
+            };
+
+            const suggestionKeys = ['Cosmetics', 'Coffee', 'Gym'];
+            const sparkCards = Array.from(document.querySelectorAll('.spark-grid .spark-card'));
+            suggestionKeys.forEach((key, idx) => {
+                const last7 = sumForCategoryRange(key, 0, 7);
+                const prev7 = sumForCategoryRange(key, 7, 14);
+                let display = 'Flat';
+                if (prev7 === 0) {
+                    if (last7 === 0) display = 'Flat';
+                    else display = `↑ ${Math.round(100)}%`;
+                } else {
+                    const change = Math.round(((last7 - prev7) / Math.max(1, prev7)) * 100);
+                    if (change > 0) display = `↑ ${Math.abs(change)}%`;
+                    else if (change < 0) display = `↓ ${Math.abs(change)}%`;
+                    else display = 'Flat';
+                }
+                if (sparkCards[idx]) {
+                    const strong = sparkCards[idx].querySelector('strong');
+                    if (strong) strong.textContent = display;
+                }
+            });
+        } catch (err) {
+            console.warn('Failed to update smart suggestions', err);
+        }
+    };
+
+    // Wire updates to expense events
+    window.addEventListener('expensesUpdated', () => {
+        try {
+            updateAllCharts();
+        } catch (err) {
+            console.warn('Failed to update charts on expensesUpdated', err);
+        }
+    });
+
+    // Also update when the user profile changes in the same tab
+    window.addEventListener('userUpdated', () => {
+        try {
+            updateAllCharts();
+        } catch (err) {
+            console.warn('Failed to update charts on userUpdated', err);
+        }
+    });
+
+    // Also refresh when storage changes (other tabs)
+    window.addEventListener('storage', (e) => {
+        if (!e.key) return;
+        if (e.key === (window?.App?.STORAGE_KEYS?.expenses || 'edufinance-expenses') || e.key === (window?.App?.STORAGE_KEYS?.user || 'edufinance-user')) {
+            try {
+                updateAllCharts();
+            } catch (err) {
+                console.warn('Failed to update charts on storage event', err);
+            }
+        }
+    });
+
+    // Initial compute to populate charts with stored data
+    try {
+        updateAllCharts();
+    } catch (err) {
+        console.warn('Failed initial chart update', err);
+    }
 
     // Listen for theme changes
     const themeToggle = document.getElementById('themeToggle');

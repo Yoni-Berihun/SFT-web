@@ -113,7 +113,7 @@ const Auth = {
             const profile = {
                 name: userData.name || email.split('@')[0] || 'Student',
                 email: user.email,
-                budget: userData.budget || 5000,
+                budget: userData.budget ?? 0,
                 currency: userData.currency || 'Birr',
                 notifications: true,
                 avatarBase64: null,

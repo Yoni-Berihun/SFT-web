@@ -12,7 +12,7 @@
     const defaultUser = {
         name: "Student",
         email: "student@edufinance.com",
-        budget: 5000,
+        budget: 0,
         currency: "Birr",
         notifications: true,
         avatarBase64: null,

@@ -13,6 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
         nameInput: document.getElementById("profileName"),
         emailInput: document.getElementById("profileEmail"),
         phoneInput: document.getElementById("profilePhone"),
+        notificationsToggle: document.getElementById("profileNotifications"),
         budgetInput: document.getElementById("profileBudget"),
         currencySelect: document.getElementById("profileCurrency"),
         studentIdInput: document.getElementById("profileStudentIdInput"),
@@ -58,7 +59,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const academicProfile = {
         studentId: "NACSR/0000/00",
-        program: "BSc Computer Science · Year 3",
+        program: "",
         major: "Information System",
         semester: "1",
     };
@@ -166,6 +167,12 @@ document.addEventListener("DOMContentLoaded", () => {
         App.showToast("Profile updated");
         renderProfile();
         renderBasicDetails();
+        // Notify other parts of the app (same tab) that the user profile changed
+        try {
+            window.dispatchEvent(new CustomEvent('userUpdated'));
+        } catch (e) {
+            console.warn('Could not dispatch userUpdated event', e);
+        }
     };
 
     const handleSubmit = (event) => {

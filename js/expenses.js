@@ -63,6 +63,31 @@ document.addEventListener("DOMContentLoaded", () => {
         if (elements.total) elements.total.textContent = formatAmount(total);
         if (elements.average) elements.average.textContent = formatAmount(average);
         if (elements.count) elements.count.textContent = source.length.toString();
+
+        // Update budget-related widgets: remaining amount and progress
+        try {
+            const budget = Number(user?.budget) || 0;
+            const remaining = Math.max(0, budget - total);
+            const percentUsed = budget > 0 ? Math.min(100, Math.round((total / budget) * 100)) : 0;
+
+            const budgetValueEl = document.querySelector('.highlight-card--accent .highlight-card__value');
+            if (budgetValueEl) {
+                budgetValueEl.textContent = `${App.formatCurrency(remaining, user.currency)} remaining`;
+            }
+
+            const progressSpan = document.querySelector('.highlight-card--accent .progress-track span');
+            if (progressSpan) {
+                progressSpan.style.width = `${percentUsed}%`;
+            }
+
+            // Update safe-to-spend value in the pulse-stats (second strong element)
+            const safeToSpendEl = document.querySelector('.pulse-stats strong:nth-of-type(2)');
+            if (safeToSpendEl) {
+                safeToSpendEl.textContent = App.formatCurrency(remaining, user.currency);
+            }
+        } catch (err) {
+            console.warn('Failed to update budget widgets', err);
+        }
     };
 
     const renderTable = () => {
@@ -290,5 +315,18 @@ document.addEventListener("DOMContentLoaded", () => {
     bindFilterInputs();
     bindModalEvents();
     renderTable();
+
+    // Respond to user updates from other tabs/windows (or other parts of app)
+    window.addEventListener('storage', (e) => {
+        if (!e.key) return;
+        if (e.key === App.STORAGE_KEYS.user) {
+            try {
+                user = App.loadState(App.STORAGE_KEYS.user, App.defaultUser);
+                renderTable();
+            } catch (err) {
+                console.warn('Failed to reload user from storage', err);
+            }
+        }
+    });
 });
 
