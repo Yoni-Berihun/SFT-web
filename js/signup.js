@@ -202,8 +202,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const submitButton = form.querySelector('button[type="submit"]');
         const originalText = submitButton ? submitButton.textContent : "Create Account";
         
+        const successTextImmediate = "Account created successfully! Login and start tracking your finance.";
         if (submitButton) {
-            submitButton.textContent = "Creating account...";
+            submitButton.textContent = successTextImmediate;
             submitButton.disabled = true;
         }
 
@@ -229,7 +230,7 @@ document.addEventListener("DOMContentLoaded", () => {
             
             if (result.success) {
                 // Success! Account created
-                const successText = "Account created successfully. Login and start using the website.";
+                const successText = successTextImmediate;
                 showMessage(successText, "success");
                 
                 // Save session

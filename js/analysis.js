@@ -7,7 +7,15 @@ const startAnalysisPage = () => {
     // Mark that we're not on an auth page
     window.__onAuthPage = false;
     
-    const shellReady = App.initPageShell({ auth: true });
+    const shellReady = window.App && typeof App.initPageShell === "function" ? App.initPageShell({ auth: true }) : false;
+    if (shellReady === false) {
+        console.warn("Analysis shell failed to init; retrying...");
+        setTimeout(() => {
+            analysisPageInitialized = false;
+            startAnalysisPage();
+        }, 120);
+        return;
+    }
 
     const selectors = {
         total: document.getElementById("analysisTotal"),
@@ -304,6 +312,21 @@ const startAnalysisPage = () => {
                 },
             },
         });
+        } catch (error) {
+            console.error("Failed to render daily chart", error);
+            if (chartContainer) {
+                loadingText.textContent = "Unable to load chart data";
+            }
+            App.showToast?.("Unable to render chart");
+        } finally {
+            if (chartContainer) {
+                const existingLoading = chartContainer.querySelector(".chart-loading");
+                if (existingLoading) {
+                    chartContainer.removeChild(existingLoading);
+                }
+            }
+            selectors.dailyChartCanvas.style.display = "block";
+        }
     };
 
     const renderCategoryChart = (source) => {

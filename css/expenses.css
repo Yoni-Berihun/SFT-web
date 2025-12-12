@@ -1,6 +1,6 @@
 .page-hero--expenses {
     background: linear-gradient(135deg, rgba(39, 174, 96, 0.12), rgba(44, 62, 80, 0.05));
-    border: 1px solid var(--color-border);
+    border: 0.5px solid var(--color-border);
     border-radius: var(--radius);
     padding: var(--space-6);
     display: grid;
@@ -52,7 +52,7 @@ body[data-page="expenses"] .page-shell > * + * {
 
 .metric-card {
     border-radius: var(--radius-sm);
-    border: 1px solid var(--color-border);
+    border: 0.5px solid var(--color-border);
     background: var(--color-surface);
     padding: var(--space-4);
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.05);
@@ -67,7 +67,7 @@ body[data-page="expenses"] .page-shell > * + * {
 .detail-focus {
     display: grid;
     gap: var(--space-4);
-    border: 1px dashed rgba(44, 62, 80, 0.2);
+    border: 0.5px dashed rgba(44, 62, 80, 0.2);
     background: linear-gradient(120deg, rgba(39, 174, 96, 0.08), rgba(44, 62, 80, 0.03));
 }
 
@@ -283,7 +283,7 @@ body[data-page="expenses"] .page-shell > * + * {
 }
 
 .pulse-figure {
-    border: 1px solid var(--color-border);
+    border: 0.5px solid var(--color-border);
     border-radius: var(--radius);
     padding: var(--space-3);
     background: var(--color-surface);
@@ -335,7 +335,7 @@ body[data-page="expenses"] .page-shell > * + * {
 }
 
 .spark-card {
-    border: 1px solid var(--color-border);
+    border: 0.5px solid var(--color-border);
     border-radius: var(--radius-sm);
     padding: var(--space-3);
     display: grid;
@@ -432,7 +432,7 @@ body[data-page="expenses"] .page-shell > * + * {
 }
 
 .log-summary article {
-    border: 1px solid var(--color-border);
+    border: 0.5px solid var(--color-border);
     border-radius: var(--radius);
     padding: var(--space-3);
     background: var(--surface-subtle);
@@ -453,7 +453,7 @@ body[data-page="expenses"] .page-shell > * + * {
     gap: var(--space-2);
     align-items: center;
     padding: var(--space-3);
-    border: 1px solid var(--color-border);
+    border: 0.5px solid var(--color-border);
     border-radius: var(--radius);
     background: var(--color-surface);
 }

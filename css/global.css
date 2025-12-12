@@ -462,7 +462,7 @@ textarea {
     top: 0;
     inset-inline: 0;
     z-index: 1000;
-    background: #5D4037; /* Rich brown color */
+    background: #0021a4;
     backdrop-filter: none; /* Remove blur for solid color */
     -webkit-backdrop-filter: none;
     padding: 0.5rem 0;
@@ -764,6 +764,19 @@ main {
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
     gap: var(--space-4);
     margin: var(--space-4) 0;
+}
+
+body[data-page="home"] .hero-card__stats {
+    padding: var(--space-4);
+    border: 0.75px solid var(--home-border);
+    border-radius: var(--radius);
+    gap: var(--space-4);
+}
+
+body[data-page="home"] .hero-card__stats > div {
+    padding: var(--space-3);
+    border: 0.75px solid var(--home-border);
+    border-radius: var(--radius-sm);
 }
 
 .hero-card__stats dt {
@@ -1976,4 +1989,19 @@ textarea:disabled {
 
 .form-right {
     justify-content: flex-end;
+}
+
+/* Header/nav color override */
+[data-theme="light"] .site-header,
+::root:not([data-theme]) .site-header,
+[data-theme="dark"] .site-header {
+    background: #0021a4;
+    border-bottom: 2px solid #0021a4;
+    box-shadow: 0 10px 28px rgba(0, 21, 164, 0.45);
+}
+
+[data-theme="light"] .primary-nav,
+::root:not([data-theme]) .primary-nav,
+[data-theme="dark"] .primary-nav {
+    background: #0021a4;
 }
