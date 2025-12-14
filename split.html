@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 908ff401bcf019e94400186bbdc9413dfdb5a445
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -226,3 +230,236 @@
     </body>
 </html>
 
+<<<<<<< HEAD
+=======
+=======
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>EduFinance — Split</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+        <link rel="stylesheet" href="css/global.css" />
+        <link rel="stylesheet" href="css/split.css" />
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" integrity="sha384-6FpEvGpK9x3TlKVUw6JO33dTUmL8/IpEW+uFfLgLxR72k3gI7mQ9mJd3Hhj3qHxN" crossorigin="anonymous"></script>
+        
+        <!-- Firebase SDKs (load synchronously, no defer) -->
+        <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+        
+        <!-- Firebase Config (load synchronously, must be before auth.js) -->
+        <script src="js/firebase-config.js"></script>
+        
+        <!-- App scripts (can use defer) -->
+        <script defer src="js/common.js"></script>
+        <script defer src="js/auth.js"></script>
+        <script defer src="js/split.js"></script>
+    </head>
+    <body data-page="split">
+        <a class="skip-link" href="#main-content">Skip to main content</a>
+
+        <header class="site-header" role="banner">
+            <div class="nav-inner container">
+                <a class="brand" href="index.html" aria-label="EduFinance home">
+                    <span class="brand-mark" aria-hidden="true">EF</span>
+                    EduFinance
+                </a>
+                <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" data-nav-toggle>
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="nav-toggle-bar"></span>
+                    <span class="nav-toggle-bar"></span>
+                    <span class="nav-toggle-bar"></span>
+                </button>
+                <nav id="primary-navigation" class="primary-nav" aria-label="Primary" data-nav-drawer>
+                    <a class="nav-link" data-nav-link="dashboard" href="dashboard.html">Dashboard</a>
+                    <a class="nav-link" data-nav-link="expenses" href="expenses.html">Expenses</a>
+                    <a class="nav-link" data-nav-link="analysis" href="analysis.html">Analysis</a>
+                    <a class="nav-link" data-nav-link="tips" href="tips.html">Tips</a>
+                    <a class="nav-link" data-nav-link="profile" href="profile.html">Profile</a>
+                    <a class="nav-link" data-nav-link="split" href="split.html">Split</a>
+                    <a class="nav-link" data-nav-link="about" href="about.html">About</a>
+                </nav>
+                <div class="shell-actions">
+                    <button id="themeToggle" class="icon-button" aria-label="Toggle theme" type="button">
+                        <svg class="sun-and-moon" aria-hidden="true" width="24" height="24" viewBox="0 0 24 24">
+                            <!-- Sun -->
+                            <g class="sun">
+                                <circle cx="12" cy="12" r="4" fill="currentColor" />
+                                <g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="12" y1="3" x2="12" y2="1" />
+                                    <line x1="12" y1="23" x2="12" y2="21" />
+                                    <line x1="5.64" y1="5.64" x2="4.22" y2="4.22" />
+                                    <line x1="19.78" y1="19.78" x2="18.36" y2="18.36" />
+                                    <line x1="1" y1="12" x2="3" y2="12" />
+                                    <line x1="21" y1="12" x2="23" y2="12" />
+                                    <line x1="5.64" y1="18.36" x2="4.22" y2="19.78" />
+                                    <line x1="19.78" y1="4.22" x2="18.36" y2="5.64" />
+                                </g>
+                            </g>
+                            <!-- Moon -->
+                            <g class="moon">
+                                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="currentColor" />
+                            </g>
+                        </svg>
+                    </button>
+                    <button id="logout" class="btn btn-secondary" type="button">Log out</button>
+                </div>
+            </div>
+        </header>
+
+        <main id="main-content">
+            <div class="container page-shell split-shell">
+                <section class="split-layout split-layout--primary">
+                    <article class="page-card split-form-card">
+                        <header>
+                            <p class="label">Split calculator</p>
+                            <h2>How should we break it down?</h2>
+                        </header>
+                        <form id="splitForm" class="split-form">
+                            <label>
+                                Total amount
+                                <input type="number" id="splitAmount" min="0" step="0.01" placeholder="Enter total bill" required />
+                            </label>
+                            <label>
+                                Number of people
+                                <input type="number" id="splitPeople" min="1" max="25" step="1" placeholder="How many friends?" required />
+                            </label>
+                            <div class="split-form__quick">
+                                <div>
+                                    <p class="label">Quick total</p>
+                                    <div class="split-form__pills" data-quick-amounts>
+                                        <button type="button" data-quick-amount="250">ETB 250</button>
+                                        <button type="button" data-quick-amount="500">ETB 500</button>
+                                        <button type="button" data-quick-amount="1000">ETB 1K</button>
+                                    </div>
+                                </div>
+                                <div>
+                                    <p class="label">Party size</p>
+                                    <div class="split-form__pills split-form__pills--ghost" data-quick-people>
+                                        <button type="button" data-quick-people="2">Pair</button>
+                                        <button type="button" data-quick-people="4">Squad</button>
+                                        <button type="button" data-quick-people="6">Full table</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="split-participants" id="splitParticipantsContainer"></div>
+                            <button class="btn btn-primary split-recalc" type="submit">
+                                <span>Recalculate</span>
+                            </button>
+                            <div class="split-form__note">
+                                <p class="helper-text">Need inspiration? Tap quick presets above, tweak sliders, and watch the visuals react instantly.</p>
+                                <div class="split-form__note-glow" aria-hidden="true"></div>
+                            </div>
+                        </form>
+                    </article>
+
+                    <article class="page-card split-result-card">
+                        <header class="split-result__header">
+                            <div>
+                                <p class="label">Result</p>
+                                <h2>Each person pays</h2>
+                            </div>
+                            <div class="share-control">
+                                <button class="btn btn-ghost" type="button" id="splitShareSummary" aria-haspopup="menu" aria-expanded="false">Share summary</button>
+                                <div class="share-menu" id="splitShareMenu" role="menu" hidden>
+                                    <button class="share-menu__item" type="button" data-share="whatsapp">🟢 WhatsApp</button>
+                                    <button class="share-menu__item" type="button" data-share="telegram">📨 Telegram</button>
+                                    <button class="share-menu__item" type="button" data-share="instagram">📸 Instagram</button>
+                                    <button class="share-menu__item" type="button" data-share="email">✉️ Email</button>
+                                    <button class="share-menu__item" type="button" data-share="sms">💬 SMS / Message</button>
+                                </div>
+                            </div>
+                        </header>
+                        <div class="split-result__figures">
+                            <strong id="splitShareAmount">ETB 0</strong>
+                            <p class="helper-text">Based on <span id="splitPeopleLabel">0</span> people sharing <span id="splitTotalLabel">ETB 0</span></p>
+                        </div>
+                        <div class="split-breakdown">
+                            <h3>Breakdown</h3>
+                            <ul id="splitBreakdownList"></ul>
+                            <p class="helper-text" id="splitRemainder" hidden></p>
+                        </div>
+                    </article>
+                </section>
+
+                <section class="page-card split-hero">
+                    <div class="split-hero__content">
+                        <p class="eyebrow">Instant splitter</p>
+                        <h1>Tell us the bill, we’ll split it</h1>
+                        <p class="helper-text">Input the total, invite your crew, and nudge sliders if someone owes a different amount. EduFinance keeps the math honest.</p>
+                    </div>
+                    <div class="split-hero__stats">
+                        <article>
+                            <p class="label">Fast splits</p>
+                            <strong>&lt; 1 sec</strong>
+                            <p class="helper-text">Average calculation time</p>
+                        </article>
+                        <article>
+                            <p class="label">Smart balance</p>
+                            <strong>Live weights</strong>
+                            <p class="helper-text">Fine-tuned sliders stay ready for nuance</p>
+                        </article>
+                        <article>
+                            <p class="label">Custom control</p>
+                            <strong>Weights &amp; names</strong>
+                            <p class="helper-text">Dial in exactly who owes what</p>
+                        </article>
+                    </div>
+                </section>
+
+                <section class="split-ribbon" aria-hidden="true">
+                    <div class="split-ribbon__inner">
+                        <span>Preset vibes</span>
+                        <span>Live sliders</span>
+                        <span>Instant charts</span>
+                        <span>One-tap sharing</span>
+                    </div>
+                </section>
+
+                <section class="split-spotlight">
+                    <article class="split-spotlight__card">
+                        <div>
+                            <p class="label">Vibe tracker</p>
+                            <h3>Live share pulse</h3>
+                        </div>
+                        <div class="split-spotlight__sparkline" aria-hidden="true">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                        <p class="helper-text">Animated bars echo the doughnut chart to preview how uneven the current bill is.</p>
+                    </article>
+                    <article class="split-spotlight__card split-spotlight__card--accent">
+                        <div>
+                            <p class="label">Share ready</p>
+                            <h3>Drop-in summary</h3>
+                        </div>
+                        <p class="helper-text">One click share menu, complete with paid vs pending overview.</p>
+                        <div class="split-spotlight__orbit" aria-hidden="true">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </article>
+                </section>
+            </div>
+        </main>
+
+        <footer class="site-footer">
+            <div class="container footer-content">
+                <p>© 2025 EduFinance Team · Hawassa University</p>
+            </div>
+        </footer>
+
+        <div id="toast" class="toast" role="status" aria-live="polite" hidden>Ready</div>
+    </body>
+</html>
+
+>>>>>>> eb4b0ab6b3af2982f8a1e8049d5578c2995278fe
+>>>>>>> 908ff401bcf019e94400186bbdc9413dfdb5a445
