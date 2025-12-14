@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -193,3 +194,200 @@
     </body>
 </html>
 
+=======
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+        <title>EduFinance — Financial Tips</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+        <link rel="stylesheet" href="css/global.css" />
+        <link rel="stylesheet" href="css/tips.css" />
+        
+        <!-- Firebase SDKs (load synchronously, no defer) -->
+        <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+        
+        <!-- Firebase Config (load synchronously, must be before auth.js) -->
+        <script src="js/firebase-config.js"></script>
+        
+        <!-- App scripts (can use defer) -->
+        <script defer src="js/common.js"></script>
+        <script defer src="js/auth.js"></script>
+        <script defer src="js/tips.js"></script>
+    </head>
+    <body data-page="tips">
+        <a class="skip-link" href="#main-content">Skip to main content</a>
+
+        <header class="site-header" role="banner">
+            <div class="nav-inner container">
+                <a class="brand" href="index.html" aria-label="EduFinance home">
+                    <span class="brand-mark" aria-hidden="true">EF</span>
+                    EduFinance
+                </a>
+                <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" data-nav-toggle>
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="nav-toggle-bar"></span>
+                    <span class="nav-toggle-bar"></span>
+                    <span class="nav-toggle-bar"></span>
+                </button>
+                <nav id="primary-navigation" class="primary-nav" aria-label="Primary" data-nav-drawer>
+                    <a class="nav-link" data-nav-link="dashboard" href="dashboard.html">Dashboard</a>
+                    <a class="nav-link" data-nav-link="expenses" href="expenses.html">Expenses</a>
+                    <a class="nav-link" data-nav-link="analysis" href="analysis.html">Analysis</a>
+                    <a class="nav-link" data-nav-link="tips" href="tips.html">Tips</a>
+                    <a class="nav-link" data-nav-link="profile" href="profile.html">Profile</a>
+                    <a class="nav-link" data-nav-link="split" href="split.html">Split</a>
+                    <a class="nav-link" data-nav-link="about" href="about.html">About</a>
+                </nav>
+                <div class="shell-actions">
+                    <button id="themeToggle" class="icon-button" aria-label="Toggle theme" type="button">
+                        <svg class="sun-and-moon" aria-hidden="true" width="24" height="24" viewBox="0 0 24 24">
+                            <!-- Sun -->
+                            <g class="sun">
+                                <circle cx="12" cy="12" r="4" fill="currentColor" />
+                                <g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="12" y1="3" x2="12" y2="1" />
+                                    <line x1="12" y1="23" x2="12" y2="21" />
+                                    <line x1="5.64" y1="5.64" x2="4.22" y2="4.22" />
+                                    <line x1="19.78" y1="19.78" x2="18.36" y2="18.36" />
+                                    <line x1="1" y1="12" x2="3" y2="12" />
+                                    <line x1="21" y1="12" x2="23" y2="12" />
+                                    <line x1="5.64" y1="18.36" x2="4.22" y2="19.78" />
+                                    <line x1="19.78" y1="4.22" x2="18.36" y2="5.64" />
+                                </g>
+                            </g>
+                            <!-- Moon -->
+                            <g class="moon">
+                                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="currentColor" />
+                            </g>
+                        </svg>
+                    </button>
+                    <button id="logout" class="btn btn-secondary" type="button">Log out</button>
+                </div>
+            </div>
+        </header>
+
+        <main id="main-content">
+            <div class="container page-shell">
+                <section class="page-hero page-hero--tips" aria-labelledby="tips-title">
+                    <div>
+                        <p class="eyebrow">Smart habits for students</p>
+                        <h1 id="tips-title" class="page-hero__title">Financial Tips &amp; Challenges</h1>
+                        <p class="page-hero__subtitle">Micro lessons and bite-sized challenges that keep you consistent. Track completion, celebrate streaks, and reset whenever you need a fresh start.</p>
+                        <ul class="tips-hero__list">
+                            <li>Weekly mini-missions designed for campus life.</li>
+                            <li>Automated streak tracker nudges you forward.</li>
+                            <li>Share progress with friends for accountability.</li>
+                        </ul>
+                        <div class="page-hero__actions">
+                            <button class="btn btn-secondary" id="tipsResetProgress" type="button">Reset progress</button>
+                        </div>
+                    </div>
+                    <div class="tips-hero__stats">
+                        <article>
+                            <p class="label">Streak goal</p>
+                            <strong>7 days</strong>
+                            <p class="helper-text">Keep logging tips to unlock rewards.</p>
+                        </article>
+                        <article>
+                            <p class="label">Cash confidence</p>
+                            <strong>+18%</strong>
+                            <p class="helper-text">Average bump after 30 days on EduFinance.</p>
+                        </article>
+                        <article>
+                            <p class="label">Focus area</p>
+                            <strong>Savings</strong>
+                            <p class="helper-text">Recommended next priority.</p>
+                        </article>
+                    </div>
+                </section>
+
+                <section class="page-grid tips-highlights" aria-label="Featured advice">
+                    <article class="page-card">
+                        <p class="label">Advice spotlight</p>
+                        <h3>50/30/20 remix</h3>
+                        <p>Try shrinking wants to 20%, freeing 10% for textbooks or lab fees. Revisit the ratio at the end of each semester.</p>
+                        <ul>
+                            <li>Split transfers the day your stipend lands.</li>
+                            <li>Use two bank accounts to separate needs vs. wants.</li>
+                            <li>Invest the surplus into your emergency fund.</li>
+                        </ul>
+                    </article>
+                    <article class="page-card">
+                        <p class="label">Campus hack</p>
+                        <h3>Community buying power</h3>
+                        <p>Pool recurring purchases (data plans, transport cards, groceries) with roommates. Rotate who pays and settle inside the Split tab.</p>
+                        <div class="tips-highlight__chips">
+                            <span class="pill">Average save: 12%</span>
+                            <span class="pill">Time to set up: 8 min</span>
+                            <span class="pill">Best for: dorm mates</span>
+                        </div>
+                    </article>
+                    <article class="page-card">
+                        <p class="label">Next best action</p>
+                        <h3>Automate “micro investments”</h3>
+                        <p>Every time you log a luxury spend above ETB 300, match 10% into savings. Use the Expenses rules tab to remind yourself.</p>
+                    </article>
+                </section>
+
+                <section class="page-card tips-progress" aria-label="Tips progress">
+                    <header>
+                        <p class="label">Challenge progress</p>
+                        <h2 id="tipsProgressLabel">0 of 0 complete</h2>
+                    </header>
+                    <div class="progress">
+                        <span class="progress-bar" id="tipsProgressBar" style="width: 0%"></span>
+                    </div>
+                    <p class="helper-text">Mark checklist items to grow your streak.</p>
+                </section>
+
+                <section class="tips-grid" id="tipsList" aria-label="Tips list"></section>
+
+                <section class="page-grid tips-advice" aria-label="Financial advice">
+                    <article class="page-card">
+                        <p class="label">Financial hygiene</p>
+                        <h3>Weekly money retro</h3>
+                        <p>Every Sunday, review wins and leaks. Screenshot your dashboard, highlight one thing to repeat and one to drop.</p>
+                        <ul class="tips-advice__list">
+                            <li>Check for duplicate charges and subscriptions.</li>
+                            <li>Move small windfalls into your high-yield goal.</li>
+                            <li>Update your wishlist so spending stays intentional.</li>
+                        </ul>
+                    </article>
+                </section>
+
+                <section class="page-card tips-quotes" aria-label="Motivational quote">
+                    <blockquote id="tipsQuote">Stay curious about your money story.</blockquote>
+                    <cite id="tipsQuoteAuthor">EduFinance team</cite>
+                </section>
+            </div>
+        </main>
+
+        <footer class="site-footer">
+            <div class="container footer-content">
+                <p>© 2025 EduFinance Team · Hawassa University</p>
+                <div class="footer-links" aria-label="Utility links">
+            </div>
+            </div>
+        </footer>
+
+        <div id="modalOverlay" class="modal-overlay" hidden>
+            <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+                <header class="modal-header">
+                    <h2 id="modalTitle">Tip details</h2>
+                    <button id="modalClose" class="icon-button" type="button" aria-label="Close">✕</button>
+                </header>
+                <div id="modalContent" class="modal-body"></div>
+            </div>
+        </div>
+
+        <div id="toast" class="toast" role="status" aria-live="polite" hidden>Ready</div>
+    </body>
+</html>
+
+>>>>>>> eb4b0ab6b3af2982f8a1e8049d5578c2995278fe

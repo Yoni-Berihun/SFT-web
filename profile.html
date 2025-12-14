@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -323,3 +324,330 @@
     </body>
 </html>
 
+=======
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+        <title>EduFinance — Profile</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+        <link rel="stylesheet" href="css/global.css" />
+        <link rel="stylesheet" href="css/profile.css" />
+        
+        <!-- Firebase SDKs (load synchronously, no defer) -->
+        <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+        
+        <!-- Firebase Config (load synchronously, must be before auth.js) -->
+        <script src="js/firebase-config.js"></script>
+        
+        <!-- App scripts (can use defer) -->
+        <script defer src="js/common.js"></script>
+        <script defer src="js/auth.js"></script>
+        <script defer src="js/profile.js"></script>
+    </head>
+    <body data-page="profile">
+        <a class="skip-link" href="#main-content">Skip to main content</a>
+
+        <header class="site-header" role="banner">
+            <div class="nav-inner container">
+                <a class="brand" href="index.html" aria-label="EduFinance home">
+                    <span class="brand-mark" aria-hidden="true">EF</span>
+                    EduFinance
+                </a>
+                <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" data-nav-toggle>
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="nav-toggle-bar"></span>
+                    <span class="nav-toggle-bar"></span>
+                    <span class="nav-toggle-bar"></span>
+                </button>
+                <nav id="primary-navigation" class="primary-nav" aria-label="Primary" data-nav-drawer>
+                    <a class="nav-link" data-nav-link="dashboard" href="dashboard.html">Dashboard</a>
+                    <a class="nav-link" data-nav-link="expenses" href="expenses.html">Expenses</a>
+                    <a class="nav-link" data-nav-link="analysis" href="analysis.html">Analysis</a>
+                    <a class="nav-link" data-nav-link="tips" href="tips.html">Tips</a>
+                    <a class="nav-link" data-nav-link="profile" href="profile.html">Profile</a>
+                    <a class="nav-link" data-nav-link="split" href="split.html">Split</a>
+                    <a class="nav-link" data-nav-link="about" href="about.html">About</a>
+                </nav>
+                <div class="shell-actions">
+                    <button id="themeToggle" class="icon-button" aria-label="Toggle theme" type="button">
+                        <svg class="sun-and-moon" aria-hidden="true" width="24" height="24" viewBox="0 0 24 24">
+                            <!-- Sun -->
+                            <g class="sun">
+                                <circle cx="12" cy="12" r="4" fill="currentColor" />
+                                <g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="12" y1="3" x2="12" y2="1" />
+                                    <line x1="12" y1="23" x2="12" y2="21" />
+                                    <line x1="5.64" y1="5.64" x2="4.22" y2="4.22" />
+                                    <line x1="19.78" y1="19.78" x2="18.36" y2="18.36" />
+                                    <line x1="1" y1="12" x2="3" y2="12" />
+                                    <line x1="21" y1="12" x2="23" y2="12" />
+                                    <line x1="5.64" y1="18.36" x2="4.22" y2="19.78" />
+                                    <line x1="19.78" y1="4.22" x2="18.36" y2="5.64" />
+                                </g>
+                            </g>
+                            <!-- Moon -->
+                            <g class="moon">
+                                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="currentColor" />
+                            </g>
+                        </svg>
+                    </button>
+                    <button id="logout" class="btn btn-secondary" type="button">Log out</button>
+                </div>
+            </div>
+        </header>
+
+        <main id="main-content">
+            <div class="container page-shell profile-shell">
+                <section class="page-card profile-hero">
+                    <div class="profile-hero__grid">
+                        <div class="profile-hero__identity">
+                            <div class="profile-avatar" id="profileAvatarPreview" aria-hidden="true">EF</div>
+                            <div>
+                                <p class="eyebrow">Student profile</p>
+                                <h1 id="profileNameHeading">Student</h1>
+                                <p id="profileProgram"></p>
+                                <div class="profile-contact">
+                                    <span id="profileEmailLabel">student@edufinance.com</span>
+                                    <span id="profilePhoneLabel">+251 900 000 000</span>
+                                </div>
+                            </div>
+                        </div>
+                        <dl class="profile-hero__meta">
+                            <div>
+                                <dt>Student ID</dt>
+                                <dd id="profileStudentId">HU-2023-001</dd>
+                            </div>
+                            <div>
+                                <dt>Major</dt>
+                                <dd id="profileMajor">Software Engineering</dd>
+                            </div>
+                            <div>
+                                <dt>Semester</dt>
+                                <dd id="profileSemester">Semester 1</dd>
+                            </div>
+                        </dl>
+                        <div class="profile-hero__actions">
+                            <button class="btn btn-primary" type="button" id="profileEditTrigger">Edit profile</button>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="profile-section profile-overview">
+                    <header class="profile-section__header">
+                        <div>
+                            <p class="label">Financial overview</p>
+                            <h2>Where your money stands</h2>
+                        </div>
+                        <div class="profile-overview__legend">
+                            <span class="legend-dot is-safe"></span> Paid
+                            <span class="legend-dot is-pending"></span> Pending
+                            <span class="legend-dot is-risk"></span> Overdue
+                        </div>
+                    </header>
+                    <div class="profile-overview__grid">
+                        <article class="overview-card">
+                            <p class="label">Current balance</p>
+                            <h3 id="overviewBalance">ETB 0</h3>
+                            <span class="status-chip is-safe">✅ On track</span>
+                        </article>
+                        <article class="overview-card">
+                            <p class="label">Outstanding dues</p>
+                            <h3 id="overviewDues">ETB 0</h3>
+                            <span class="status-chip is-risk">❌ Overdue</span>
+                        </article>
+                        <article class="overview-card">
+                            <p class="label">Upcoming payments</p>
+                            <h3 id="overviewUpcoming">ETB 0</h3>
+                            <span class="status-chip is-pending">⚠️ Pending</span>
+                        </article>
+                        <article class="overview-card">
+                            <p class="label">Financial aid received</p>
+                            <h3 id="overviewAid">ETB 0</h3>
+                            <span class="status-chip is-safe">✅ Cleared</span>
+                        </article>
+                    </div>
+                </section>
+
+                <section class="profile-section profile-analytics">
+                    <article class="page-card profile-basic-card">
+                        <header class="profile-section__header">
+                            <div>
+                                <p class="label">Student basics</p>
+                                <h2>Onboarding information</h2>
+                            </div>
+                        </header>
+                        <dl class="profile-basic__list" id="profileBasicDetails">
+                            <div>
+                                <dt>Full name</dt>
+                                <dd>Student</dd>
+                            </div>
+                            <div>
+                                <dt>Email</dt>
+                                <dd>student@edufinance.com</dd>
+                            </div>
+                            <div>
+                                <dt>Phone</dt>
+                                <dd>+251 900 000 000</dd>
+                            </div>
+                            <div>
+                                <dt>Monthly budget</dt>
+                                <dd>ETB 0</dd>
+                            </div>
+                            <div>
+                                <dt>Preferred currency</dt>
+                                <dd>Birr (ETB)</dd>
+                            </div>
+                        </dl>
+                        <button class="btn btn-tertiary" type="button" id="profileEditSecondary">Update info</button>
+                    </article>
+                    <article class="page-card profile-obligations">
+                        <header class="profile-section__header">
+                            <div>
+                                <p class="label">Obligations</p>
+                                <h2>Upcoming dues &amp; aid</h2>
+                            </div>
+                        </header>
+                        <ul class="profile-obligations__list" id="profileObligations"></ul>
+                    </article>
+                </section>
+
+                <section class="profile-section profile-settings">
+                    <header class="profile-section__header">
+                        <div>
+                            <p class="label">Settings &amp; preferences</p>
+                            <h2>Make it yours</h2>
+                        </div>
+                    </header>
+                    <div class="profile-settings__grid">
+                        <form id="profileForm" class="page-card profile-form">
+                            <h3>Personal info</h3>
+                            <label>
+                                Full name
+                                <input type="text" id="profileName" required />
+                            </label>
+                            <label>
+                                Email
+                                <input type="email" id="profileEmail" required />
+                            </label>
+                            <div class="form-row">
+                                <label>
+                                    Student ID
+                                    <input type="text" id="profileStudentIdInput" required />
+                                </label>
+                                <label>
+                                    Major
+                                    <input type="text" id="profileMajorInput" required />
+                                </label>
+                            </div>
+                            <div class="form-row">
+                                <label>
+                                    Semester
+                                    <input type="text" id="profileSemesterInput" required />
+                                </label>
+                                <label>
+                                    Monthly budget
+                                    <input type="number" id="profileBudget" min="0" step="0.01" required />
+                                </label>
+                            </div>
+                            <div class="form-row">
+                                <label>
+                                    Currency
+                                    <select id="profileCurrency">
+                                        <option value="Birr">Birr (ETB)</option>
+                                        <option value="USD">USD ($)</option>
+                                    </select>
+                                </label>
+                                <label>
+                                    Phone
+                                    <input type="tel" id="profilePhone" placeholder="+251" />
+                                </label>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="profileNotifications" />
+                                <span>Enable weekly digests</span>
+                            </label>
+                            <div class="profile-form__actions">
+                                <button class="btn btn-primary" type="submit">Save changes</button>
+                                <button class="btn btn-tertiary" type="button" id="profileReset">Reset</button>
+                            </div>
+                        </form>
+                        <div class="page-card profile-security">
+                            <h3>Security &amp; access</h3>
+                            <div class="profile-security__item">
+                                <div>
+                                    <strong>Password</strong>
+                                    <p class="helper-text">Last updated 45 days ago</p>
+                                </div>
+                                <button class="btn btn-secondary" type="button" id="changePasswordBtn">Change</button>
+                            </div>
+                            <div class="profile-security__item">
+                                <div>
+                                    <strong>Two-factor authentication</strong>
+                                    <p class="helper-text">Add a second step for logins</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="twoFactorToggle" />
+                                    <span>Enable 2FA</span>
+                                </label>
+                            </div>
+                            <div class="profile-security__item">
+                                <div>
+                                    <strong>Preferred language</strong>
+                                    <p class="helper-text">Apply instantly across app</p>
+                                </div>
+                                <select id="profileLanguage">
+                                    <option value="en">English</option>
+                                    <option value="am">Amharic</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="profile-section profile-support">
+                    <div class="page-card profile-danger">
+                        <p class="label">Data controls</p>
+                        <h2>Backup or reset</h2>
+                        <div class="profile-actions__buttons">
+                            <button class="btn btn-ghost" type="button" id="profileExportSummary">Export summary (Excel)</button>
+                            <button class="btn btn-ghost" type="button" id="profileExportJson">Export profile JSON</button>
+                            <button class="btn btn-danger" type="button" id="clearData">Clear all data</button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <footer class="site-footer">
+            <div class="container footer-content">
+                <p>© 2025 EduFinance Team · Hawassa University</p>
+            </div>
+        </footer>
+
+        <div id="modalOverlay" class="modal-overlay" hidden>
+            <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+                <header class="modal-header">
+                    <h2 id="modalTitle">Export profile</h2>
+                    <button id="modalClose" class="icon-button" type="button" aria-label="Close">✕</button>
+                </header>
+                <div id="modalContent" class="modal-body">
+                    <p>Copy the JSON below to share profile settings.</p>
+                    <textarea id="profileExportContent" rows="6"></textarea>
+                    <div class="form-row form-right" style="margin-top: var(--space-4);">
+                        <button type="button" class="btn btn-tertiary" id="modalCancel">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="toast" class="toast" role="status" aria-live="polite" hidden>Ready</div>
+    </body>
+</html>
+
+>>>>>>> eb4b0ab6b3af2982f8a1e8049d5578c2995278fe

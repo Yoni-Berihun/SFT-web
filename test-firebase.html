@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html>
 <head>
@@ -39,4 +40,47 @@
     <h1>Firebase Test Page</h1>
     <p>Check browser console (F12)</p>
 </body>
+=======
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Firebase Test</title>
+    <!-- Load Firebase SDKs WITHOUT defer -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
+    <!-- Load config -->
+    <script>
+        // Simple inline config for testing
+        console.log('Testing Firebase...');
+        
+        if (typeof firebase === 'undefined') {
+            console.error('Firebase not loaded');
+        } else {
+            console.log('Firebase loaded:', firebase.SDK_VERSION);
+            
+            // Try to initialize
+            try {
+                const config = {
+                    apiKey: "test",
+                    authDomain: "test.firebaseapp.com",
+                    projectId: "test",
+                    storageBucket: "test.appspot.com",
+                    messagingSenderId: "123",
+                    appId: "1:123:web:abc"
+                };
+                const app = firebase.initializeApp(config);
+                console.log('Firebase initialized:', app.name);
+            } catch (e) {
+                console.log('Firebase init error (expected):', e.message);
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Firebase Test Page</h1>
+    <p>Check browser console (F12)</p>
+</body>
+>>>>>>> eb4b0ab6b3af2982f8a1e8049d5578c2995278fe
 </html>

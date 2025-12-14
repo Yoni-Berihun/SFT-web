@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .login-wrapper {
     min-height: 100vh;
     display: grid;
@@ -227,4 +228,235 @@ button[disabled] {
 .login-card {
     position: relative;
     z-index: 2;
+=======
+.login-wrapper {
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: 48px 16px;
+}
+
+.login-card {
+    width: min(460px, 100%);
+    background: var(--card);
+    border-radius: var(--radius);
+    border: 1px solid color-mix(in srgb, var(--border) 90%, transparent 10%);
+    box-shadow: var(--shadow);
+    padding: 36px;
+}
+
+.login-card h1 {
+    margin: 0 0 8px;
+    font-size: 1.8rem;
+}
+
+.login-card p {
+    color: var(--muted);
+    margin: 0 0 24px;
+}
+
+.login-card form {
+    display: grid;
+    gap: 18px;
+}
+
+.remember-row {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    font-size: 0.9rem;
+    color: var(--muted);
+}
+
+.remember-row label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.login-message {
+    font-size: 0.9rem;
+    padding: 12px 16px;
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--danger) 12%, transparent 88%);
+    border: 1px solid color-mix(in srgb, var(--danger) 40%, transparent 60%);
+    color: #fff;
+    display: none;
+}
+
+.login-message.success {
+    background: color-mix(in srgb, var(--success) 18%, transparent 82%);
+    border-color: color-mix(in srgb, var(--success) 45%, transparent 55%);
+}
+
+.login-message.show {
+    display: block;
+}
+
+/* Mobile Responsive Styles */
+@media (max-width: 640px) {
+    .login-wrapper {
+        padding: 24px 16px;
+        min-height: calc(100vh - 80px);
+    }
+    
+    .login-card {
+        padding: 28px 20px;
+        width: 100%;
+        max-width: 100%;
+    }
+    
+    .login-card h1 {
+        font-size: 1.6rem;
+        margin-bottom: 8px;
+    }
+    
+    .login-card p {
+        font-size: 0.95rem;
+        margin-bottom: 24px;
+    }
+    
+    .login-card form {
+        gap: 16px;
+    }
+    
+    .input-group {
+        font-size: 0.95rem;
+    }
+    
+    .input-group input {
+        font-size: 16px; /* Prevents zoom on iOS */
+        padding: 12px;
+        min-height: 48px; /* Better touch target */
+    }
+    
+    .remember-row {
+        font-size: 0.9rem;
+        margin-top: 4px;
+    }
+    
+    .remember-row label {
+        font-size: 0.9rem;
+    }
+    
+    .btn {
+        width: 100%;
+        padding: 14px 24px;
+        font-size: 1rem;
+        min-height: 48px; /* Better touch target */
+    }
+    
+    .auth-switch {
+        font-size: 0.9rem;
+        margin-top: 20px;
+        padding-top: 16px;
+    }
+    
+    .login-message {
+        font-size: 0.85rem;
+        padding: 10px 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-wrapper {
+        padding: 20px 12px;
+    }
+    
+    .login-card {
+        padding: 24px 16px;
+    }
+    
+    .login-card h1 {
+        font-size: 1.5rem;
+    }
+    
+    .login-card p {
+        font-size: 0.9rem;
+    }
+    
+    .input-group input {
+        padding: 10px;
+    }
+    
+    .btn {
+        padding: 12px 20px;
+        font-size: 0.95rem;
+    }
+}
+
+/* Added to existing login.css */
+.auth-switch {
+    text-align: center;
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid color-mix(in srgb, var(--border) 40%, transparent 60%);
+    color: var(--muted);
+    font-size: 0.95rem;
+}
+
+.auth-switch a {
+    color: var(--secondary);
+    text-decoration: none;
+    font-weight: 600;
+    margin-left: 4px;
+}
+
+.auth-switch a:hover {
+    text-decoration: underline;
+}
+
+
+.login-card .note {
+    margin-top: 24px;
+    padding: 12px;
+    background: color-mix(in srgb, var(--card) 80%, transparent 20%);
+    border-radius: 8px;
+    border-left: 3px solid var(--secondary);
+    font-size: 0.85rem;
+    color: var(--muted);
+    text-align: center;
+}
+
+.login-card .note a {
+    color: var(--secondary);
+    text-decoration: none;
+}
+
+.login-card .note a:hover {
+    text-decoration: underline;
+}
+
+/* Loading state for buttons */
+button[disabled] {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* Ensure form inputs are always interactive */
+.login-card form input,
+.login-card form button,
+.login-card form label {
+    pointer-events: auto !important;
+    user-select: auto !important;
+}
+
+.login-card form input:not([disabled]) {
+    cursor: text;
+}
+
+.login-card form button:not([disabled]) {
+    cursor: pointer;
+}
+
+/* Prevent any overlay from blocking form */
+.login-wrapper {
+    position: relative;
+    z-index: 1;
+}
+
+.login-card {
+    position: relative;
+    z-index: 2;
+>>>>>>> eb4b0ab6b3af2982f8a1e8049d5578c2995278fe
 }

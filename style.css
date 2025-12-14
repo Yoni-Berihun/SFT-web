@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /*
     Legacy placeholder
     ------------------
@@ -9,3 +10,16 @@
 
     This file remains only for backward compatibility with earlier references.
 */
+=======
+/*
+    Legacy placeholder
+    ------------------
+    The React-to-HTML conversion now lives in dedicated stylesheets:
+      • css/global.css
+      • css/index.css
+      • css/login.css
+      • css/dashboard.css
+
+    This file remains only for backward compatibility with earlier references.
+*/
+>>>>>>> eb4b0ab6b3af2982f8a1e8049d5578c2995278fe

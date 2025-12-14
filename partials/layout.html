@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!-- Shared layout snippet: header, footer, toast, modal shell -->
 <header class="site-header" data-component="site-header">
     <div class="site-nav" role="navigation" aria-label="Primary">
@@ -48,3 +49,55 @@
 </div>
 
 <div id="toast" class="toast" role="status" aria-live="polite" hidden>Saved</div>
+=======
+<!-- Shared layout snippet: header, footer, toast, modal shell -->
+<header class="site-header" data-component="site-header">
+    <div class="site-nav" role="navigation" aria-label="Primary">
+        <a class="brand" href="index.html" aria-label="EduFinance home">EduFinance</a>
+        <button id="mobileToggle" class="icon-button" type="button" aria-expanded="false" aria-controls="mobileMenu" aria-label="Toggle navigation">☰</button>
+        <nav class="nav-links" data-role="desktop-links">
+            <a href="dashboard.html">Dashboard</a>
+            <a href="expenses.html">Expenses</a>
+            <a href="analysis.html">Analysis</a>
+            <a href="tips.html">Tips</a>
+            <a href="profile.html">Profile</a>
+            <a href="split.html">Split</a>
+            <a href="about.html">About</a>
+        </nav>
+        <div class="nav-actions">
+            <button id="themeToggle" class="icon-button" type="button" aria-label="Toggle theme">🌙</button>
+            <a class="btn btn-secondary" href="login.html">Login</a>
+        </div>
+    </div>
+    <div id="mobileMenu" class="mobile-menu" hidden data-role="mobile-links">
+        <a href="dashboard.html">Dashboard</a>
+        <a href="expenses.html">Expenses</a>
+        <a href="analysis.html">Analysis</a>
+        <a href="tips.html">Tips</a>
+        <a href="profile.html">Profile</a>
+        <a href="split.html">Split</a>
+        <a href="about.html">About</a>
+        <a class="btn btn-secondary" href="login.html">Login</a>
+    </div>
+</header>
+
+<footer class="site-footer" data-component="site-footer">
+    <p>© 2025 EduFinance Team · Mock experience inspired by the Figma design</p>
+    <div class="footer-links">
+        <a href="https://github.com/Yoni-Berihun" target="_blank" rel="noreferrer">GitHub</a>
+        <a href="https://www.figma.com/design/eCcZirqtQctQjrw2z6v8iw/EduFinance-Website-Mockup-Design" target="_blank" rel="noreferrer">Figma file</a>
+    </div>
+</footer>
+
+<div id="modalOverlay" class="modal-overlay" hidden role="presentation">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" hidden>
+        <header class="modal-header">
+            <h2 id="modalTitle">Modal title</h2>
+            <button id="modalClose" class="icon-button" type="button" aria-label="Close">✕</button>
+        </header>
+        <div id="modalContent" class="modal-body"></div>
+    </div>
+</div>
+
+<div id="toast" class="toast" role="status" aria-live="polite" hidden>Saved</div>
+>>>>>>> eb4b0ab6b3af2982f8a1e8049d5578c2995278fe

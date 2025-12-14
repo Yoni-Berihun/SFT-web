@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -248,3 +249,255 @@
     </body>
 </html>
 
+=======
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+        <title>EduFinance — Analysis</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+        <link rel="stylesheet" href="css/global.css" />
+        <link rel="stylesheet" href="css/analysis.css" />
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" integrity="sha384-6FpEvGpK9x3TlKVUw6JO33dTUmL8/IpEW+uFfLgLxR72k3gI7mQ9mJd3Hhj3qHxN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+        
+        <!-- Firebase SDKs (load synchronously, no defer) -->
+        <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+        
+        <!-- Firebase Config (load synchronously, must be before auth.js) -->
+        <script src="js/firebase-config.js"></script>
+        
+        <!-- App scripts (can use defer) -->
+        <script defer src="js/common.js"></script>
+        <script defer src="js/auth.js"></script>
+        <script defer src="js/analysis.js"></script>
+    </head>
+    <body data-page="analysis">
+        <a class="skip-link" href="#main-content">Skip to main content</a>
+
+        <header class="site-header" role="banner">
+            <div class="nav-inner container">
+                <a class="brand" href="index.html" aria-label="EduFinance home">
+                    <span class="brand-mark" aria-hidden="true">EF</span>
+                    EduFinance
+                </a>
+                <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" data-nav-toggle>
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="nav-toggle-bar"></span>
+                    <span class="nav-toggle-bar"></span>
+                    <span class="nav-toggle-bar"></span>
+                </button>
+                <nav id="primary-navigation" class="primary-nav" aria-label="Primary" data-nav-drawer>
+                    <a class="nav-link" data-nav-link="dashboard" href="dashboard.html">Dashboard</a>
+                    <a class="nav-link" data-nav-link="expenses" href="expenses.html">Expenses</a>
+                    <a class="nav-link" data-nav-link="analysis" href="analysis.html">Analysis</a>
+                    <a class="nav-link" data-nav-link="tips" href="tips.html">Tips</a>
+                    <a class="nav-link" data-nav-link="profile" href="profile.html">Profile</a>
+                    <a class="nav-link" data-nav-link="split" href="split.html">Split</a>
+                    <a class="nav-link" data-nav-link="about" href="about.html">About</a>
+                </nav>
+                <div class="shell-actions">
+                    <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme" type="button" title="Toggle theme">
+                        <svg class="sun-and-moon" aria-hidden="true" width="24" height="24" viewBox="0 0 24 24">
+                            <mask class="moon" id="moon-mask">
+                                <rect x="0" y="0" width="100%" height="100%" fill="white" />
+                                <circle cx="24" cy="10" r="6" fill="black" />
+                            </mask>
+                            <circle class="sun" cx="12" cy="12" r="6" mask="url(#moon-mask)" fill="currentColor" />
+                            <g class="sun-beams" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                                <line x1="12" y1="1" x2="12" y2="3" />
+                                <line x1="12" y1="21" x2="12" y2="23" />
+                                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                                <line x1="1" y1="12" x2="3" y2="12" />
+                                <line x1="21" y1="12" x2="23" y2="12" />
+                                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                            </g>
+                        </svg>
+                    </button>
+                    <button id="logout" class="btn btn-secondary" type="button">Log out</button>
+                </div>
+            </div>
+        </header>
+
+        <main id="main-content">
+            <div class="container page-shell">
+                <section class="page-hero page-hero--analysis" aria-labelledby="analysis-title">
+                    <div>
+                        <h1 id="analysis-title" class="page-hero__title">Analysis &amp; Reports</h1>
+                        <p class="page-hero__subtitle">Understand trends with daily totals, category comparisons, and live projections that respond instantly to every filter change.</p>
+                    </div>
+                    <ul class="analysis-hero__list">
+                        <li>Adaptive charts update in real time as you tweak ranges.</li>
+                        <li>See how actual spend stacks against a smart target.</li>
+                        <li>Share or export polished snapshots for your accountability squad.</li>
+                    </ul>
+                    <div class="page-hero__actions">
+                        <div class="share-control">
+                            <button class="btn btn-primary" id="analysisShare" type="button" aria-haspopup="menu" aria-expanded="false">
+                                Share summary
+                            </button>
+                            <div class="share-menu" id="analysisShareMenu" role="menu" hidden>
+                                <button class="share-menu__item" type="button" data-share="native">
+                                    <span>📱 System share</span>
+                                    <small>Use your device share sheet</small>
+                                </button>
+                                <button class="share-menu__item" type="button" data-share="copy">
+                                    <span>📋 Copy summary</span>
+                                    <small>Copy text to clipboard</small>
+                                </button>
+                                <button class="share-menu__item" type="button" data-share="email">
+                                    <span>✉️ Email</span>
+                                    <small>Create an email draft</small>
+                                </button>
+                                <button class="share-menu__item" type="button" data-share="telegram">
+                                    <span>📨 Telegram</span>
+                                    <small>Share to a Telegram chat</small>
+                                </button>
+                                <button class="share-menu__item" type="button" data-share="unigram">
+                                    <span>📡 Unigram</span>
+                                    <small>Share via Unigram client</small>
+                                </button>
+                                <button class="share-menu__item" type="button" data-share="whatsapp">
+                                    <span>🟢 WhatsApp</span>
+                                    <small>Share via WhatsApp</small>
+                                </button>
+                                <button class="share-menu__item" type="button" data-share="sms">
+                                    <span>💬 Messages / SMS</span>
+                                    <small>Send as a text message</small>
+                                </button>
+                                <button class="share-menu__item" type="button" data-share="x">
+                                    <span>𝕏 / Twitter</span>
+                                    <small>Open a post with this summary</small>
+                                </button>
+                            </div>
+                        </div>
+                        <button class="btn btn-secondary" id="analysisExportPdf" type="button">Export PDF</button>
+                        <button class="btn btn-ghost btn--csv" id="analysisExportCsv" type="button">Export CSV</button>
+                        <button class="btn btn-tertiary" id="analysisPrint" type="button">Print</button>
+                    </div>
+                </section>
+
+                <section class="page-card analysis-controls" aria-label="Analysis filters">
+                    <div class="analysis-controls__group">
+                        <label>
+                            Date range
+                            <select id="analysisRange">
+                                <option value="7">Last 7 days</option>
+                                <option value="30">Last 30 days</option>
+                                <option value="90">Last 90 days</option>
+                            </select>
+                        </label>
+                        <label>
+                            Category
+                            <select id="analysisCategory">
+                                <option value="all">All categories</option>
+                                <option value="Food">Food</option>
+                                <option value="Transport">Transport</option>
+                                <option value="Books">Books</option>
+                                <option value="Entertainment">Entertainment</option>
+                                <option value="Supplies">Supplies</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </label>
+                        <label>
+                            Start date
+                            <input type="date" id="analysisStart" />
+                        </label>
+                        <label>
+                            End date
+                            <input type="date" id="analysisEnd" />
+                        </label>
+                    </div>
+                    <button class="btn btn-tertiary" id="analysisReset" type="button">Reset</button>
+                </section>
+
+                <section class="page-grid analysis-summary" aria-label="Analysis highlights">
+                    <article class="page-card">
+                        <p class="label">Total spent</p>
+                        <h3 id="analysisTotal">ETB 0</h3>
+                        <p class="helper-text">For the selected range</p>
+                    </article>
+                    <article class="page-card">
+                        <p class="label">Average daily</p>
+                        <h3 id="analysisAverage">ETB 0</h3>
+                        <p class="helper-text">Daily mean spend</p>
+                    </article>
+                    <article class="page-card">
+                        <p class="label">Biggest category</p>
+                        <h3 id="analysisTopCategory">—</h3>
+                        <p class="helper-text" id="analysisTopCategoryShare">Waiting for data</p>
+                    </article>
+                </section>
+
+                <section class="analysis-charts" aria-label="Visual spending insights">
+                    <article class="page-card chart-card chart-card--wide">
+                        <div class="analysis-card__header">
+                            <div>
+                                <p class="label">Spending overview</p>
+                                <h3>Daily flow &amp; running trend</h3>
+                            </div>
+                            <span class="helper-text">Bars show each day, line tracks how it builds up over time.</span>
+                        </div>
+                        <div id="analysisDailyChart" class="chart-surface">
+                            <canvas id="analysisDailyChartCanvas"></canvas>
+                        </div>
+                    </article>
+                    <article class="page-card chart-card">
+                        <div class="analysis-card__header">
+                            <div>
+                                <p class="label">Top categories</p>
+                                <h3>Category breakdown</h3>
+                            </div>
+                            <span class="helper-text">Live top five split</span>
+                        </div>
+                        <div id="analysisCategoryChart" class="chart-surface chart-surface--compact">
+                            <canvas id="analysisCategoryChartCanvas"></canvas>
+                        </div>
+                        <ul id="analysisCategoryList" class="category-table" aria-live="polite"></ul>
+                    </article>
+                </section>
+
+
+                <section class="page-card analysis-log" aria-labelledby="analysis-log-title">
+                    <header class="analysis-table__header">
+                        <div>
+                            <h2 id="analysis-log-title">Recent expenses in range</h2>
+                            <p class="helper-text">Timeline style list to pair with charts.</p>
+                        </div>
+                        <button class="btn btn-ghost" id="analysisRefresh" type="button">Reload</button>
+                    </header>
+                    <ul id="analysisLog" class="page-list analysis-log__list"></ul>
+                </section>
+            </div>
+        </main>
+
+        <footer class="site-footer">
+            <div class="container footer-content">
+                <p>© 2025 EduFinance Team · Hawassa University</p>
+            </div>
+        </footer>
+
+        <div id="modalOverlay" class="modal-overlay" hidden>
+            <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+                <header class="modal-header">
+                    <h2 id="modalTitle">Calendar coming soon</h2>
+                    <button id="modalClose" class="icon-button" type="button" aria-label="Close">✕</button>
+                </header>
+                <div id="modalContent" class="modal-body">
+                    <p>We are stitching in a detailed monthly calendar picker. Stay tuned!</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="toast" class="toast" role="status" aria-live="polite" hidden>Ready</div>
+    </body>
+</html>
+
+>>>>>>> eb4b0ab6b3af2982f8a1e8049d5578c2995278fe
