@@ -1,6 +1,26 @@
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 908ff401bcf019e94400186bbdc9413dfdb5a445
+>>>>>>> 1082ddc7eefc7f610027d70ddd08cda88a37c68b
 - [ ] Review provided TSX components to understand structure and content for conversion
 - [ ] Decide target HTML page structure and required sections based on components
 - [ ] Draft static HTML content with placeholders that reflect dynamic data states
 - [ ] Extract and adapt relevant styling into CSS file
 - [ ] Validate consistency between HTML and CSS, noting any assumptions for interactive behavior
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+=======
+- [ ] Review provided TSX components to understand structure and content for conversion
+- [ ] Decide target HTML page structure and required sections based on components
+- [ ] Draft static HTML content with placeholders that reflect dynamic data states
+- [ ] Extract and adapt relevant styling into CSS file
+- [ ] Validate consistency between HTML and CSS, noting any assumptions for interactive behavior
+>>>>>>> eb4b0ab6b3af2982f8a1e8049d5578c2995278fe
+>>>>>>> 908ff401bcf019e94400186bbdc9413dfdb5a445
+>>>>>>> 1082ddc7eefc7f610027d70ddd08cda88a37c68b
 - [ ] Share summary of conversion and next steps with user
